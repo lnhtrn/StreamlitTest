@@ -58,10 +58,11 @@ with st.form('addition'):
     data['Demographic'] = demographic
     
     submit = st.form_submit_button('Submit')
-    
 
 if submit:
     doc = Document('templates/template_mod_12.docx')
+    yaml_string = yaml.dump(data, sort_keys=False)
+    yaml_data = st.code(yaml_string, language=None)
 
     # handle word to replace 
     # pronouns
@@ -82,7 +83,7 @@ if submit:
             if p.text.find(word) >= 0:
                 p.text = p.text.replace(word, replace_word[word])
     
-    doc.save(f'output/Report_{data['Demographic']['firstname']}_{data['Demographic']['lastname']}.docx')
+    # doc.save(f'output/Report_{data['Demographic']['firstname']}_{data['Demographic']['lastname']}.docx')
 
     bio = io.BytesIO()
     doc.save(bio)
