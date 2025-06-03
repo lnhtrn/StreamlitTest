@@ -7,7 +7,7 @@ import io
 col1,col2 = st.columns(2)
 col1.title('Report Builder')
 
-with open('misc_data\states.txt', 'r') as file:
+with open('misc_data/states.txt', 'r') as file:
     states = [x.strip() for x in file]
 
 # Set up dictionary to store data 
@@ -61,11 +61,11 @@ with st.form('addition'):
     
 
 if submit:
-    doc = Document('templates\\template_mod_12.docx')
+    doc = Document('templates/template_mod_12.docx')
 
     # handle word to replace 
     # pronouns
-    with open("misc_data\pronouns.yaml", "r") as file:
+    with open("misc_data/pronouns.yaml", "r") as file:
         pronoun = yaml.safe_load(file)
     preferred = data['Demographic']['pronoun']
 
