@@ -2,6 +2,7 @@ import streamlit as st
 from docx import Document
 import yaml
 import io
+import docxedit
 
 
 col1,col2 = st.columns(2)
@@ -71,18 +72,28 @@ if submit:
     preferred = data['Demographic']['pronoun']
 
     replace_word = {
+        "{{Patient First Name}}": data['Demographic']['firstname'],
+        "{{Patient Last Name}}": data['Demographic']['lastname'],
         "{{Preferred Pronouns 1}}": pronoun[preferred]['pronoun1'],
         "{{Preferred Pronouns 1 CAP}}": pronoun[preferred]['pronoun1cap'],
         "{{Preferred Pronouns 2}}": pronoun[preferred]['pronoun2'],
         "{{Preferred Pronouns 2 CAP}}": pronoun[preferred]['pronoun2cap'],
+        "{{Caregiver type}}": data['Demographic']['caregiver'].lower(),
+        "{{Residence City/State}}": data['Demographic']['state'],
+        '{{Narrative to finish \"Patient lives with...\"}}': data['Demographic']['narrative'],
     }
 
-    for word in replace_word:
-        for p in doc.paragraphs:
-            print(type(p.text))
-            if p.text.find(word) >= 0:
-                p.text = p.text.replace(word, replace_word[word])
+    # for p in doc.paragraphs:
+    #     style = p.style
+    #     for word in replace_word:
+    #         print(type(p.text))
+    #         if p.text.find(word) >= 0:
+    #             p.text = p.text.replace(word, replace_word[word])
+    #     p.style = style
     
+    for word in replace_word:
+        docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
+
     # doc.save(f'output/Report_{data['Demographic']['firstname']}_{data['Demographic']['lastname']}.docx')
 
     bio = io.BytesIO()
