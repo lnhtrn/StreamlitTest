@@ -139,7 +139,7 @@ if submit:
     replace_word.update(data)
 
     # format date time to something like May 23, 2025
-    for key, value in replace_word:
+    for key, value in replace_word.items():
         if isinstance(value, datetime.datetime):
             replace_word[key] = value.strftime("%B %d, %Y")
 
