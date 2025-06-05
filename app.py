@@ -80,7 +80,7 @@ with st.form('BasicInfo'):
     data['{{Date Report Sent to Patient}}'] = st.date_input("Date Report Sent to Patient")
 
     data["{{Result of the evaluation}}"] = st.multiselect(
-        "Result of the evaluation",
+        "Result of the evaluation (select or add your own)",
         (
             "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
             "F88.0 - Global Developmental Delay (per behavioral presentation)",
