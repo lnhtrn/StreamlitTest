@@ -3,6 +3,7 @@ from docx import Document
 import yaml
 import io
 import docxedit
+import datetime
 
 
 col1,col2 = st.columns(2)
@@ -28,8 +29,8 @@ with st.form('BasicInfo'):
         "Patient's Preferred Pronoun",
         ("They/them", "He/him", "She/her"),
     )
-    data["{{Patient's Age}}"] = st.number_input("Patient's Age", 0, 100)
-    data['age_unit'] = st.selectbox(
+    data["{{Patient Age}}"] = st.number_input("Patient's Age", 0, 100)
+    data['age_unit'] = st.radio(
         "Year/month?",
         ("Year", "Month"),
     )
@@ -39,7 +40,7 @@ with st.form('BasicInfo'):
         ("mother", "father", "parent", "grandparent", "legal custodian", "Foster Parent"),
     )
 
-    data['{{Caregiver\'s Primary Concerns}}'] = st.multiselect(
+    data['{{Caregiver Primary Concerns}}'] = st.multiselect(
         "Caregiver\'s Primary Concerns (select or add your own)",
         (
             "Speech delays impacting social opportunities.",
@@ -51,7 +52,7 @@ with st.form('BasicInfo'):
         ),
         accept_new_options=True
     )
-    data['{{Caregiver\'s Primary Concerns}}'] = "\n".join(data['{{Caregiver\'s Primary Concerns}}'])
+    data['{{Caregiver Primary Concerns}}'] = "\n".join(data['{{Caregiver Primary Concerns}}'])
 
     data['{{Residence City/State}}'] = st.selectbox(
         "Residence City/State", states
@@ -136,6 +137,11 @@ if submit:
     }
 
     replace_word.update(data)
+
+    # format date time to something like May 23, 2025
+    for key, value in replace_word:
+        if isinstance(value, datetime.datetime):
+            replace_word[key] = value.strftime("%B %d, %Y")
 
     # Display data 
     yaml_string = yaml.dump(replace_word, sort_keys=False)
