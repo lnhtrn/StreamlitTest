@@ -40,7 +40,7 @@ with st.form('BasicInfo'):
     )
 
     data['{{Caregiver\'s Primary Concerns}}'] = st.multiselect(
-        "Caregiver\'s Primary Concerns",
+        "Caregiver\'s Primary Concerns (select or add your own)",
         (
             "Speech delays impacting social opportunities.",
             "Clarifying diagnostic presentation.",
@@ -51,7 +51,7 @@ with st.form('BasicInfo'):
         ),
         accept_new_options=True
     )
-    data['{{Caregiver\'s Primary Concerns}}'] = "\n".join(['{{Caregiver\'s Primary Concerns}}'])
+    data['{{Caregiver\'s Primary Concerns}}'] = "\n".join(data['{{Caregiver\'s Primary Concerns}}'])
 
     data['{{Residence City/State}}'] = st.selectbox(
         "Residence City/State", states
