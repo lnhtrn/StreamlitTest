@@ -147,17 +147,17 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    data['{{}}'] = st.text_input("")
-    data['{{}}'] = st.text_input("")
-    data['{{}}'] = st.text_input("")
-    data['{{}}'] = st.text_input("")
-    data['{{}}'] = st.text_input("")
-    data['{{}}'] = st.text_input("")
-    data['{{}}'] = st.text_input("")
-    data['{{}}'] = st.text_input("")
-    data['{{}}'] = st.text_input("")
-    data['{{}}'] = st.text_input("")
-    data['{{}}'] = st.text_input("")
+    # data['{{}}'] = st.text_input("")
+    # data['{{}}'] = st.text_input("")
+    # data['{{}}'] = st.text_input("")
+    # data['{{}}'] = st.text_input("")
+    # data['{{}}'] = st.text_input("")
+    # data['{{}}'] = st.text_input("")
+    # data['{{}}'] = st.text_input("")
+    # data['{{}}'] = st.text_input("")
+    # data['{{}}'] = st.text_input("")
+    # data['{{}}'] = st.text_input("")
+    # data['{{}}'] = st.text_input("")
 
     submit = st.form_submit_button('Submit')
 
