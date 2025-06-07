@@ -15,11 +15,14 @@ with open('misc_data/states.txt', 'r') as file:
 # Set up dictionary to store data 
 data = {}
 
-with st.form('BasicInfo'):
-    ####################################################
-    st.header("Appointment Summary")
-    audio_summary = st.audio_input("Summarize the appointment details")
+####################################################
+st.header("Appointment Summary")
+audio_summary = st.audio_input("Summarize the appointment details")
+st.markdown("**Check before proceeding with form**")
+teacher_eval = st.checkbox("Teacher gave SSR Scores")
 
+
+with st.form('BasicInfo'):
     ####################################################
     st.header("Patient's data")
     # Dict to store data
@@ -76,9 +79,9 @@ with st.form('BasicInfo'):
         ['home', 'school', 'the office']
     )
 
-    data['{{Results Shared Date}}'] = st.date_input("Results Shared Date")
+    data['{{Results Shared Date}}'] = st.date_input("Results Shared Date").strftime("%B %d, %Y")
     
-    data['{{Date Report Sent to Patient}}'] = st.date_input("Date Report Sent to Patient")
+    data['{{Date Report Sent to Patient}}'] = st.date_input("Date Report Sent to Patient").strftime("%B %d, %Y")
 
     data["{{Result of the evaluation}}"] = st.multiselect(
         "Result of the evaluation (select or add your own)",
@@ -97,7 +100,7 @@ with st.form('BasicInfo'):
         "Results (SCQ) - Lifetime Form"
     )
 
-    data["{{SRS-2 Score Caregiver}}"] = st.text_input("SRS-2 Score Caregiver")
+    data["{{SRS-2 Score Caregiver}}"] = st.text_input("Caregiver's SRS-2 Score")
     
     data["{{Social Communication and Interaction Score Caregiver}}"] = st.text_input("Social Communication and Interaction Score Caregiver")
     
@@ -113,9 +116,48 @@ with st.form('BasicInfo'):
         ['no', 'mild', 'moderate', 'severe']
     )
 
-    teacher_eval = st.checkbox("Teacher gave SSR Scores")
+    ##########################################################
+    if teacher_eval:
+        st.header("Teacher SSR Score")
+        st.markdown("*Skip this section if teacher did not give SSR Score*")
+
+        data['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
+
+        data['{{Social Communication and Interaction Score Teacher}}'] = st.text_input("Social Communication and Interaction Score Teacher")
+
+        data['{{Restricted Interests and Repetitive Behavior Score Teacher}}'] = st.text_input("Restricted Interests and Repetitive Behavior Score Teacher")
+
+        data["{{Teacher's level of concern}}"] = st.radio(
+            "Teacher's level of concern",
+            ['no', 'mild', 'moderate', 'severe']
+        )
 
     ######################################################
+    st.header("Medical/Developmental History")
+    
+    data['{{Diagnosis History}}'] = st.multiselect(
+        "Diagnosis History (Select or add your own)",
+        ['History of language and social communication delays.'],
+        accept_new_options=True
+    )
+
+    data['{{Medications}}'] = st.multiselect(
+        "Medications (Select or add your own)",
+        ['None noted or reported.'],
+        accept_new_options=True
+    )
+
+    data['{{}}'] = st.text_input("")
+    data['{{}}'] = st.text_input("")
+    data['{{}}'] = st.text_input("")
+    data['{{}}'] = st.text_input("")
+    data['{{}}'] = st.text_input("")
+    data['{{}}'] = st.text_input("")
+    data['{{}}'] = st.text_input("")
+    data['{{}}'] = st.text_input("")
+    data['{{}}'] = st.text_input("")
+    data['{{}}'] = st.text_input("")
+    data['{{}}'] = st.text_input("")
 
     submit = st.form_submit_button('Submit')
 
