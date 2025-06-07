@@ -18,9 +18,15 @@ data = {}
 ####################################################
 st.header("Appointment Summary")
 audio_summary = st.audio_input("Summarize the appointment details")
-st.markdown("**Check before proceeding with form**")
-teacher_eval = st.checkbox("Teacher gave SSR Scores")
-
+st.markdown("***Check before proceeding with form:*** Scores to report:")
+teacher_eval = st.checkbox("Teacher's SSR Scores")
+wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
+dppr_score = st.checkbox("Developmental Profile – Fourth Edition – Parent Report (DPPR)")
+pls_score = st.checkbox("Preschool Language Scale – Fifth Edition (PLS)")
+pdms_score = st.checkbox("Peabody Developmental Motor Scales – Second Edition")
+peshv_score = st.checkbox("Preschool Evaluation Scale Home Version – Second Edition")
+reelt_score = st.checkbox("Receptive Expressive Emergent Language Test – Fourth Edition")
+abas_score = st.checkbox("Adaptive Behavior Assessment System – Third Edition")
 
 with st.form('BasicInfo'):
     ####################################################
@@ -35,7 +41,7 @@ with st.form('BasicInfo'):
     data["{{Patient Age}}"] = st.number_input("Patient's Age", 0, 100)
     data['age_unit'] = st.radio(
         "Year/month?",
-        ("Year", "Month"),
+        ("Year", "Month")
     )
 
     data['{{Caregiver type}}'] = st.selectbox(
@@ -76,7 +82,8 @@ with st.form('BasicInfo'):
 
     data['{{Location of the evaluation}}'] = st.radio(
         "Location of the evaluation",
-        ['home', 'school', 'the office']
+        ['home', 'school', 'the office'],
+        index=None,
     )
 
     data['{{Results Shared Date}}'] = st.date_input("Results Shared Date").strftime("%B %d, %Y")
@@ -85,14 +92,15 @@ with st.form('BasicInfo'):
 
     data["{{Result of the evaluation}}"] = st.multiselect(
         "Result of the evaluation (select or add your own)",
-        (
+        [
             "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
             "F88.0 - Global Developmental Delay (per behavioral presentation)",
             "F80.2 - Mixed Receptive-Expressive Language Disorder",
             "F90.2 - Attention Deficit Hyperactivity Disorder - Combined-Type",
             "F50.82 Avoidant/Restrictive Food Intake Disorder",
-            "None",
-        ),
+        ],
+        index=None,
+        placeholder="Select from the choices or enter a new one, or select nothing if None",
         accept_new_options=True
     )
 
@@ -147,11 +155,51 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    # data['{{}}'] = st.text_input("")
-    # data['{{}}'] = st.text_input("")
-    # data['{{}}'] = st.text_input("")
-    # data['{{}}'] = st.text_input("")
-    # data['{{}}'] = st.text_input("")
+    ###############################################
+    st.header("Educational Background")
+
+    data['{{School District}}'] = st.selectbox(
+        "School District",
+        ['Rochester City'],
+        index=None,
+        placeholder="Select a school district or enter a new one",
+        accept_new_options=True,
+    )
+
+    data['{{School Name}}'] = st.text_input("School Name")
+
+    data['{{Grade}}'] = st.selectbox(
+        "Grade",
+        ['EPK (2023-24 school year)', 'UPK (2023-24 school year)', 'Kindergarten (2023-24 school year)'],
+        index=None,
+        placeholder="Select a grade or enter a new one",
+        accept_new_options=True,
+    )
+
+    data['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
+
+    data['{{Education Setting}}'] = st.selectbox(
+        "Education Setting",
+        ["General Education", "Integrated Co-Taught", "12:1:1", "8:1:1", "6:1:1"],
+        index=None,
+        placeholder="Select a grade or enter a new one",
+        accept_new_options=True,
+    )
+
+    data['{{Services}}'] = st.multiselect(
+        "Services",
+        [
+            "Speech therapy",
+            "Occupational therapy",
+            "Physical therapy",
+            "Extended school year services",
+            "Testing accommodations"
+        ],
+        index=None, 
+        placeholder="Select from the choices or enter a new one, or select nothing if None",
+        accept_new_options=True
+    )
+    
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
