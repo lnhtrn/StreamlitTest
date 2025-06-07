@@ -50,7 +50,7 @@ with st.form('BasicInfo'):
     )
 
     data['{{Caregiver Primary Concerns}}'] = st.multiselect(
-        "Caregiver\'s Primary Concerns (select or add your own)",
+        "Caregiver\'s Primary Concerns",
         (
             "Speech delays impacting social opportunities.",
             "Clarifying diagnostic presentation.",
@@ -59,6 +59,7 @@ with st.form('BasicInfo'):
             "Elopement and related safety concerns.",
             "Determining appropriate supports."
         ),
+        placeholder="Select from the choices or enter a new one",
         accept_new_options=True
     )
     data['{{Caregiver Primary Concerns}}'] = "\n".join(data['{{Caregiver Primary Concerns}}'])
@@ -91,16 +92,16 @@ with st.form('BasicInfo'):
     data['{{Date Report Sent to Patient}}'] = st.date_input("Date Report Sent to Patient").strftime("%B %d, %Y")
 
     data["{{Result of the evaluation}}"] = st.multiselect(
-        "Result of the evaluation (select or add your own)",
+        "Result of the evaluation",
         [
             "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
             "F88.0 - Global Developmental Delay (per behavioral presentation)",
             "F80.2 - Mixed Receptive-Expressive Language Disorder",
             "F90.2 - Attention Deficit Hyperactivity Disorder - Combined-Type",
             "F50.82 Avoidant/Restrictive Food Intake Disorder",
+            "None"
         ],
-        index=None,
-        placeholder="Select from the choices or enter a new one, or select nothing if None",
+        placeholder="Select from the choices or enter a new one",
         accept_new_options=True
     )
 
@@ -189,14 +190,14 @@ with st.form('BasicInfo'):
     data['{{Services}}'] = st.multiselect(
         "Services",
         [
+            "None",
             "Speech therapy",
             "Occupational therapy",
             "Physical therapy",
             "Extended school year services",
             "Testing accommodations"
         ],
-        index=None, 
-        placeholder="Select from the choices or enter a new one, or select nothing if None",
+        placeholder="Select from the choices or enter a new one",
         accept_new_options=True
     )
     
