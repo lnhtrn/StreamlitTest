@@ -130,6 +130,7 @@ with st.form('BasicInfo'):
     if teacher_eval:
         st.header("Teacher SSR Score")
         st.markdown("*Skip this section if teacher did not give SSR Score*")
+        optional["teacher"] = {}
 
         optional["teacher"]['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
 
@@ -206,7 +207,8 @@ with st.form('BasicInfo'):
     if wppsi_score:
         st.header("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI)")
         st.markdown("*Skip this section if teacher did not give SSR Score*")
-
+        optional["wppsi"] = {}
+        
         optional["wppsi"]["WPPSI Test Date"] = st.date_input("WPPSI Test Date")
         optional["wppsi"]['{{WPPSI Full Scale IQ Score}}'] = st.text_input("WPPSI Full Scale IQ Score")
 
