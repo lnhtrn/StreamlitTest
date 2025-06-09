@@ -74,7 +74,7 @@ with st.form('BasicInfo'):
     ##########################################################
     st.header("BRH Evaluation Details")
 
-    data['{{Evaluation Date}}'] = st.date_input("Evaluation Date")
+    data['{{Evaluation Date}}'] = st.date_input("Evaluation Date").strftime("%B %d, %Y")
 
     data['{{Module used}}'] = st.radio("Module used", ["Module 1", "Module 2"])
     if data['{{Module used}}'] == "Module 1":
@@ -245,9 +245,9 @@ if submit:
     replace_word.update(data)
 
     # format date time to something like May 23, 2025
-    for key, value in replace_word.items():
-        if isinstance(value, datetime.date):
-            replace_word[key] = value.strftime("%B %d, %Y")
+    # for key, value in replace_word.items():
+    #     if isinstance(value, datetime.date):
+    #         replace_word[key] = value.strftime("%B %d, %Y")
 
     # Display data 
     yaml_string = yaml.dump(replace_word, sort_keys=False)
