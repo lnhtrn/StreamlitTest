@@ -206,9 +206,9 @@ with st.form('BasicInfo'):
     ##########################################################
     if wppsi_score:
         st.header("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI)")
-        st.markdown("*Skip this section if teacher did not give SSR Score*")
+        st.markdown("*Skip this section if there is no WPPSI Score*")
         optional["wppsi"] = {}
-        
+
         optional["wppsi"]["WPPSI Test Date"] = st.date_input("WPPSI Test Date")
         optional["wppsi"]['{{WPPSI Full Scale IQ Score}}'] = st.text_input("WPPSI Full Scale IQ Score")
 
@@ -246,7 +246,7 @@ if submit:
 
     # format date time to something like May 23, 2025
     for key, value in replace_word.items():
-        if isinstance(value, datetime.datetime):
+        if isinstance(value, datetime.date):
             replace_word[key] = value.strftime("%B %d, %Y")
 
     # Display data 
