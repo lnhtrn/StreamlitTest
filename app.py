@@ -14,6 +14,7 @@ with open('misc_data/states.txt', 'r') as file:
 
 # Set up dictionary to store data 
 data = {}
+optional = {}
 
 ####################################################
 st.header("Appointment Summary")
@@ -130,13 +131,13 @@ with st.form('BasicInfo'):
         st.header("Teacher SSR Score")
         st.markdown("*Skip this section if teacher did not give SSR Score*")
 
-        data['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
+        optional["teacher"]['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
 
-        data['{{Social Communication and Interaction Score Teacher}}'] = st.text_input("Social Communication and Interaction Score Teacher")
+        optional["teacher"]['{{Social Communication and Interaction Score Teacher}}'] = st.text_input("Social Communication and Interaction Score Teacher")
 
-        data['{{Restricted Interests and Repetitive Behavior Score Teacher}}'] = st.text_input("Restricted Interests and Repetitive Behavior Score Teacher")
+        optional["teacher"]['{{Restricted Interests and Repetitive Behavior Score Teacher}}'] = st.text_input("Restricted Interests and Repetitive Behavior Score Teacher")
 
-        data["{{Teacher's level of concern}}"] = st.radio(
+        optional["teacher"]["{{Teacher's level of concern}}"] = st.radio(
             "Teacher's level of concern",
             ['no', 'mild', 'moderate', 'severe']
         )
@@ -200,6 +201,18 @@ with st.form('BasicInfo'):
         placeholder="Select from the choices or enter a new one",
         accept_new_options=True
     )
+
+    ##########################################################
+    if wppsi_score:
+        st.header("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI)")
+        st.markdown("*Skip this section if teacher did not give SSR Score*")
+
+        optional["wppsi"]["WPPSI Test Date"] = st.date_input("WPPSI Test Date")
+        optional["wppsi"]['{{WPPSI Full Scale IQ Score}}'] = st.text_input("WPPSI Full Scale IQ Score")
+
+        optional["wppsi"]['{{WPPSI Verbal Comprehension Score}}'] = st.text_input("WPPSI Verbal Comprehension Score")
+
+        optional["wppsi"]['{{WPPSI Visual Spatial Score}}'] = st.text_input("WPPSI Visual Spatial Score")
     
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
