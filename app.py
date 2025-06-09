@@ -12,6 +12,11 @@ col1.title('Report Builder')
 with open('misc_data/states.txt', 'r') as file:
     states = [x.strip() for x in file]
 
+def format_date_with_ordinal(date_obj):
+    day = date_obj.day
+    suffix = 'th' if 11 <= day <= 13 else {1: 'st', 2: 'nd', 3: 'rd'}.get(day % 10, 'th')
+    return date_obj.strftime(f"%B {day}{suffix}, %Y")
+
 # Set up dictionary to store data 
 data = {}
 optional = {}
@@ -65,16 +70,17 @@ with st.form('BasicInfo'):
     )
     data['{{Caregiver Primary Concerns}}'] = "\n".join(data['{{Caregiver Primary Concerns}}'])
 
-    data['{{Residence City/State}}'] = st.selectbox(
-        "Residence City/State", states
-    )
+    data['{{Residence City/State}}'] = st.text_input("Residence City/State")
+    # st.selectbox(
+    #     "Residence City/State", states, index=None,
+    # )
 
     data['{{Narrative}}'] = st.text_area('Narrative to finish \"Patient lives with...\"')
 
     ##########################################################
     st.header("BRH Evaluation Details")
 
-    data['{{Evaluation Date}}'] = st.date_input("Evaluation Date").strftime("%B %d, %Y")
+    data['{{Evaluation Date}}'] = format_date_with_ordinal(st.date_input("Evaluation Date"))
 
     data['{{Module used}}'] = st.radio("Module used", ["Module 1", "Module 2"])
     if data['{{Module used}}'] == "Module 1":
@@ -88,9 +94,9 @@ with st.form('BasicInfo'):
         index=None,
     )
 
-    data['{{Results Shared Date}}'] = st.date_input("Results Shared Date").strftime("%B %d, %Y")
+    data['{{Results Shared Date}}'] = format_date_with_ordinal(st.date_input("Results Shared Date"))
     
-    data['{{Date Report Sent to Patient}}'] = st.date_input("Date Report Sent to Patient").strftime("%B %d, %Y")
+    data['{{Date Report Sent to Patient}}'] = format_date_with_ordinal(st.date_input("Date Report Sent to Patient"))
 
     data["{{Result of the evaluation}}"] = st.multiselect(
         "Result of the evaluation",
@@ -209,7 +215,7 @@ with st.form('BasicInfo'):
         st.markdown("*Skip this section if there is no WPPSI Score*")
         optional["wppsi"] = {}
 
-        optional["wppsi"]["WPPSI Test Date"] = st.date_input("WPPSI Test Date")
+        optional["wppsi"]["WPPSI Test Date"] = format_date_with_ordinal(st.date_input("WPPSI Test Date"))
         optional["wppsi"]['{{WPPSI Full Scale IQ Score}}'] = st.text_input("WPPSI Full Scale IQ Score")
 
         optional["wppsi"]['{{WPPSI Verbal Comprehension Score}}'] = st.text_input("WPPSI Verbal Comprehension Score")
@@ -226,10 +232,7 @@ with st.form('BasicInfo'):
     submit = st.form_submit_button('Submit')
 
 
-
 if submit:
-    doc = Document('templates/template_mod_12.docx')
-
     # handle word to replace 
     # pronouns
     with open("misc_data/pronouns.yaml", "r") as file:
@@ -244,7 +247,7 @@ if submit:
 
     replace_word.update(data)
 
-    # format date time to something like May 23, 2025
+    # format date time to something like May 23rd, 2025
     # for key, value in replace_word.items():
     #     if isinstance(value, datetime.date):
     #         replace_word[key] = value.strftime("%B %d, %Y")
@@ -253,16 +256,23 @@ if submit:
     yaml_string = yaml.dump(replace_word, sort_keys=False)
     yaml_data = st.code(yaml_string, language=None)
     
-    for word in replace_word:
-        docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
 
-    bio = io.BytesIO()
-    doc.save(bio)
-
+    #### Edit document 
+    doc = Document('templates/template_mod_12.docx')
     if doc:
+        # Edit document
+        for word in replace_word:
+            docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
+
+        bio = io.BytesIO()
+        doc.save(bio)
+
+        today_date = format_date_with_ordinal(datetime.date.today())
+        
+        # Download 
         st.download_button(
             label="Click here to download",
             data=bio.getvalue(),
-            file_name=f"Report_{data['{{Patient First Name}}']}_{data['{{Patient Last Name}}']}.docx",
+            file_name=f"Report_{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} {today_date}.docx",
             mime="docx"
         )
