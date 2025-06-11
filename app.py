@@ -4,6 +4,7 @@ import yaml
 import io
 import docxedit
 import datetime
+from docx.shared import Pt
 
 
 col1,col2 = st.columns(2)
@@ -231,6 +232,12 @@ with st.form('BasicInfo'):
 
     submit = st.form_submit_button('Submit')
 
+def add_wppsi(paragraph, score_data, style):
+    paragraph.insert_paragraph_before()
+    paragraph.insert_paragraph_before().add_run(f'\t({score_data["WPPSI Test Date"]}) – Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed.', style=style).italic = True
+    paragraph.insert_paragraph_before().add_run(f'\tFull Scale IQ: {score_data["WPPSI Full Scale IQ Score"]}', style=style).bold = True
+    paragraph.insert_paragraph_before().add_run(f'\tVerbal Comprehension: {score_data["WPPSI Verbal Comprehension Score"]}\t\tVisual Spatial: {score_data["WPPSI Visual Spatial Score"]}', style=style)
+    paragraph.insert_paragraph_before()
 
 if submit:
     # handle word to replace 
@@ -260,10 +267,24 @@ if submit:
     #### Edit document 
     doc = Document('templates/template_mod_12.docx')
     if doc:
+        ### create document style
+        doc_style = doc.styles['Normal']
+        font = doc_style.font
+        font.name = 'Georgia'
+        font.size = Pt(12)
+
         # Edit document
         for word in replace_word:
             docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
 
+        # Add scores 
+        if len(optional) > 0:
+            for i, paragraph in enumerate(doc.paragraphs):
+                if "Scores are reported here as standard scores" in paragraph.text:
+                    if 'wppsi' in optional:
+                        add_wppsi(paragraph, optional['wppsi'], doc_style)
+
+        # Save content to file
         bio = io.BytesIO()
         doc.save(bio)
 
@@ -273,6 +294,6 @@ if submit:
         st.download_button(
             label="Click here to download",
             data=bio.getvalue(),
-            file_name=f"Report_{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} {today_date}.docx",
+            file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} {today_date}.docx",
             mime="docx"
         )
