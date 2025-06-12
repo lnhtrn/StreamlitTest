@@ -250,7 +250,8 @@ def delete_paragraph(paragraph):
     p._p = p._element = None
 
 def add_srs_no_teacher(paragraph):
-    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle').italic = True
+    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle')
+    r.italic = True
     r.font.underline = True
     paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
     paragraph.insert_paragraph_before()
@@ -266,7 +267,8 @@ def add_srs_no_teacher(paragraph):
     delete_paragraph(paragraph)
 
 def add_srs_yes_teacher(paragraph, score_data):
-    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle').italic = True
+    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle')
+    r.italic = True
     r.font.underline = True
     paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
     paragraph.insert_paragraph_before()
@@ -334,6 +336,7 @@ if submit:
 
     # Display data 
     yaml_string = yaml.dump(replace_word, sort_keys=False)
+    yaml_string = yaml_string + '\n' + yaml.dump(optional, sort_keys=False)
     yaml_data = st.code(yaml_string, language=None)
     
 
