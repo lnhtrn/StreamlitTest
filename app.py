@@ -9,8 +9,7 @@ from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK
 from streamlit_gsheets import GSheetsConnection
 
-conn = st.connection("gsheets", type=GSheetsConnection)
-primary_concerns = conn.read(worksheet="Sheet1")['Results'].tolist()
+primary_concerns = []
 
 # Create a connection object for google sheets
 def load_data(store_data):
