@@ -9,14 +9,13 @@ from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK
 from streamlit_gsheets import GSheetsConnection
 
+conn = st.connection("gsheets", type=GSheetsConnection)
+primary_concerns = conn.read()['Results'].tolist()
+
 # Create a connection object for google sheets
 def load_data(store_data):
     conn = st.connection("gsheets", type=GSheetsConnection)
     store_data = conn.read()['Results'].tolist()
-
-conn = st.connection("gsheets", type=GSheetsConnection)
-primary_concerns = conn.read()['Results'].tolist()
-
 st.button("Reload Data", on_click=load_data(primary_concerns))
 
 col1,col2 = st.columns(2)
