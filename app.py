@@ -217,7 +217,7 @@ with st.form('BasicInfo'):
         st.markdown("*Skip this section if there is no WPPSI Score*")
         optional["wppsi"] = {}
 
-        optional["wppsi"]["Test Date"] = st.date_input("WPPSI Test Date").strftime(f"%M/%Y")
+        optional["wppsi"]["Test Date"] = st.date_input("WPPSI Test Date").strftime("%m/%Y")
         optional["wppsi"]['{{WPPSI Full Scale IQ Score}}'] = st.text_input("WPPSI Full Scale IQ Score")
 
         optional["wppsi"]['{{WPPSI Verbal Comprehension Score}}'] = st.text_input("WPPSI Verbal Comprehension Score")
@@ -229,7 +229,7 @@ with st.form('BasicInfo'):
         st.markdown("*Skip this section if there is no DPPR Score*")
         optional["dppr"] = {}
 
-        optional["dppr"]["Test Date"] = st.date_input("DPPR Test Date").strftime(f"%M/%Y")
+        optional["dppr"]["Test Date"] = st.date_input("DPPR Test Date").strftime("%m/%Y")
         optional["dppr"]['DPPR Cognitive Score'] = st.text_input("DPPR Cognitive Score")
         optional["dppr"]['DPPR Social-Emotional Score'] = st.text_input("DPPR Social-Emotional Score")
         optional["dppr"]['DPPR Adaptive Score'] = st.text_input("DPPR Adaptive Score")
