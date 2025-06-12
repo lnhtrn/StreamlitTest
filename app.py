@@ -235,6 +235,23 @@ with st.form('BasicInfo'):
         optional["dppr"]['DPPR Adaptive Score'] = st.text_input("DPPR Adaptive Score")
         optional["dppr"]['DPPR Physical Score'] = st.text_input("DPPR Physical Score")
     
+    if pls_score:
+        st.header("Preschool Language Scale – Fifth Edition (PLS)")
+        st.markdown("*Skip this section if there is no PLS Score*")
+        optional["pls"] = {}
+        optional["pls"]["Test Date"] = st.date_input("PLS Test Date").strftime("%m/%Y")
+        optional["pls"]['PLS Total Language Score'] = st.text_input("PLS Total Language Score")
+        optional["pls"]['PLS Auditory Comprehension Score'] = st.text_input("PLS Auditory Comprehension Score")
+        optional["pls"]['PLS Expressive Communication Score'] = st.text_input("PLS Expressive Communication Score")
+
+    if pdms_score:
+        st.header("Peabody Developmental Motor Scales – Second Edition (PDMS)")
+        st.markdown("*Skip this section if there is no PDMS Score*")
+        optional["pdms"] = {}
+        optional["pdms"]["Test Date"] = st.date_input("PDMS Test Date").strftime("%m/%Y")
+        optional["pdms"]['PDMS Gross Motor Score'] = st.text_input("PDMS Gross Motor Score")
+        optional["pdms"]['PDMS Fine Motor Score'] = st.text_input("PDMS Fine Motor Score")
+    
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -255,10 +272,10 @@ def add_srs_no_teacher(paragraph):
     r.font.underline = True
     paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
     paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run('\t\tSRS-2 Total Score: {{SRS-2 Score Caregiver}} ({{Caregiver type}})', style='CustomStyle').bold = True
+    paragraph.insert_paragraph_before().add_run('\tSRS-2 Total Score: {{SRS-2 Score Caregiver}} ({{Caregiver type}})', style='CustomStyle').bold = True
     paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run('\t\tSocial Communication and Interaction: {{Social Communication and Interaction Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
-    paragraph.insert_paragraph_before().add_run('\t\tRestricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run('\tSocial Communication and Interaction: {{Social Communication and Interaction Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run('\tRestricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
     paragraph.insert_paragraph_before()
     observe = paragraph.insert_paragraph_before()
     observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
@@ -302,6 +319,18 @@ def add_dppr(paragraph, score_data):
     paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Developmental Profile – Fourth Edition – Parent Report', style='CustomStyle').italic = True
     paragraph.insert_paragraph_before().add_run(f'\tCognitive: {score_data["DPPR Cognitive Score"]}\t\t\t\tSocial-Emotional: {score_data["DPPR Social-Emotional Score"]}', style='CustomStyle')
     paragraph.insert_paragraph_before().add_run(f'\tAdaptive: {score_data["DPPR Adaptive Score"]}\t\t\t\tPhysical: {score_data["DPPR Physical Score"]}', style='CustomStyle')
+
+def add_pls(paragraph, score_data):
+    paragraph.insert_paragraph_before()
+    paragraph.insert_paragraph_before().add_run(f'\t({score_data["PLS Test Date"]}) – Preschool Language Scale – Fifth Edition', style='CustomStyle').italic = True
+    paragraph.insert_paragraph_before().add_run(f'\tTotal Language Score: {score_data["PLS Total Language Score"]}', style='CustomStyle').bold = True
+    paragraph.insert_paragraph_before().add_run(f'\tAuditory Comprehension: {score_data["PLS Auditory Comprehension Score"]} \t\tExpressive Communication: {score_data["PLS Expressive Communication Score"]}', style='CustomStyle')
+
+def add_pdms(paragraph, score_data):
+    paragraph.insert_paragraph_before()
+    paragraph.insert_paragraph_before().add_run(f'\t({score_data["PDMS Test Date"]}) – Peabody Developmental Motor Scales – Second Edition', style='CustomStyle').italic = True
+    paragraph.insert_paragraph_before().add_run(f'\tGross Motor: {score_data["PDMS Gross Motor Score"]}\t\t\t\tFine Motor: {score_data["PDMS Fine Motor Score"]}', style='CustomStyle').bold = True
+    
 
 if submit:
     # handle word to replace 
@@ -356,6 +385,10 @@ if submit:
                         add_wppsi(paragraph, optional['wppsi'])
                     if 'dppr' in optional:
                         add_dppr(paragraph, optional["dppr"])
+                    if 'pls' in optional:
+                        add_pls(paragraph, optional["pls"])
+                    if 'pdms' in optional:
+                        add_pls(paragraph, optional["pdms"])
                 
                 if "SRS Report Information" in paragraph.text:
                     if len(teacher_score) == 0:
