@@ -67,14 +67,7 @@ with st.form('BasicInfo'):
 
     data['{{Caregiver Primary Concerns}}'] = st.multiselect(
         "Caregiver\'s Primary Concerns",
-        (
-            "Speech delays impacting social opportunities.",
-            "Clarifying diagnostic presentation.",
-            "Determining service eligibility.",
-            "Language delays and difficulties.",
-            "Elopement and related safety concerns.",
-            "Determining appropriate supports."
-        ),
+        eval_results,
         placeholder="Select from the choices or enter a new one",
         accept_new_options=True
     )
@@ -110,7 +103,14 @@ with st.form('BasicInfo'):
 
     data["{{Result of the evaluation}}"] = st.multiselect(
         "Result of the evaluation",
-        eval_results,
+        [
+            "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
+            "F88.0 - Global Developmental Delay (per behavioral presentation)",
+            "F80.2 - Mixed Receptive-Expressive Language Disorder",
+            "F90.2 - Attention Deficit Hyperactivity Disorder - Combined-Type",
+            "F50.82 Avoidant/Restrictive Food Intake Disorder",
+            "None"
+        ],
         placeholder="Select from the choices or enter a new one",
         accept_new_options=True
     )
