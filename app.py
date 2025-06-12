@@ -360,7 +360,7 @@ if submit:
                     if len(teacher_score) == 0:
                         add_srs_no_teacher(paragraph)
                     else:
-                        add_srs_yes_teacher(paragraph, teacher_eval)
+                        add_srs_yes_teacher(paragraph, teacher_score)
 
         # Save content to file
         bio = io.BytesIO()
