@@ -298,15 +298,14 @@ if submit:
     replace_word.update(data)
 
     # Add optional data 
-    if not teacher_eval:
-
-    wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
-    dppr_score = st.checkbox("Developmental Profile – Fourth Edition – Parent Report (DPPR)")
-    pls_score = st.checkbox("Preschool Language Scale – Fifth Edition (PLS)")
-    pdms_score = st.checkbox("Peabody Developmental Motor Scales – Second Edition")
-    peshv_score = st.checkbox("Preschool Evaluation Scale Home Version – Second Edition")
-    reelt_score = st.checkbox("Receptive Expressive Emergent Language Test – Fourth Edition")
-    abas_score 
+    if not wppsi_score:
+        del optional['wppsi']
+    # dppr_score = st.checkbox("Developmental Profile – Fourth Edition – Parent Report (DPPR)")
+    # pls_score = st.checkbox("Preschool Language Scale – Fifth Edition (PLS)")
+    # pdms_score = st.checkbox("Peabody Developmental Motor Scales – Second Edition")
+    # peshv_score = st.checkbox("Preschool Evaluation Scale Home Version – Second Edition")
+    # reelt_score = st.checkbox("Receptive Expressive Emergent Language Test – Fourth Edition")
+    # abas_score 
 
     # Display data 
     yaml_string = yaml.dump(replace_word, sort_keys=False)
@@ -331,7 +330,13 @@ if submit:
                 if "Scores are reported here as standard scores" in paragraph.text:
                     if 'wppsi' in optional:
                         add_wppsi(paragraph, optional['wppsi'])
-
+                
+                if "SRS Report Information" in paragraph.text:
+                    if len(teacher_score) == 0:
+                        add_srs_no_teacher(paragraph)
+                    else:
+                        add_srs_yes_teacher(paragraph, teacher_eval)
+                        
         # Save content to file
         bio = io.BytesIO()
         doc.save(bio)
