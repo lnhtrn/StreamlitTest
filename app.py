@@ -250,7 +250,8 @@ def delete_paragraph(paragraph):
     p._p = p._element = None
 
 def add_srs_no_teacher(paragraph):
-    paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle').italic = True
+    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle').italic = True
+    r.font.underline = True
     paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
     paragraph.insert_paragraph_before()
     paragraph.insert_paragraph_before().add_run('SRS-2 Total Score: {{SRS-2 Score Caregiver}} ({{Caregiver type}})', style='CustomStyle').bold = True
@@ -265,7 +266,8 @@ def add_srs_no_teacher(paragraph):
     delete_paragraph(paragraph)
 
 def add_srs_yes_teacher(paragraph, score_data):
-    paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle').italic = True
+    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle').italic = True
+    r.font.underline = True
     paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
     paragraph.insert_paragraph_before()
     p = paragraph.insert_paragraph_before()
@@ -288,16 +290,16 @@ def add_srs_yes_teacher(paragraph, score_data):
     delete_paragraph(paragraph)
 
 def add_wppsi(paragraph, score_data):
+    paragraph.insert_paragraph_before()
     paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed.', style='CustomStyle').italic = True
     paragraph.insert_paragraph_before().add_run(f'\tFull Scale IQ: {score_data["{{WPPSI Full Scale IQ Score}}"]}', style='CustomStyle').bold = True
     paragraph.insert_paragraph_before().add_run(f'\tVerbal Comprehension: {score_data["{{WPPSI Verbal Comprehension Score}}"]}\t\t\tVisual Spatial: {score_data["{{WPPSI Visual Spatial Score}}"]}', style='CustomStyle')
-    paragraph.insert_paragraph_before()
     
 def add_dppr(paragraph, score_data):
+    paragraph.insert_paragraph_before()
     paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Developmental Profile – Fourth Edition – Parent Report', style='CustomStyle').italic = True
     paragraph.insert_paragraph_before().add_run(f'\tCognitive: {score_data["DPPR Cognitive Score"]}\t\t\t\tSocial-Emotional: {score_data["DPPR Social-Emotional Score"]}', style='CustomStyle')
     paragraph.insert_paragraph_before().add_run(f'\tAdaptive: {score_data["DPPR Adaptive Score"]}\t\t\t\tPhysical: {score_data["DPPR Physical Score"]}', style='CustomStyle')
-    paragraph.insert_paragraph_before()
 
 if submit:
     # handle word to replace 
@@ -343,10 +345,6 @@ if submit:
         custom_style.font.size = Pt(12)
         custom_style.font.name = 'Georgia'
 
-        # Edit document
-        for word in replace_word:
-            docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
-
         # Add scores 
         if len(optional) > 0:
             for i, paragraph in enumerate(doc.paragraphs):
@@ -361,6 +359,10 @@ if submit:
                         add_srs_no_teacher(paragraph)
                     else:
                         add_srs_yes_teacher(paragraph, teacher_score)
+
+        # Edit document
+        for word in replace_word:
+            docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
 
         # Save content to file
         bio = io.BytesIO()
