@@ -217,12 +217,23 @@ with st.form('BasicInfo'):
         st.markdown("*Skip this section if there is no WPPSI Score*")
         optional["wppsi"] = {}
 
-        optional["wppsi"]["WPPSI Test Date"] = format_date_with_ordinal(st.date_input("WPPSI Test Date"))
+        optional["wppsi"]["Test Date"] = st.date_input("WPPSI Test Date").strftime(f"%M/%Y")
         optional["wppsi"]['{{WPPSI Full Scale IQ Score}}'] = st.text_input("WPPSI Full Scale IQ Score")
 
         optional["wppsi"]['{{WPPSI Verbal Comprehension Score}}'] = st.text_input("WPPSI Verbal Comprehension Score")
 
         optional["wppsi"]['{{WPPSI Visual Spatial Score}}'] = st.text_input("WPPSI Visual Spatial Score")
+    
+    if dppr_score:
+        st.header("Developmental Profile – Fourth Edition – Parent Report (DPPR)")
+        st.markdown("*Skip this section if there is no DPPR Score*")
+        optional["dppr"] = {}
+
+        optional["dppr"]["Test Date"] = st.date_input("DPPR Test Date").strftime(f"%M/%Y")
+        optional["dppr"]['DPPR Cognitive Score'] = st.text_input("DPPR Cognitive Score")
+        optional["dppr"]['DPPR Social-Emotional Score'] = st.text_input("DPPR Social-Emotional Score")
+        optional["dppr"]['DPPR Adaptive Score'] = st.text_input("DPPR Adaptive Score")
+        optional["dppr"]['DPPR Physical Score'] = st.text_input("DPPR Physical Score")
     
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -277,9 +288,15 @@ def add_srs_yes_teacher(paragraph, score_data):
     delete_paragraph(paragraph)
 
 def add_wppsi(paragraph, score_data):
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["{{WPPSI Test Date}}"]}) – Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed.', style='CustomStyle').italic = True
+    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed.', style='CustomStyle').italic = True
     paragraph.insert_paragraph_before().add_run(f'\tFull Scale IQ: {score_data["{{WPPSI Full Scale IQ Score}}"]}', style='CustomStyle').bold = True
     paragraph.insert_paragraph_before().add_run(f'\tVerbal Comprehension: {score_data["{{WPPSI Verbal Comprehension Score}}"]}\t\t\tVisual Spatial: {score_data["{{WPPSI Visual Spatial Score}}"]}', style='CustomStyle')
+    paragraph.insert_paragraph_before()
+    
+def add_dppr(paragraph, score_data):
+    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Developmental Profile – Fourth Edition – Parent Report', style='CustomStyle').italic = True
+    paragraph.insert_paragraph_before().add_run(f'\tCognitive: {score_data["DPPR Cognitive Score"]}\t\t\t\tSocial-Emotional: {score_data["DPPR Social-Emotional Score"]}', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run(f'\tAdaptive: {score_data["DPPR Adaptive Score"]}\t\t\t\tPhysical: {score_data["DPPR Physical Score"]}', style='CustomStyle')
     paragraph.insert_paragraph_before()
 
 if submit:
@@ -298,14 +315,20 @@ if submit:
     replace_word.update(data)
 
     # Add optional data 
-    if not wppsi_score:
+    if not wppsi_score and 'wppsi' in optional:
         del optional['wppsi']
-    # dppr_score = st.checkbox("Developmental Profile – Fourth Edition – Parent Report (DPPR)")
-    # pls_score = st.checkbox("Preschool Language Scale – Fifth Edition (PLS)")
-    # pdms_score = st.checkbox("Peabody Developmental Motor Scales – Second Edition")
-    # peshv_score = st.checkbox("Preschool Evaluation Scale Home Version – Second Edition")
-    # reelt_score = st.checkbox("Receptive Expressive Emergent Language Test – Fourth Edition")
-    # abas_score 
+    if not dppr_score and 'dppr' in optional:
+        del optional['dppr']
+    if not pls_score and 'pls' in optional:
+        del optional['pls']
+    if not pdms_score and 'pdms' in optional:
+        del optional['pdms']
+    if not peshv_score and 'peshv' in optional:
+        del optional['peshv']
+    if not reelt_score and 'reelt' in optional:
+        del optional['reelt']
+    if not abas_score and 'abas' in optional:
+        del optional['abas']
 
     # Display data 
     yaml_string = yaml.dump(replace_word, sort_keys=False)
@@ -330,6 +353,8 @@ if submit:
                 if "Scores are reported here as standard scores" in paragraph.text:
                     if 'wppsi' in optional:
                         add_wppsi(paragraph, optional['wppsi'])
+                    if 'dppr' in optional:
+                        add_dppr(paragraph, optional["dppr"])
                 
                 if "SRS Report Information" in paragraph.text:
                     if len(teacher_score) == 0:
