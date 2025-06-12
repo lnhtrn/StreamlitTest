@@ -313,7 +313,7 @@ if submit:
     
 
     #### Edit document 
-    doc = Document('templates/template_mod_12.docx')
+    doc = Document('templates/template_mod_12_noScore.docx')
     if doc:
         ### create document style
         custom_style = doc.styles.add_style('CustomStyle', WD_STYLE_TYPE.CHARACTER)
@@ -336,7 +336,7 @@ if submit:
                         add_srs_no_teacher(paragraph)
                     else:
                         add_srs_yes_teacher(paragraph, teacher_eval)
-                        
+
         # Save content to file
         bio = io.BytesIO()
         doc.save(bio)
