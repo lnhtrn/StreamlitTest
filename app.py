@@ -5,7 +5,8 @@ import io
 import docxedit
 import datetime
 from docx.shared import Pt
-
+from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.text import WD_BREAK
 
 col1,col2 = st.columns(2)
 col1.title('Report Builder')
@@ -21,6 +22,7 @@ def format_date_with_ordinal(date_obj):
 # Set up dictionary to store data 
 data = {}
 optional = {}
+teacher_score = {}
 
 ####################################################
 st.header("Appointment Summary")
@@ -137,15 +139,14 @@ with st.form('BasicInfo'):
     if teacher_eval:
         st.header("Teacher SSR Score")
         st.markdown("*Skip this section if teacher did not give SSR Score*")
-        optional["teacher"] = {}
 
-        optional["teacher"]['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
+        teacher_score['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
 
-        optional["teacher"]['{{Social Communication and Interaction Score Teacher}}'] = st.text_input("Social Communication and Interaction Score Teacher")
+        teacher_score['{{Social Communication and Interaction Score Teacher}}'] = st.text_input("Social Communication and Interaction Score Teacher")
 
-        optional["teacher"]['{{Restricted Interests and Repetitive Behavior Score Teacher}}'] = st.text_input("Restricted Interests and Repetitive Behavior Score Teacher")
+        teacher_score['{{Restricted Interests and Repetitive Behavior Score Teacher}}'] = st.text_input("Restricted Interests and Repetitive Behavior Score Teacher")
 
-        optional["teacher"]["{{Teacher's level of concern}}"] = st.radio(
+        teacher_score["{{Teacher level of concern}}"] = st.radio(
             "Teacher's level of concern",
             ['no', 'mild', 'moderate', 'severe']
         )
@@ -232,11 +233,53 @@ with st.form('BasicInfo'):
 
     submit = st.form_submit_button('Submit')
 
-def add_wppsi(paragraph, score_data, style):
+def delete_paragraph(paragraph):
+    p = paragraph._element
+    p.getparent().remove(p)
+    p._p = p._element = None
+
+def add_srs_no_teacher(paragraph):
+    paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle').italic = True
+    paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
     paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["WPPSI Test Date"]}) – Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed.', style=style).italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tFull Scale IQ: {score_data["WPPSI Full Scale IQ Score"]}', style=style).bold = True
-    paragraph.insert_paragraph_before().add_run(f'\tVerbal Comprehension: {score_data["WPPSI Verbal Comprehension Score"]}\t\tVisual Spatial: {score_data["WPPSI Visual Spatial Score"]}', style=style)
+    paragraph.insert_paragraph_before().add_run('SRS-2 Total Score: {{SRS-2 Score Caregiver}} ({{Caregiver type}})', style='CustomStyle').bold = True
+    paragraph.insert_paragraph_before()
+    paragraph.insert_paragraph_before().add_run('Social Communication and Interaction: {{Social Communication and Interaction Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run('Restricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
+    paragraph.insert_paragraph_before()
+    observe = paragraph.insert_paragraph_before()
+    observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
+    observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
+    observe.add_run("My observation aligned with a {{Evaluator's level of concern}} level of concern.", style='CustomStyle').bold = True
+    delete_paragraph(paragraph)
+
+def add_srs_yes_teacher(paragraph, score_data):
+    paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle').italic = True
+    paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
+    paragraph.insert_paragraph_before()
+    p = paragraph.insert_paragraph_before()
+    p.add_run('SRS-2 Total Score: {{SRS-2 Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle').bold = True
+    p.add_run(f"{score_data['{{SRS-2 Score Teacher}}']} (teacher)", style='CustomStyle').bold = True
+    paragraph.insert_paragraph_before()
+    p = paragraph.insert_paragraph_before()
+    p.add_run('Social Communication and Interaction: {{Social Communication and Interaction Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle')
+    p.add_run(f"{score_data['{{Social Communication and Interaction Score Teacher}}']} (teacher)", style='CustomStyle')
+    p = paragraph.insert_paragraph_before()
+    p.add_run('Restricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle')
+    p.add_run(f'{score_data["{{Restricted Interests and Repetitive Behavior Score Teacher}}"]} (teacher)', style='CustomStyle')
+    paragraph.insert_paragraph_before()
+    observe = paragraph.insert_paragraph_before()
+    observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
+    observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
+    observe.add_run("{{Patient First Name}}’s teacher reported a ", style='CustomStyle')
+    observe.add_run(f"{score_data['{{Teacher level of concern}}']} level of concern, and ", style='CustomStyle')
+    observe.add_run("my observation aligned with a {{Evaluator's level of concern}} level of concern.", style='CustomStyle').bold = True
+    delete_paragraph(paragraph)
+
+def add_wppsi(paragraph, score_data):
+    paragraph.insert_paragraph_before().add_run(f'\t({score_data["{{WPPSI Test Date}}"]}) – Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed.', style='CustomStyle').italic = True
+    paragraph.insert_paragraph_before().add_run(f'\tFull Scale IQ: {score_data["{{WPPSI Full Scale IQ Score}}"]}', style='CustomStyle').bold = True
+    paragraph.insert_paragraph_before().add_run(f'\tVerbal Comprehension: {score_data["{{WPPSI Verbal Comprehension Score}}"]}\t\t\tVisual Spatial: {score_data["{{WPPSI Visual Spatial Score}}"]}', style='CustomStyle')
     paragraph.insert_paragraph_before()
 
 if submit:
@@ -254,10 +297,16 @@ if submit:
 
     replace_word.update(data)
 
-    # format date time to something like May 23rd, 2025
-    # for key, value in replace_word.items():
-    #     if isinstance(value, datetime.date):
-    #         replace_word[key] = value.strftime("%B %d, %Y")
+    # Add optional data 
+    if not teacher_eval:
+
+    wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
+    dppr_score = st.checkbox("Developmental Profile – Fourth Edition – Parent Report (DPPR)")
+    pls_score = st.checkbox("Preschool Language Scale – Fifth Edition (PLS)")
+    pdms_score = st.checkbox("Peabody Developmental Motor Scales – Second Edition")
+    peshv_score = st.checkbox("Preschool Evaluation Scale Home Version – Second Edition")
+    reelt_score = st.checkbox("Receptive Expressive Emergent Language Test – Fourth Edition")
+    abas_score 
 
     # Display data 
     yaml_string = yaml.dump(replace_word, sort_keys=False)
@@ -268,10 +317,9 @@ if submit:
     doc = Document('templates/template_mod_12.docx')
     if doc:
         ### create document style
-        doc_style = doc.styles['Normal']
-        font = doc_style.font
-        font.name = 'Georgia'
-        font.size = Pt(12)
+        custom_style = doc.styles.add_style('CustomStyle', WD_STYLE_TYPE.CHARACTER)
+        custom_style.font.size = Pt(12)
+        custom_style.font.name = 'Georgia'
 
         # Edit document
         for word in replace_word:
@@ -282,7 +330,7 @@ if submit:
             for i, paragraph in enumerate(doc.paragraphs):
                 if "Scores are reported here as standard scores" in paragraph.text:
                     if 'wppsi' in optional:
-                        add_wppsi(paragraph, optional['wppsi'], doc_style)
+                        add_wppsi(paragraph, optional['wppsi'])
 
         # Save content to file
         bio = io.BytesIO()
