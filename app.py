@@ -218,11 +218,11 @@ with st.form('BasicInfo'):
         optional["wppsi"] = {}
 
         optional["wppsi"]["Test Date"] = st.date_input("WPPSI Test Date").strftime("%m/%Y")
-        optional["wppsi"]['{{WPPSI Full Scale IQ Score}}'] = st.text_input("WPPSI Full Scale IQ Score")
+        optional["wppsi"]['WPPSI Full Scale IQ Score'] = st.text_input("WPPSI Full Scale IQ Score")
 
-        optional["wppsi"]['{{WPPSI Verbal Comprehension Score}}'] = st.text_input("WPPSI Verbal Comprehension Score")
+        optional["wppsi"]['WPPSI Verbal Comprehension Score'] = st.text_input("WPPSI Verbal Comprehension Score")
 
-        optional["wppsi"]['{{WPPSI Visual Spatial Score}}'] = st.text_input("WPPSI Visual Spatial Score")
+        optional["wppsi"]['WPPSI Visual Spatial Score'] = st.text_input("WPPSI Visual Spatial Score")
     
     if dppr_score:
         st.header("Developmental Profile – Fourth Edition – Parent Report (DPPR)")
@@ -311,8 +311,8 @@ def add_srs_yes_teacher(paragraph, score_data):
 def add_wppsi(paragraph, score_data):
     paragraph.insert_paragraph_before()
     paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed.', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tFull Scale IQ: {score_data["{{WPPSI Full Scale IQ Score}}"]}', style='CustomStyle').bold = True
-    paragraph.insert_paragraph_before().add_run(f'\tVerbal Comprehension: {score_data["{{WPPSI Verbal Comprehension Score}}"]}\t\t\t\tVisual Spatial: {score_data["{{WPPSI Visual Spatial Score}}"]}', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run(f'\tFull Scale IQ: {score_data["WPPSI Full Scale IQ Score"]}', style='CustomStyle').bold = True
+    paragraph.insert_paragraph_before().add_run(f'\tVerbal Comprehension: {score_data["WPPSI Verbal Comprehension Score"]}\t\t\tVisual Spatial: {score_data["WPPSI Visual Spatial Score"]}', style='CustomStyle')
     
 def add_dppr(paragraph, score_data):
     paragraph.insert_paragraph_before()
