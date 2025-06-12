@@ -7,6 +7,13 @@ import datetime
 from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_BREAK
+from streamlit_gsheets import GSheetsConnection
+
+# Create a connection object for google sheets
+conn = st.connection("gsheets", type=GSheetsConnection)
+
+eval_results = conn.read()['Results'].tolist()
+
 
 col1,col2 = st.columns(2)
 col1.title('Report Builder')
@@ -103,14 +110,7 @@ with st.form('BasicInfo'):
 
     data["{{Result of the evaluation}}"] = st.multiselect(
         "Result of the evaluation",
-        [
-            "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
-            "F88.0 - Global Developmental Delay (per behavioral presentation)",
-            "F80.2 - Mixed Receptive-Expressive Language Disorder",
-            "F90.2 - Attention Deficit Hyperactivity Disorder - Combined-Type",
-            "F50.82 Avoidant/Restrictive Food Intake Disorder",
-            "None"
-        ],
+        eval_results,
         placeholder="Select from the choices or enter a new one",
         accept_new_options=True
     )
