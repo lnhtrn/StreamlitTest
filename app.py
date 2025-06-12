@@ -388,7 +388,7 @@ if submit:
                     if 'pls' in optional:
                         add_pls(paragraph, optional["pls"])
                     if 'pdms' in optional:
-                        add_pls(paragraph, optional["pdms"])
+                        add_pdms(paragraph, optional["pdms"])
                 
                 if "SRS Report Information" in paragraph.text:
                     if len(teacher_score) == 0:
