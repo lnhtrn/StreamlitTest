@@ -322,13 +322,13 @@ def add_dppr(paragraph, score_data):
 
 def add_pls(paragraph, score_data):
     paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["PLS Test Date"]}) – Preschool Language Scale – Fifth Edition', style='CustomStyle').italic = True
+    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Preschool Language Scale – Fifth Edition', style='CustomStyle').italic = True
     paragraph.insert_paragraph_before().add_run(f'\tTotal Language Score: {score_data["PLS Total Language Score"]}', style='CustomStyle').bold = True
     paragraph.insert_paragraph_before().add_run(f'\tAuditory Comprehension: {score_data["PLS Auditory Comprehension Score"]} \t\tExpressive Communication: {score_data["PLS Expressive Communication Score"]}', style='CustomStyle')
 
 def add_pdms(paragraph, score_data):
     paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["PDMS Test Date"]}) – Peabody Developmental Motor Scales – Second Edition', style='CustomStyle').italic = True
+    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Peabody Developmental Motor Scales – Second Edition', style='CustomStyle').italic = True
     paragraph.insert_paragraph_before().add_run(f'\tGross Motor: {score_data["PDMS Gross Motor Score"]}\t\t\t\tFine Motor: {score_data["PDMS Fine Motor Score"]}', style='CustomStyle').bold
     
 
