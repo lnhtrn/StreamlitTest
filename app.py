@@ -72,7 +72,6 @@ with st.form('BasicInfo'):
 
     data['{{Caregiver Primary Concerns}}'] = st.multiselect(
         "Caregiver\'s Primary Concerns",
-        # eval_results,
         [
             "Speech delays impacting social opportunities.",
             "Clarifying diagnostic presentation.",
@@ -80,7 +79,7 @@ with st.form('BasicInfo'):
             "Language delays and difficulties.",
             "Elopement and related safety concerns.",
             "Determining appropriate supports."
-        ]
+        ],
         placeholder="Select from the choices or enter a new one",
         accept_new_options=True
     )
@@ -261,18 +260,26 @@ with st.form('BasicInfo'):
         st.header("Peabody Developmental Motor Scales – Second Edition (PDMS)")
         st.markdown("*Skip this section if there is no PDMS Score*")
         optional["pdms"] = {}
-        optional["pdms"]["Test Date"] = st.date_input("PDMS Test Date").strftime("%m/%Y")
+        optional["pdms"]["Test Date"] = st.date_input("Test Date").strftime("%m/%Y")
         optional["pdms"]['PDMS Gross Motor Score'] = st.text_input("PDMS Gross Motor Score")
         optional["pdms"]['PDMS Fine Motor Score'] = st.text_input("PDMS Fine Motor Score")
 
-    if pdms_score:
-        st.header("Peabody Developmental Motor Scales – Second Edition (PDMS)")
-        st.markdown("*Skip this section if there is no PDMS Score*")
-        optional["pdms"] = {}
-        optional["pdms"]["Test Date"] = st.date_input("PDMS Test Date").strftime("%m/%Y")
-        optional["pdms"]['PDMS Gross Motor Score'] = st.text_input("PDMS Gross Motor Score")
-        optional["pdms"]['PDMS Fine Motor Score'] = st.text_input("PDMS Fine Motor Score")
+    if peshv_score:
+        st.header("Preschool Evaluation Scale Home Version – Second Edition (PESHV)")
+        st.markdown("*Skip this section if there is no PESHV Score*")
+        optional["peshv"] = {}
+        optional["peshv"]["Test Date"] = st.date_input("PESHV Test Date").strftime("%m/%Y")
+        optional["peshv"]['PESHV Cognitive Score'] = st.text_input("PESHV Cognitive Score")
+        optional["peshv"]['PESHV Social Emotional Score'] = st.text_input("PESHV Social Emotional Score")
     
+    if peshv_score:
+        st.header("Receptive Expressive Emergent Language Test – Fourth Edition (REELT)")
+        st.markdown("*Skip this section if there is no REELT Score*")
+        optional[""] = {}
+        optional["peshv"]["Test Date"] = st.date_input("PESHV Test Date").strftime("%m/%Y")
+        optional["peshv"]['Total Language'] = st.text_input("Total Language")
+        optional["peshv"]['PESHV Social Emotional Score'] = st.text_input("PESHV Social Emotional Score")
+
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -352,7 +359,11 @@ def add_pdms(paragraph, score_data):
     paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Peabody Developmental Motor Scales – Second Edition', style='CustomStyle').italic = True
     paragraph.insert_paragraph_before().add_run(f'\tGross Motor: {score_data["PDMS Gross Motor Score"]}\t\t\t\tFine Motor: {score_data["PDMS Fine Motor Score"]}', style='CustomStyle').bold
     
-
+def add_peshv(paragraph, score_data):
+    paragraph.insert_paragraph_before()
+    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Preschool Evaluation Scale Home Version – Second Edition', style='CustomStyle').italic = True
+    paragraph.insert_paragraph_before().add_run(f'\tCognitive: {score_data["PESHV Cognitive Score"]} \t\t\t\t\tSocial Emotional: {score_data["PESHV Social Emotional Score"]}', style='CustomStyle').bold
+    
 
 if submit:
     # handle word to replace 
