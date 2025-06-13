@@ -12,10 +12,10 @@ from streamlit_gsheets import GSheetsConnection
 primary_concerns = []
 
 # Create a connection object for google sheets
-def load_data(store_data):
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    store_data = conn.read(worksheet="Sheet1")['Results'].tolist()
-st.button("Reload Data", on_click=load_data(primary_concerns))
+# def load_data(store_data):
+#     conn = st.connection("gsheets", type=GSheetsConnection)
+#     store_data = conn.read(worksheet="Sheet1")['Results'].tolist()
+# st.button("Reload Data", on_click=load_data(primary_concerns))
 
 col1,col2 = st.columns(2)
 col1.title('Report Builder')
@@ -57,19 +57,30 @@ with st.form('BasicInfo'):
         ("They/them", "He/him", "She/her"),
     )
     data["{{Patient Age}}"] = st.number_input("Patient's Age", 0, 100)
-    data['age_unit'] = st.radio(
+    data['{{Patient age unit}}'] = st.radio(
         "Year/month?",
-        ("Year", "Month")
+        ("year", "month")
     )
 
     data['{{Caregiver type}}'] = st.selectbox(
         "Patient's Caregiver",
-        ("mother", "father", "parent", "grandparent", "legal custodian", "Foster Parent"),
+        ("mother", "father", "parent", "grandparent", "legal custodian", "foster parent"),
+        label="Select from the choices or enter a new one",
+        index=None,
+        accept_new_options=True,
     )
 
     data['{{Caregiver Primary Concerns}}'] = st.multiselect(
         "Caregiver\'s Primary Concerns",
-        eval_results,
+        # eval_results,
+        [
+            "Speech delays impacting social opportunities.",
+            "Clarifying diagnostic presentation.",
+            "Determining service eligibility.",
+            "Language delays and difficulties.",
+            "Elopement and related safety concerns.",
+            "Determining appropriate supports."
+        ]
         placeholder="Select from the choices or enter a new one",
         accept_new_options=True
     )
@@ -253,6 +264,14 @@ with st.form('BasicInfo'):
         optional["pdms"]["Test Date"] = st.date_input("PDMS Test Date").strftime("%m/%Y")
         optional["pdms"]['PDMS Gross Motor Score'] = st.text_input("PDMS Gross Motor Score")
         optional["pdms"]['PDMS Fine Motor Score'] = st.text_input("PDMS Fine Motor Score")
+
+    if pdms_score:
+        st.header("Peabody Developmental Motor Scales – Second Edition (PDMS)")
+        st.markdown("*Skip this section if there is no PDMS Score*")
+        optional["pdms"] = {}
+        optional["pdms"]["Test Date"] = st.date_input("PDMS Test Date").strftime("%m/%Y")
+        optional["pdms"]['PDMS Gross Motor Score'] = st.text_input("PDMS Gross Motor Score")
+        optional["pdms"]['PDMS Fine Motor Score'] = st.text_input("PDMS Fine Motor Score")
     
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -333,6 +352,7 @@ def add_pdms(paragraph, score_data):
     paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Peabody Developmental Motor Scales – Second Edition', style='CustomStyle').italic = True
     paragraph.insert_paragraph_before().add_run(f'\tGross Motor: {score_data["PDMS Gross Motor Score"]}\t\t\t\tFine Motor: {score_data["PDMS Fine Motor Score"]}', style='CustomStyle').bold
     
+
 
 if submit:
     # handle word to replace 
