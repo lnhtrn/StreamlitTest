@@ -67,7 +67,7 @@ with st.form('BasicInfo'):
     data['{{Caregiver type}}'] = st.selectbox(
         "Patient's Caregiver",
         ("mother", "father", "parent", "grandparent", "legal custodian", "foster parent"),
-        label="Select from the choices or enter a new one",
+        placeholder="Select from the choices or enter a new one",
         index=None,
         accept_new_options=True,
     )
