@@ -5,7 +5,7 @@ import io
 import docxedit
 import datetime
 from docx.shared import Pt
-from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.style import WD_STYLE_TYPE, WD_STYLE
 from docx.enum.text import WD_BREAK
 
 
@@ -60,6 +60,11 @@ def add_wppsi(paragraph, score_data):
     paragraph.insert_paragraph_before()
 
 
+def add_bullet(paragraph, list_data):
+    paragraph.insert_paragraph_before()
+    for item in list_data:
+        paragraph.insert_paragraph_before().add_run(item, style='ListStyle')
+    delete_paragraph(paragraph)
 '''
 ({{DPPR Test Date}}) – Developmental Profile – Fourth Edition – Parent Report
 Cognitive: {{DPPR Cognitive Score}} 				Social-Emotional: {{DPPR Social-Emotional Score}}
@@ -78,6 +83,11 @@ if doc:
     custom_style.font.size = Pt(12)
     custom_style.font.name = 'Georgia'
 
+    list_style = doc.styles.add_style('ListStyle', WD_STYLE_TYPE.LIST_BULLET)
+    list_style.font.size = Pt(12)
+    list_style.font.name = 'Georgia'
+
+
     # Edit document
     # for word in replace_word:
     #     docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
@@ -91,5 +101,12 @@ if doc:
 
         if "SRS Report Information" in paragraph.text:
             add_srs_yes_teacher(paragraph, dict())
+
+        if "{{Deficits in social emotional reciprocity:}}" in paragraph.text:
+            add_bullet(paragraph,
+                       [
+                           "Problem 1",
+                           "Problem 2"
+                       ])
 
 doc.save("New_file.docx")

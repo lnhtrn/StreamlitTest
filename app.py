@@ -5,7 +5,7 @@ import io
 import docxedit
 import datetime
 from docx.shared import Pt
-from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.style import WD_STYLE_TYPE, WD_STYLE
 from docx.enum.text import WD_BREAK
 from streamlit_gsheets import GSheetsConnection
 
@@ -32,6 +32,8 @@ def format_date_with_ordinal(date_obj):
 data = {}
 optional = {}
 teacher_score = {}
+bullet = {}
+numerical = {}
 
 ####################################################
 st.header("Appointment Summary")
@@ -280,6 +282,138 @@ with st.form('BasicInfo'):
         optional["peshv"]['Total Language'] = st.text_input("Total Language")
         optional["peshv"]['PESHV Social Emotional Score'] = st.text_input("PESHV Social Emotional Score")
 
+    if reelt_score:
+        st.header("Receptive Expressive Emergent Language Test – Fourth Edition (REELT)")
+        st.markdown("*Skip this section if there is no REELT Score*")
+        optional["reelt"] = {}
+        optional["reelt"]["Test Date"] = st.date_input("REELT Test Date").strftime("%m/%Y")
+        optional["reelt"]['REELT Total Language Score'] = st.text_input("REELT Total Language Score")
+        optional["reelt"]['REELT Auditory Comprehension Score'] = st.text_input("REELT Auditory Comprehension Score")
+        optional["reelt"]['REELT Expressive Communication Score'] = st.text_input("REELT Expressive Communication Score")
+
+    if abas_score:
+        st.header("Adaptive Behavior Assessment System – Third Edition (ABAS)")
+        st.markdown("*Skip this section if there is no ABAS Score*")
+        optional["abas"] = {}
+        optional["abas"]["Test Date"] = st.date_input("ABAS Test Date").strftime("%m/%Y")
+        optional["abas"]['ABAS General Adaptive Composite'] = st.text_input("ABAS General Adaptive Composite")
+        optional["abas"]['ABAS Conceptual'] = st.text_input("ABAS Conceptual")
+        optional["abas"]['ABAS Social'] = st.text_input("ABAS Social")
+        optional["abas"]['ABAS Practical'] = st.text_input("ABAS Practical")
+
+    ############################################
+    st.header("DSM Criteria")
+    
+    bullet['{{Deficits in social emotional reciprocity:}}'] = st.multiselect(
+        "Deficits in social emotional reciprocity",
+        [
+            "None",
+            "Awkward social initiation and response",
+            "Difficulties with chit-chat",
+            "Difficulty interpreting figurative language",
+            "Limited social approach or greetings",
+        ],
+        placeholder="Select from the choices or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['{{Deficits in nonverbal communicative behaviors used for social interaction:}}'] = st.multiselect(
+        "Deficits in nonverbal communicative behaviors used for social interaction",
+        [
+            "None",
+            "Limited well-directed eye contact",
+            "Difficulty reading facial expressions",
+            "Absence of joint attention",
+            "Lack of well-integrated gestures",
+            "Limited range of facial expression",
+        ],
+        placeholder="Select from the choices or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['{{Deficits in developing, maintaining, and understanding relationships:}}'] = st.multiselect(
+        "Deficits in developing, maintaining, and understanding relationships",
+        [
+            "None",
+            "Limited engagement with same age peers",
+            "Difficulties adjusting behavior to social context",
+            "Difficulties forming friendships",
+        ],
+        placeholder="Select from the choices or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['{{Stereotyped or repetitive motor movements, use of objects, or speech:}}'] = st.multiselect(
+        "Stereotyped or repetitive motor movements, use of objects, or speech",
+        [
+            "None",
+            "Repetitive whole-body movements",
+            "Repetitive hand movements",
+            "Echolalia of sounds",
+            "Echolalia of words",
+            "Stereotyped speech",
+        ],
+        placeholder="Select from the choices or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['{{Insistence on sameness, inflexible adherence to routines or ritualized behavior:}}'] = st.multiselect(
+        "Insistence on sameness, inflexible adherence to routines or ritualized behavior",
+        [
+            "None",
+            "Difficulties with changes in routine across developmental course",
+            "Notable difficulties with transitions",
+            "Insistence on following very specific routines",
+        ],
+        placeholder="Select from the choices or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['{{Highly restricted, fixated interests that are abnormal in intensity or focus:}}'] = st.multiselect(
+        "Highly restricted, fixated interests that are abnormal in intensity or focus",
+        [
+            "None",
+            "Persistent pattern of perseverative interests",
+            "Notable interest in topics others may find odd",
+            "Very restricted pattern of eating and sleep time behavior",
+        ],
+        placeholder="Select from the choices or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['{{Hyper- or hypo-reactivity to sensory aspects of the environment:}}'] = st.multiselect(
+        "Hyper- or hypo-reactivity to sensory aspects of the environment:",
+        [
+            "None",
+            "Auditory sensitivities",
+            "Tactile defensiveness",
+            "Proprioceptive-seeking behavior",
+        ],
+        placeholder="Select from the choices or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['{{Symptoms present in the early developmental period}}'] = st.multiselect(
+        "Symptoms present in the early developmental period",
+        [
+            "Confirmed by record review",
+            "None",
+        ],
+        placeholder="Select from the choices or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['{{Symptoms cause clinically significant impairment}}'] = st.multiselect(
+        "Symptoms cause clinically significant impairment",
+        [
+            "Confirmed by record review",
+            "None",
+        ],
+        placeholder="Select from the choices or enter a new one",
+        accept_new_options=True
+    )
+
+
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -357,13 +491,33 @@ def add_pls(paragraph, score_data):
 def add_pdms(paragraph, score_data):
     paragraph.insert_paragraph_before()
     paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Peabody Developmental Motor Scales – Second Edition', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tGross Motor: {score_data["PDMS Gross Motor Score"]}\t\t\t\tFine Motor: {score_data["PDMS Fine Motor Score"]}', style='CustomStyle').bold
+    paragraph.insert_paragraph_before().add_run(f'\tGross Motor: {score_data["PDMS Gross Motor Score"]}\t\t\t\tFine Motor: {score_data["PDMS Fine Motor Score"]}', style='CustomStyle')
     
 def add_peshv(paragraph, score_data):
     paragraph.insert_paragraph_before()
     paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Preschool Evaluation Scale Home Version – Second Edition', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tCognitive: {score_data["PESHV Cognitive Score"]} \t\t\t\t\tSocial Emotional: {score_data["PESHV Social Emotional Score"]}', style='CustomStyle').bold
+    paragraph.insert_paragraph_before().add_run(f'\tCognitive: {score_data["PESHV Cognitive Score"]} \t\t\t\t\tSocial Emotional: {score_data["PESHV Social Emotional Score"]}', style='CustomStyle')
+
+def add_reelt(paragraph, score_data):
+    paragraph.insert_paragraph_before()
+    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Receptive Expressive Emergent Language Test – Fourth Edition', style='CustomStyle').italic = True
+    paragraph.insert_paragraph_before().add_run(f'\tTotal Language: {score_data["REELT Total Language Score"]}', style='CustomStyle').bold = True
+    paragraph.insert_paragraph_before().add_run(f'\tAuditory Comprehension: {score_data["REELT Auditory Comprehension Score"]}', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run(f'\tExpressive Communication: {score_data["REELT Expressive Communication Score"]}', style='CustomStyle')
     
+def add_abas(paragraph, score_data):
+    paragraph.insert_paragraph_before()
+    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Adaptive Behavior Assessment System – Third Edition', style='CustomStyle').italic = True
+    paragraph.insert_paragraph_before().add_run(f'\tGeneral Adaptive Composite: {score_data["ABAS General Adaptive Composite"]}', style='CustomStyle').bold = True
+    paragraph.insert_paragraph_before().add_run(f'\tConceptual: {score_data["ABAS Conceptual"]}', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run(f'\tSocial: {score_data["ABAS Social"]}\t\t\tPractical: {score_data["ABAS Practical"]}', style='CustomStyle')
+    
+def add_bullet(paragraph, list_data):
+    paragraph.insert_paragraph_before()
+    for item in list_data:
+        paragraph.insert_paragraph_before().add_run(item, style='ListStyle')
+    delete_paragraph(paragraph)
+
 
 if submit:
     # handle word to replace 
@@ -410,6 +564,10 @@ if submit:
         custom_style.font.size = Pt(12)
         custom_style.font.name = 'Georgia'
 
+        # list_style = doc.styles.add_style('ListStyle', WD_STYLE.LIST_BULLET)
+        # list_style.font.size = Pt(12)
+        # list_style.font.name = 'Georgia'
+
         # Add scores 
         if len(optional) > 0:
             for i, paragraph in enumerate(doc.paragraphs):
@@ -422,6 +580,12 @@ if submit:
                         add_pls(paragraph, optional["pls"])
                     if 'pdms' in optional:
                         add_pdms(paragraph, optional["pdms"])
+                    if 'peshv' in optional:
+                        add_peshv(paragraph, optional['peshv'])
+                    if 'reelt' in optional:
+                        add_reelt(paragraph, optional['reelt'])
+                    if 'abas' in optional:
+                        add_abas(paragraph, optional['abas'])
                 
                 if "SRS Report Information" in paragraph.text:
                     if len(teacher_score) == 0:
