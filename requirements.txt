@@ -2,3 +2,4 @@ pyyaml
 python-docx
 docxedit
 st-gsheets-connection
+docxtpl

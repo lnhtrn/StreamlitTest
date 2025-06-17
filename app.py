@@ -8,6 +8,7 @@ from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE, WD_STYLE
 from docx.enum.text import WD_BREAK
 from streamlit_gsheets import GSheetsConnection
+from docxtpl import DocxTemplate
 
 primary_concerns = []
 
@@ -33,7 +34,8 @@ data = {}
 optional = {}
 teacher_score = {}
 bullet = {}
-numerical = {}
+lines = {}
+comma = {}
 
 ####################################################
 st.header("Appointment Summary")
@@ -72,7 +74,7 @@ with st.form('BasicInfo'):
         accept_new_options=True,
     )
 
-    data['{{Caregiver Primary Concerns}}'] = st.multiselect(
+    bullet['{{Caregiver Primary Concerns}}'] = st.multiselect(
         "Caregiver\'s Primary Concerns",
         [
             "Speech delays impacting social opportunities.",
@@ -115,7 +117,7 @@ with st.form('BasicInfo'):
     
     data['{{Date Report Sent to Patient}}'] = format_date_with_ordinal(st.date_input("Date Report Sent to Patient"))
 
-    data["{{Result of the evaluation}}"] = st.multiselect(
+    lines["{{Result of the evaluation}}"] = st.multiselect(
         "Result of the evaluation",
         [
             "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
@@ -168,13 +170,13 @@ with st.form('BasicInfo'):
     ######################################################
     st.header("Medical/Developmental History")
     
-    data['{{Diagnosis History}}'] = st.multiselect(
+    lines['{{Diagnosis History}}'] = st.multiselect(
         "Diagnosis History (Select or add your own)",
         ['History of language and social communication delays.'],
         accept_new_options=True
     )
 
-    data['{{Medications}}'] = st.multiselect(
+    lines['{{Medications}}'] = st.multiselect(
         "Medications (Select or add your own)",
         ['None noted or reported.'],
         accept_new_options=True
@@ -211,7 +213,7 @@ with st.form('BasicInfo'):
         accept_new_options=True,
     )
 
-    data['{{Services}}'] = st.multiselect(
+    comma['{{Services}}'] = st.multiselect(
         "Services",
         [
             "None",
@@ -393,7 +395,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['{{Symptoms present in the early developmental period}}'] = st.multiselect(
+    comma['{{Symptoms present in the early developmental period}}'] = st.multiselect(
         "Symptoms present in the early developmental period",
         [
             "Confirmed by record review",
@@ -403,7 +405,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['{{Symptoms cause clinically significant impairment}}'] = st.multiselect(
+    comma['{{Symptoms cause clinically significant impairment}}'] = st.multiselect(
         "Symptoms cause clinically significant impairment",
         [
             "Confirmed by record review",
@@ -597,9 +599,21 @@ if submit:
         for word in replace_word:
             docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
 
+        # Replace for lists separated by comma:
+        for word in comma:
+            new_word = ", ".join(comma[word])
+            docxedit.replace_string(doc, old_string=word, new_string=new_word)
+
+        # Replace for lists separated by new line:
+        for word in lines:
+            new_word = "\n".join(comma[word])
+            docxedit.replace_string(doc, old_string=word, new_string=new_word)
+
         # Save content to file
         bio = io.BytesIO()
         doc.save(bio)
+
+        # Replace for lists separated by bullet points
 
         today_date = format_date_with_ordinal(datetime.date.today())
         
