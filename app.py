@@ -87,8 +87,7 @@ with st.form('BasicInfo'):
         placeholder="Select from the choices or enter a new one",
         accept_new_options=True
     )
-    data['{{Caregiver Primary Concerns}}'] = "\n".join(data['{{Caregiver Primary Concerns}}'])
-
+    
     data['{{Residence City/State}}'] = st.text_input("Residence City/State")
     # st.selectbox(
     #     "Residence City/State", states, index=None,
