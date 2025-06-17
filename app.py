@@ -615,10 +615,14 @@ if submit:
 
         # Replace for lists separated by bullet points
         tpl=DocxTemplate(filename)
+        print("Load template!")
 
         tpl.render(bullet)
+        print("Bullet rendered!")
+
         tpl.save(filename)
-        
+        print("File saved at", filename)
+
         # Download 
         bio = io.BytesIO()
         document = Document(filename)
