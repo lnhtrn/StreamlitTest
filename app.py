@@ -605,7 +605,7 @@ if submit:
 
         # Replace for lists separated by new line:
         for word in lines:
-            new_word = "\n".join(comma[word])
+            new_word = "\n".join(lines[word])
             docxedit.replace_string(doc, old_string=word, new_string=new_word)
 
         # Save content to file
