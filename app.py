@@ -611,7 +611,7 @@ if submit:
             docxedit.replace_string(doc, old_string=word, new_string=new_word)
 
         # Save content to file
-        doc.save(bio)
+        doc.save(filename)
 
         # Replace for lists separated by bullet points
         tpl=DocxTemplate(filename)
@@ -627,6 +627,6 @@ if submit:
         st.download_button(
             label="Click here to download",
             data=bio.getvalue(),
-            file_name=,
+            file_name=filename,
             mime="docx"
         )
