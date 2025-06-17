@@ -5,8 +5,7 @@ import io
 import docxedit
 import datetime
 from docx.shared import Pt
-from docx.enum.style import WD_STYLE_TYPE, WD_STYLE
-from docx.enum.text import WD_BREAK
+from docx.enum.style import WD_STYLE_TYPE
 from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
 
@@ -74,7 +73,7 @@ with st.form('BasicInfo'):
         accept_new_options=True,
     )
 
-    bullet['{{Caregiver Primary Concerns}}'] = st.multiselect(
+    bullet['Caregiver_Primary_Concerns'] = st.multiselect(
         "Caregiver\'s Primary Concerns",
         [
             "Speech delays impacting social opportunities.",
@@ -305,8 +304,7 @@ with st.form('BasicInfo'):
     ############################################
     st.header("DSM Criteria")
     
-    bullet['{{Deficits in social emotional reciprocity:}}'] = st.multiselect(
-        "Deficits in social emotional reciprocity",
+    bullet['Deficits_in_social_emotional_reciprocity'] = st.multiselect(    "Deficits in social emotional reciprocity",
         [
             "None",
             "Awkward social initiation and response",
@@ -318,7 +316,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['{{Deficits in nonverbal communicative behaviors used for social interaction:}}'] = st.multiselect(
+    bullet['Deficits_in_nonverbal_communicative_behaviors_used_for_social_interaction'] = st.multiselect(
         "Deficits in nonverbal communicative behaviors used for social interaction",
         [
             "None",
@@ -332,7 +330,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['{{Deficits in developing, maintaining, and understanding relationships:}}'] = st.multiselect(
+    bullet['Deficits_in_developing_maintaining_and_understanding_relationships'] = st.multiselect(
         "Deficits in developing, maintaining, and understanding relationships",
         [
             "None",
@@ -344,7 +342,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['{{Stereotyped or repetitive motor movements, use of objects, or speech:}}'] = st.multiselect(
+    bullet['Stereotyped_or_repetitive_motor_movements_use_of_objects_or_speech'] = st.multiselect(
         "Stereotyped or repetitive motor movements, use of objects, or speech",
         [
             "None",
@@ -358,7 +356,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['{{Insistence on sameness, inflexible adherence to routines or ritualized behavior:}}'] = st.multiselect(
+    bullet['Insistence_on_sameness_inflexible_adherence_to_routines_or_ritualized_behavior'] = st.multiselect(
         "Insistence on sameness, inflexible adherence to routines or ritualized behavior",
         [
             "None",
@@ -370,7 +368,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['{{Highly restricted, fixated interests that are abnormal in intensity or focus:}}'] = st.multiselect(
+    bullet['Highly_restricted_fixated_interests_that_are_abnormal_in_intensity_or_focus'] = st.multiselect(
         "Highly restricted, fixated interests that are abnormal in intensity or focus",
         [
             "None",
@@ -382,7 +380,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['{{Hyper- or hypo-reactivity to sensory aspects of the environment:}}'] = st.multiselect(
+    bullet['Hyper_or_hypo_reactivity_to_sensory_aspects_of_the_environment'] = st.multiselect(
         "Hyper- or hypo-reactivity to sensory aspects of the environment:",
         [
             "None",
@@ -560,6 +558,10 @@ if submit:
     #### Edit document 
     doc = Document('templates/template_mod_12_noScore.docx')
     if doc:
+        # Get file name
+        today_date = format_date_with_ordinal(datetime.date.today())
+        filename = f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} {today_date}.docx"
+        
         ### create document style
         custom_style = doc.styles.add_style('CustomStyle', WD_STYLE_TYPE.CHARACTER)
         custom_style.font.size = Pt(12)
@@ -609,17 +611,22 @@ if submit:
             docxedit.replace_string(doc, old_string=word, new_string=new_word)
 
         # Save content to file
-        bio = io.BytesIO()
         doc.save(bio)
 
         # Replace for lists separated by bullet points
+        tpl=DocxTemplate(filename)
 
-        today_date = format_date_with_ordinal(datetime.date.today())
+        tpl.render(bullet)
+        tpl.save(filename)
         
         # Download 
+        bio = io.BytesIO()
+        document = Document(filename)
+        document.save(bio)
+        
         st.download_button(
             label="Click here to download",
             data=bio.getvalue(),
-            file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} {today_date}.docx",
+            file_name=,
             mime="docx"
         )
