@@ -618,7 +618,7 @@ if submit:
     
 
     #### Edit document 
-    doc = Document('templates/template_mod_12_noScore.docx')
+    doc = Document('templates/template_mod_12_noBrackets.docx')
     if doc:
         # Get file name
         today_date = format_date_with_ordinal(datetime.date.today())
