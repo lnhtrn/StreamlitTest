@@ -101,7 +101,7 @@ if audio_behavior:
 
 audio_development = st.audio_input("Developmental History")
 # Play back the recorded audio (optional)
-if audio_behavior:
+if audio_development:
     st.text("Developmental History Recording")
     st.audio(
         audio_development, format='audio/wav'
