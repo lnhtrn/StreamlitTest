@@ -671,11 +671,11 @@ if submit:
                     if 'abas' in optional:
                         add_abas(paragraph, optional['abas'])
                 
-                if "SRS Report Information" in paragraph.text:
-                    if len(teacher_score) == 0:
-                        add_srs_no_teacher(paragraph)
-                    else:
-                        add_srs_yes_teacher(paragraph, teacher_score)
+            if "SRS Report Information" in paragraph.text:
+                if len(teacher_score) == 0:
+                    add_srs_no_teacher(paragraph)
+                else:
+                    add_srs_yes_teacher(paragraph, teacher_score)
             
             if "Social Responsiveness Scale" in paragraph.text:
                 if teacher_eval:
