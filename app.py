@@ -717,7 +717,7 @@ if submit:
         
         st.download_button(
             label="Click here to download",
-            key="report_download"
+            key="report_download",
             data=bio.getvalue(),
             file_name=filename,
             mime="docx"
