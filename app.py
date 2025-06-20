@@ -12,6 +12,7 @@ from docxtpl import DocxTemplate
 dropdowns = {
     'PrimaryConcerns': [],
     'EvaluationResults': [],
+    'DiagnosisHistory': [],
 }
 connections = {}
 
@@ -21,6 +22,11 @@ for worksheet in dropdowns:
     # Read object
     df = connections[worksheet].read() 
     dropdowns[worksheet] = df.iloc[:, 0].tolist()
+
+def clear_my_cache():
+    st.cache_data.clear()
+
+st.button('Reload Dropdown Data', on_click=clear_my_cache)
 
 # Display data 
 yaml_dropdown = yaml.dump(dropdowns, sort_keys=False)
@@ -133,7 +139,7 @@ with st.form('BasicInfo'):
 
     bullet['Caregiver_Primary_Concerns'] = st.multiselect(
         "Caregiver\'s Primary Concerns",
-        primary_concerns,
+        dropdowns['PrimaryConcerns'],
         # [
         #     "Speech delays impacting social opportunities.",
         #     "Clarifying diagnostic presentation.",
@@ -142,7 +148,7 @@ with st.form('BasicInfo'):
         #     "Elopement and related safety concerns.",
         #     "Determining appropriate supports."
         # ],
-        placeholder="Select from the choices or enter a new one",
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
     
@@ -176,15 +182,16 @@ with st.form('BasicInfo'):
 
     lines["{{Result of the evaluation}}"] = st.multiselect(
         "Result of the evaluation",
-        [
-            "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
-            "F88.0 - Global Developmental Delay (per behavioral presentation)",
-            "F80.2 - Mixed Receptive-Expressive Language Disorder",
-            "F90.2 - Attention Deficit Hyperactivity Disorder - Combined-Type",
-            "F50.82 Avoidant/Restrictive Food Intake Disorder",
-            "None"
-        ],
-        placeholder="Select from the choices or enter a new one",
+        dropdowns['EvaluationResults'],
+        # [
+        #     "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
+        #     "F88.0 - Global Developmental Delay (per behavioral presentation)",
+        #     "F80.2 - Mixed Receptive-Expressive Language Disorder",
+        #     "F90.2 - Attention Deficit Hyperactivity Disorder - Combined-Type",
+        #     "F50.82 Avoidant/Restrictive Food Intake Disorder",
+        #     "None"
+        # ],
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
@@ -228,14 +235,17 @@ with st.form('BasicInfo'):
     st.header("Medical/Developmental History")
     
     lines['{{Diagnosis History}}'] = st.multiselect(
-        "Diagnosis History (Select or add your own)",
-        ['History of language and social communication delays.'],
+        "Diagnosis History",
+        dropdowns['DiagnosisHistory'],
+        # ['History of language and social communication delays.'],
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
     lines['{{Medications}}'] = st.multiselect(
-        "Medications (Select or add your own)",
+        "Medications",
         ['None noted or reported.'],
+        placeholder="Can input multiple options",
         accept_new_options=True
     )
 
@@ -280,7 +290,7 @@ with st.form('BasicInfo'):
             "Extended school year services",
             "Testing accommodations"
         ],
-        placeholder="Select from the choices or enter a new one",
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
@@ -363,7 +373,8 @@ with st.form('BasicInfo'):
     ############################################
     st.header("DSM Criteria")
     
-    bullet['Deficits_in_social_emotional_reciprocity'] = st.multiselect(    "Deficits in social emotional reciprocity",
+    bullet['Deficits_in_social_emotional_reciprocity'] = st.multiselect(    
+        "Deficits in social emotional reciprocity",
         [
             "None",
             "Awkward social initiation and response",
@@ -371,7 +382,7 @@ with st.form('BasicInfo'):
             "Difficulty interpreting figurative language",
             "Limited social approach or greetings",
         ],
-        placeholder="Select from the choices or enter a new one",
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
@@ -385,7 +396,7 @@ with st.form('BasicInfo'):
             "Lack of well-integrated gestures",
             "Limited range of facial expression",
         ],
-        placeholder="Select from the choices or enter a new one",
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
@@ -397,7 +408,7 @@ with st.form('BasicInfo'):
             "Difficulties adjusting behavior to social context",
             "Difficulties forming friendships",
         ],
-        placeholder="Select from the choices or enter a new one",
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
@@ -411,7 +422,7 @@ with st.form('BasicInfo'):
             "Echolalia of words",
             "Stereotyped speech",
         ],
-        placeholder="Select from the choices or enter a new one",
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
@@ -423,7 +434,7 @@ with st.form('BasicInfo'):
             "Notable difficulties with transitions",
             "Insistence on following very specific routines",
         ],
-        placeholder="Select from the choices or enter a new one",
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
@@ -435,7 +446,7 @@ with st.form('BasicInfo'):
             "Notable interest in topics others may find odd",
             "Very restricted pattern of eating and sleep time behavior",
         ],
-        placeholder="Select from the choices or enter a new one",
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
@@ -447,7 +458,7 @@ with st.form('BasicInfo'):
             "Tactile defensiveness",
             "Proprioceptive-seeking behavior",
         ],
-        placeholder="Select from the choices or enter a new one",
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
@@ -457,7 +468,7 @@ with st.form('BasicInfo'):
             "Confirmed by record review",
             "None",
         ],
-        placeholder="Select from the choices or enter a new one",
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
@@ -467,7 +478,7 @@ with st.form('BasicInfo'):
             "Confirmed by record review",
             "None",
         ],
-        placeholder="Select from the choices or enter a new one",
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
