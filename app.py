@@ -8,6 +8,7 @@ from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE
 from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
+from docx.shared import Inches
 
 ##########################################################
 st.set_page_config(
@@ -212,6 +213,8 @@ with st.form('BasicInfo'):
         st.header("Teacher SSR Score")
         st.markdown("*Skip this section if teacher did not give SSR Score*")
 
+        teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
+
         teacher_score['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
 
         teacher_score['{{Social Communication and Interaction Score Teacher}}'] = st.text_input("Social Communication and Interaction Score Teacher")
@@ -261,8 +264,6 @@ with st.form('BasicInfo'):
         placeholder="Select a grade or enter a new one",
         accept_new_options=True,
     )
-
-    data['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
 
     data['{{Education Setting}}'] = st.selectbox(
         "Education Setting",
@@ -489,6 +490,23 @@ def delete_paragraph(paragraph):
     p.getparent().remove(p)
     p._p = p._element = None
 
+def add_school(paragraph):
+    p = paragraph.insert_paragraph_before()
+    tab_stops = p.paragraph_format.tab_stops
+    tab_stops.clear()  # Start fresh for this paragraph only
+    tab_stops.add_tab_stop(Inches(3.5))
+    # Add data
+    p.add_run("District").font.underline = True
+    p.add_run(f": {data['{{School District}}']}\t")
+    p.add_run("Grade").font.underline = True
+    p.add_run(f": {data['{{Grade}}']}\n\n")
+    p.add_run("School").font.underline = True
+    p.add_run(f": {data['{{School Name}}']}\t")
+    p.add_run("Setting").font.underline = True
+    p.add_run(f": {data['{{Education Setting}}']}")
+    delete_paragraph(paragraph)
+
+
 def add_srs_no_teacher(paragraph):
     r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle')
     r.italic = True
@@ -619,7 +637,7 @@ if submit:
     
 
     #### Edit document 
-    doc = Document('templates/template_mod_12_noBrackets.docx')
+    doc = Document('templates/template_mod_12_noScore.docx')
     if doc:
         # Get file name
         today_date = format_date_with_ordinal(datetime.date.today())
@@ -637,7 +655,17 @@ if submit:
         # Add scores 
         if len(optional) > 0:
             for i, paragraph in enumerate(doc.paragraphs):
-                if "Scores are reported here as standard scores" in paragraph.text:
+                if "Social Responsiveness Scale" in paragraph.text:
+                    if len(teacher_score) > 0:
+                        paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n")
+                        paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}")
+                    else:
+                        paragraph.add_run("\nDevelopmental History & Review of Records\n")
+
+                if "[[District Grade School Setting]]" in paragraph:
+                    add_school(paragraph)
+
+                elif "Scores are reported here as standard scores" in paragraph.text:
                     if 'wppsi' in optional:
                         add_wppsi(paragraph, optional['wppsi'])
                     if 'dppr' in optional:
@@ -653,7 +681,7 @@ if submit:
                     if 'abas' in optional:
                         add_abas(paragraph, optional['abas'])
                 
-                if "SRS Report Information" in paragraph.text:
+                elif "SRS Report Information" in paragraph.text:
                     if len(teacher_score) == 0:
                         add_srs_no_teacher(paragraph)
                     else:
