@@ -104,13 +104,13 @@ audio_development = st.audio_input("Developmental History")
 if audio_behavior:
     st.text("Developmental History Recording")
     st.audio(
-        audio_behavior, format='audio/wav'
+        audio_development, format='audio/wav'
     )
 
     # 3. Create a download button
     st.download_button(
         label="Download Developmental History Recording",
-        data=audio_behavior,
+        data=audio_development,
         file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Behavioral Observation.wav",
         mime="audio/wav",
     )
