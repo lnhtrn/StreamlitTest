@@ -653,19 +653,9 @@ if submit:
         # list_style.font.name = 'Georgia'
 
         # Add scores 
-        if len(optional) > 0:
-            for i, paragraph in enumerate(doc.paragraphs):
-                if "Social Responsiveness Scale" in paragraph.text:
-                    if teacher_eval:
-                        paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n")
-                        paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['[[Teacher name, title]]']}")
-                    else:
-                        paragraph.add_run("\nDevelopmental History & Review of Records\n")
-
-                if "[[District Grade School Setting]]" in paragraph:
-                    add_school(paragraph)
-
-                elif "Scores are reported here as standard scores" in paragraph.text:
+        for i, paragraph in enumerate(doc.paragraphs):
+            if len(optional) > 0:
+                if "Scores are reported here as standard scores" in paragraph.text:
                     if 'wppsi' in optional:
                         add_wppsi(paragraph, optional['wppsi'])
                     if 'dppr' in optional:
@@ -681,12 +671,22 @@ if submit:
                     if 'abas' in optional:
                         add_abas(paragraph, optional['abas'])
                 
-                elif "SRS Report Information" in paragraph.text:
+                if "SRS Report Information" in paragraph.text:
                     if len(teacher_score) == 0:
                         add_srs_no_teacher(paragraph)
                     else:
                         add_srs_yes_teacher(paragraph, teacher_score)
+            
+            if "Social Responsiveness Scale" in paragraph.text:
+                if teacher_eval:
+                    paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n")
+                    paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['[[Teacher name, title]]']}")
+                else:
+                    paragraph.add_run("\nDevelopmental History & Review of Records\n")
 
+            if "[[District Grade School Setting]]" in paragraph:
+                add_school(paragraph)
+        
         # Edit document
         for word in replace_word:
             docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])

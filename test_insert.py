@@ -108,6 +108,8 @@ if doc:
         #                    "Problem 2"
         #                ])
 
+    docxedit.replace_string(doc, old_string='[[Patient First Name]]', new_string='Linh')
+    docxedit.replace_string(doc, old_string='[[Patient Last Name]]', new_string='Tran')
 
 
 doc.save("New_file.docx")
