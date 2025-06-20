@@ -496,14 +496,14 @@ def add_school(paragraph):
     # tab_stops.clear()  # Start fresh for this paragraph only
     tab_stops.add_tab_stop(Inches(3.5))
     # Add data
-    p.add_run("District").font.underline = True
-    p.add_run(f": {data['[[School District]]']}\t")
+    p.add_run("District", style='CustomStyle').font.underline = True
+    p.add_run(f": {data['[[School District]]']}\t", style='CustomStyle')
     p.add_run("Grade").font.underline = True
-    p.add_run(f": {data['[[Grade]]']}\n\n")
+    p.add_run(f": {data['[[Grade]]']}\n\n", style='CustomStyle')
     p.add_run("School").font.underline = True
-    p.add_run(f": {data['[[School Name]]']}\t")
+    p.add_run(f": {data['[[School Name]]']}\t", style='CustomStyle')
     p.add_run("Setting").font.underline = True
-    p.add_run(f": {data['[[Education Setting]]']}")
+    p.add_run(f": {data['[[Education Setting]]']}", style='CustomStyle')
     delete_paragraph(paragraph)
 
 
@@ -679,10 +679,10 @@ if submit:
             
             if "Social Responsiveness Scale" in paragraph.text:
                 if teacher_eval:
-                    paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n")
-                    paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['[[Teacher name, title]]']}")
+                    paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n", style='CustomStyle')
+                    paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['[[Teacher name, title]]']}", style='CustomStyle')
                 else:
-                    paragraph.add_run("\nDevelopmental History & Review of Records\n")
+                    paragraph.add_run("\nDevelopmental History & Review of Records\n", style='CustomStyle')
 
             if "[[District Grade School Setting]]" in paragraph.text:
                 add_school(paragraph)
