@@ -20,7 +20,7 @@ for worksheet in dropdowns:
     connections[worksheet] = st.connection(f"mod12_{worksheet}", type=GSheetsConnection)
     # Read object
     df = connections[worksheet].read() 
-    dropdowns[worksheet.title] = df.iloc[:, 0].tolist()
+    dropdowns[worksheet] = df.iloc[:, 0].tolist()
 
 # Display data 
     yaml_dropdown = yaml.dump(dropdowns, sort_keys=False)
