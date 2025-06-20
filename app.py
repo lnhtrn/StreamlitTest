@@ -38,7 +38,27 @@ comma = {}
 
 ####################################################
 st.header("Appointment Summary")
-audio_summary = st.audio_input("Summarize the appointment details")
+data['{{Patient First Name}}'] = st.text_input('Patient First Name')
+data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
+audio_behavior = st.audio_input("Behavioral Observation")
+audio_development = st.audio_input("Developmental History")
+
+# 2. Play back the recorded audio (optional)
+if audio_behavior:
+    st.audio(
+        audio_behavior, label="Behavioral Observation Recording",
+        format='audio/wav'
+    )
+
+    # 3. Create a download button
+    st.download_button(
+        label="Download Behavioral Observation Recording",
+        data=audio_behavior,
+        file_name=f"audio_behavior.wav",
+        mime="audio/wav",
+    )
+
+####################################################
 st.markdown("***Check before proceeding with form:*** Scores to report:")
 teacher_eval = st.checkbox("Teacher's SSR Scores")
 wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
@@ -53,8 +73,6 @@ with st.form('BasicInfo'):
     ####################################################
     st.header("Patient's data")
     # Dict to store data
-    data['{{Patient First Name}}'] = st.text_input('Patient First Name')
-    data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
     preferred = st.selectbox(
         "Patient's Preferred Pronoun",
         ("They/them", "He/him", "She/her"),
