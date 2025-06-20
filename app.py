@@ -41,9 +41,7 @@ st.header("Appointment Summary")
 data['{{Patient First Name}}'] = st.text_input('Patient First Name')
 data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
 audio_behavior = st.audio_input("Behavioral Observation")
-audio_development = st.audio_input("Developmental History")
-
-# 2. Play back the recorded audio (optional)
+# Play back the recorded audio (optional)
 if audio_behavior:
     st.text("Behavioral Observation Recording")
     st.audio(
@@ -54,9 +52,41 @@ if audio_behavior:
     st.download_button(
         label="Download Behavioral Observation Recording",
         data=audio_behavior,
-        file_name=f"audio_behavior.wav",
+        file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Behavioral Observation.wav",
         mime="audio/wav",
     )
+
+audio_development = st.audio_input("Developmental History")
+# Play back the recorded audio (optional)
+if audio_behavior:
+    st.text("Developmental History Recording")
+    st.audio(
+        audio_behavior, format='audio/wav'
+    )
+
+    # 3. Create a download button
+    st.download_button(
+        label="Download Developmental History Recording",
+        data=audio_behavior,
+        file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Behavioral Observation.wav",
+        mime="audio/wav",
+    )
+
+# Play back the recorded audio (optional)
+if audio_behavior:
+    st.text("Behavioral Observation Recording")
+    st.audio(
+        audio_behavior, format='audio/wav'
+    )
+
+    # 3. Create a download button
+    st.download_button(
+        label="Download Behavioral Observation Recording",
+        data=audio_behavior,
+        file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Behavioral Observation.wav",
+        mime="audio/wav",
+    )
+
 
 ####################################################
 st.markdown("***Check before proceeding with form:*** Scores to report:")
