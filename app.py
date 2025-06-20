@@ -82,8 +82,8 @@ comma = {}
 
 ####################################################
 st.header("Appointment Summary")
-data['{{Patient First Name}}'] = st.text_input('Patient First Name')
-data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
+data['[[Patient First Name]]'] = st.text_input('Patient First Name')
+data['[[Patient Last Name]]'] = st.text_input('Patient Last Name')
 audio_behavior = st.audio_input("Behavioral Observation")
 # Play back the recorded audio (optional)
 if audio_behavior:
@@ -92,7 +92,7 @@ if audio_behavior:
         label="Download Behavioral Observation Recording",
         key="audio_behavior",
         data=audio_behavior,
-        file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Behavioral Observation.wav",
+        file_name=f"{data['[[Patient First Name]]']} {data['[[Patient Last Name]]']} - Behavioral Observation.wav",
         mime="audio/wav",
     )
 
@@ -104,7 +104,7 @@ if audio_development:
         label="Download Developmental History Recording",
         key="audio_development",
         data=audio_development,
-        file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Behavioral Observation.wav",
+        file_name=f"{data['[[Patient First Name]]']} {data['[[Patient Last Name]]']} - Behavioral Observation.wav",
         mime="audio/wav",
     )
 
@@ -116,13 +116,13 @@ with st.form('BasicInfo'):
         "Patient's Preferred Pronoun",
         ("They/them", "He/him", "She/her"),
     )
-    data["{{Patient Age}}"] = st.number_input("Patient's Age", 0, 100)
-    data['{{Patient age unit}}'] = st.radio(
+    data["[[Patient Age]]"] = st.number_input("Patient's Age", 0, 100)
+    data['[[Patient age unit]]'] = st.radio(
         "Year/month?",
         ("year", "month")
     )
 
-    data['{{Caregiver type}}'] = st.selectbox(
+    data['[[Caregiver type]]'] = st.selectbox(
         "Patient's Caregiver",
         ("mother", "father", "parent", "grandparent", "legal custodian", "foster parent"),
         placeholder="Select from the choices or enter a new one",
@@ -145,35 +145,35 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
     
-    data['{{Residence City/State}}'] = st.text_input("Residence City/State")
+    data['[[Residence City/State]]'] = st.text_input("Residence City/State")
     # st.selectbox(
     #     "Residence City/State", states, index=None,
     # )
 
-    data['{{Narrative}}'] = st.text_area('Narrative to finish \"Patient lives with...\"')
+    data['[[Narrative]]'] = st.text_area('Narrative to finish \"Patient lives with...\"')
 
     ##########################################################
     st.header("BRH Evaluation Details")
 
-    data['{{Evaluation Date}}'] = format_date_with_ordinal(st.date_input("Evaluation Date"))
+    data['[[Evaluation Date]]'] = format_date_with_ordinal(st.date_input("Evaluation Date"))
 
-    data['{{Module used}}'] = st.radio("Module used", ["Module 1", "Module 2"])
-    if data['{{Module used}}'] == "Module 1":
-        data['{{Module Description}}'] = "Module 1 is designed for children with single words"
+    data['[[Module used]]'] = st.radio("Module used", ["Module 1", "Module 2"])
+    if data['[[Module used]]'] == "Module 1":
+        data['[[Module Description]]'] = "Module 1 is designed for children with single words"
     else:
-        data['{{Module Description}}'] = "Module 2 is designed for children with phrase speech"
+        data['[[Module Description]]'] = "Module 2 is designed for children with phrase speech"
 
-    data['{{Location of the evaluation}}'] = st.radio(
+    data['[[Location of the evaluation]]'] = st.radio(
         "Location of the evaluation",
         ['home', 'school', 'the office'],
         index=None,
     )
 
-    data['{{Results Shared Date}}'] = format_date_with_ordinal(st.date_input("Results Shared Date"))
+    data['[[Results Shared Date]]'] = format_date_with_ordinal(st.date_input("Results Shared Date"))
     
-    data['{{Date Report Sent to Patient}}'] = format_date_with_ordinal(st.date_input("Date Report Sent to Patient"))
+    data['[[Date Report Sent to Patient]]'] = format_date_with_ordinal(st.date_input("Date Report Sent to Patient"))
 
-    lines["{{Result of the evaluation}}"] = st.multiselect(
+    lines["[[Result of the evaluation]]"] = st.multiselect(
         "Result of the evaluation",
         dropdowns['EvaluationResults'],
         # [
@@ -188,22 +188,22 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    data["{{Results (SCQ) - Lifetime Form}}"] = st.text_input(
+    data["[[Results (SCQ) - Lifetime Form]]"] = st.text_input(
         "Results (SCQ) - Lifetime Form"
     )
 
-    data["{{SRS-2 Score Caregiver}}"] = st.text_input("Caregiver's SRS-2 Score")
+    data["[[SRS-2 Score Caregiver]]"] = st.text_input("Caregiver's SRS-2 Score")
     
-    data["{{Social Communication and Interaction Score Caregiver}}"] = st.text_input("Social Communication and Interaction Score Caregiver")
+    data["[[Social Communication and Interaction Score Caregiver]]"] = st.text_input("Social Communication and Interaction Score Caregiver")
     
-    data["{{Restricted Interests and Repetitive Behavior Score Caregiver}}"] = st.text_input("Restricted Interests and Repetitive Behavior Score Caregiver")
+    data["[[Restricted Interests and Repetitive Behavior Score Caregiver]]"] = st.text_input("Restricted Interests and Repetitive Behavior Score Caregiver")
 
-    data["{{Caregiver's level of concern}}"] = st.radio(
+    data["[[Caregiver's level of concern]]"] = st.radio(
         "Caregiver's level of concern",
         ['no', 'mild', 'moderate', 'severe']
     )
 
-    data["{{Evaluator's level of concern}}"] = st.radio(
+    data["[[Evaluator's level of concern]]"] = st.radio(
         "Evaluator's level of concern",
         ['no', 'mild', 'moderate', 'severe']
     )
@@ -213,15 +213,15 @@ with st.form('BasicInfo'):
         st.header("Teacher SSR Score")
         st.markdown("*Skip this section if teacher did not give SSR Score*")
 
-        teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
+        teacher_score['[[Teacher name, title]]'] = st.text_input("Teacher name, title")
 
-        teacher_score['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
+        teacher_score['[[SRS-2 Score Teacher]]'] = st.text_input("Teacher's SRS-2 Score")
 
-        teacher_score['{{Social Communication and Interaction Score Teacher}}'] = st.text_input("Social Communication and Interaction Score Teacher")
+        teacher_score['[[Social Communication and Interaction Score Teacher]]'] = st.text_input("Social Communication and Interaction Score Teacher")
 
-        teacher_score['{{Restricted Interests and Repetitive Behavior Score Teacher}}'] = st.text_input("Restricted Interests and Repetitive Behavior Score Teacher")
+        teacher_score['[[Restricted Interests and Repetitive Behavior Score Teacher]]'] = st.text_input("Restricted Interests and Repetitive Behavior Score Teacher")
 
-        teacher_score["{{Teacher level of concern}}"] = st.radio(
+        teacher_score["[[Teacher level of concern]]"] = st.radio(
             "Teacher's level of concern",
             ['no', 'mild', 'moderate', 'severe']
         )
@@ -229,7 +229,7 @@ with st.form('BasicInfo'):
     ######################################################
     st.header("Medical/Developmental History")
     
-    lines['{{Diagnosis History}}'] = st.multiselect(
+    lines['[[Diagnosis History]]'] = st.multiselect(
         "Diagnosis History",
         dropdowns['DiagnosisHistory'],
         # ['History of language and social communication delays.'],
@@ -237,7 +237,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    lines['{{Medications}}'] = st.multiselect(
+    lines['[[Medications]]'] = st.multiselect(
         "Medications",
         ['None noted or reported.'],
         placeholder="Can input multiple options",
@@ -247,7 +247,7 @@ with st.form('BasicInfo'):
     ###############################################
     st.header("Educational Background")
 
-    data['{{School District}}'] = st.selectbox(
+    data['[[School District]]'] = st.selectbox(
         "School District",
         ['Rochester City'],
         index=None,
@@ -255,9 +255,9 @@ with st.form('BasicInfo'):
         accept_new_options=True,
     )
 
-    data['{{School Name}}'] = st.text_input("School Name")
+    data['[[School Name]]'] = st.text_input("School Name")
 
-    data['{{Grade}}'] = st.selectbox(
+    data['[[Grade]]'] = st.selectbox(
         "Grade",
         ['EPK (2023-24 school year)', 'UPK (2023-24 school year)', 'Kindergarten (2023-24 school year)'],
         index=None,
@@ -265,7 +265,7 @@ with st.form('BasicInfo'):
         accept_new_options=True,
     )
 
-    data['{{Education Setting}}'] = st.selectbox(
+    data['[[Education Setting]]'] = st.selectbox(
         "Education Setting",
         ["General Education", "Integrated Co-Taught", "12:1:1", "8:1:1", "6:1:1"],
         index=None,
@@ -273,7 +273,7 @@ with st.form('BasicInfo'):
         accept_new_options=True,
     )
 
-    comma['{{Services}}'] = st.multiselect(
+    comma['[[Services]]'] = st.multiselect(
         "Services",
         [
             "None",
@@ -455,7 +455,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    comma['{{Symptoms present in the early developmental period}}'] = st.multiselect(
+    comma['[[Symptoms present in the early developmental period]]'] = st.multiselect(
         "Symptoms present in the early developmental period",
         [
             "Confirmed by record review",
@@ -465,7 +465,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    comma['{{Symptoms cause clinically significant impairment}}'] = st.multiselect(
+    comma['[[Symptoms cause clinically significant impairment]]'] = st.multiselect(
         "Symptoms cause clinically significant impairment",
         [
             "Confirmed by record review",
@@ -476,12 +476,12 @@ with st.form('BasicInfo'):
     )
 
 
-    # data['{{}}'] = st.text_input("")
-    # data['{{}}'] = st.text_input("")
-    # data['{{}}'] = st.text_input("")
-    # data['{{}}'] = st.text_input("")
-    # data['{{}}'] = st.text_input("")
-    # data['{{}}'] = st.text_input("")
+    # data['[[]]'] = st.text_input("")
+    # data['[[]]'] = st.text_input("")
+    # data['[[]]'] = st.text_input("")
+    # data['[[]]'] = st.text_input("")
+    # data['[[]]'] = st.text_input("")
+    # data['[[]]'] = st.text_input("")
 
     submit = st.form_submit_button('Submit')
 
@@ -497,13 +497,13 @@ def add_school(paragraph):
     tab_stops.add_tab_stop(Inches(3.5))
     # Add data
     p.add_run("District").font.underline = True
-    p.add_run(f": {data['{{School District}}']}\t")
+    p.add_run(f": {data['[[School District]]']}\t")
     p.add_run("Grade").font.underline = True
-    p.add_run(f": {data['{{Grade}}']}\n\n")
+    p.add_run(f": {data['[[Grade]]']}\n\n")
     p.add_run("School").font.underline = True
-    p.add_run(f": {data['{{School Name}}']}\t")
+    p.add_run(f": {data['[[School Name]]']}\t")
     p.add_run("Setting").font.underline = True
-    p.add_run(f": {data['{{Education Setting}}']}")
+    p.add_run(f": {data['[[Education Setting]]']}")
     delete_paragraph(paragraph)
 
 
@@ -513,15 +513,15 @@ def add_srs_no_teacher(paragraph):
     r.font.underline = True
     paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
     paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run('\tSRS-2 Total Score: {{SRS-2 Score Caregiver}} ({{Caregiver type}})', style='CustomStyle').bold = True
+    paragraph.insert_paragraph_before().add_run('\tSRS-2 Total Score: [[SRS-2 Score Caregiver]] ([[Caregiver type]])', style='CustomStyle').bold = True
     paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run('\tSocial Communication and Interaction: {{Social Communication and Interaction Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
-    paragraph.insert_paragraph_before().add_run('\tRestricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run('\tSocial Communication and Interaction: [[Social Communication and Interaction Score Caregiver]] ([[Caregiver type]])', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run('\tRestricted Interests and Repetitive Behavior: [[Restricted Interests and Repetitive Behavior Score Caregiver]] ([[Caregiver type]])', style='CustomStyle')
     paragraph.insert_paragraph_before()
     observe = paragraph.insert_paragraph_before()
-    observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
-    observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
-    observe.add_run("My observation aligned with a {{Evaluator's level of concern}} level of concern.", style='CustomStyle').bold = True
+    observe.add_run("Based on the report provided by [[Preferred Pronouns 2]] [[Caregiver type]], ", style='CustomStyle')
+    observe.add_run("[[Patient First Name]]’s social communication and related behaviors indicated [[Caregiver's level of concern]] concerns. ", style='CustomStyle').italic = True
+    observe.add_run("My observation aligned with a [[Evaluator's level of concern]] level of concern.", style='CustomStyle').bold = True
     delete_paragraph(paragraph)
 
 def add_srs_yes_teacher(paragraph, score_data):
@@ -531,22 +531,22 @@ def add_srs_yes_teacher(paragraph, score_data):
     paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
     paragraph.insert_paragraph_before()
     p = paragraph.insert_paragraph_before()
-    p.add_run('\tSRS-2 Total Score: {{SRS-2 Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle').bold = True
-    p.add_run(f"{score_data['{{SRS-2 Score Teacher}}']} (teacher)", style='CustomStyle').bold = True
+    p.add_run('\tSRS-2 Total Score: [[SRS-2 Score Caregiver]] ([[Caregiver type]]), ', style='CustomStyle').bold = True
+    p.add_run(f"{score_data['[[SRS-2 Score Teacher]]']} (teacher)", style='CustomStyle').bold = True
     paragraph.insert_paragraph_before()
     p = paragraph.insert_paragraph_before()
-    p.add_run('\tSocial Communication and Interaction: {{Social Communication and Interaction Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle')
-    p.add_run(f"{score_data['{{Social Communication and Interaction Score Teacher}}']} (teacher)", style='CustomStyle')
+    p.add_run('\tSocial Communication and Interaction: [[Social Communication and Interaction Score Caregiver]] ([[Caregiver type]]), ', style='CustomStyle')
+    p.add_run(f"{score_data['[[Social Communication and Interaction Score Teacher]]']} (teacher)", style='CustomStyle')
     p = paragraph.insert_paragraph_before()
-    p.add_run('\tRestricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle')
-    p.add_run(f'{score_data["{{Restricted Interests and Repetitive Behavior Score Teacher}}"]} (teacher)', style='CustomStyle')
+    p.add_run('\tRestricted Interests and Repetitive Behavior: [[Restricted Interests and Repetitive Behavior Score Caregiver]] ([[Caregiver type]]), ', style='CustomStyle')
+    p.add_run(f'{score_data["[[Restricted Interests and Repetitive Behavior Score Teacher]]"]} (teacher)', style='CustomStyle')
     paragraph.insert_paragraph_before()
     observe = paragraph.insert_paragraph_before()
-    observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
-    observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
-    observe.add_run("{{Patient First Name}}’s teacher reported a ", style='CustomStyle')
-    observe.add_run(f"{score_data['{{Teacher level of concern}}']} level of concern, and ", style='CustomStyle')
-    observe.add_run("my observation aligned with a {{Evaluator's level of concern}} level of concern.", style='CustomStyle').bold = True
+    observe.add_run("Based on the report provided by [[Preferred Pronouns 2]] [[Caregiver type]], ", style='CustomStyle')
+    observe.add_run("[[Patient First Name]]’s social communication and related behaviors indicated [[Caregiver's level of concern]] concerns. ", style='CustomStyle').italic = True
+    observe.add_run("[[Patient First Name]]’s teacher reported a ", style='CustomStyle')
+    observe.add_run(f"{score_data['[[Teacher level of concern]]']} level of concern, and ", style='CustomStyle')
+    observe.add_run("my observation aligned with a [[Evaluator's level of concern]] level of concern.", style='CustomStyle').bold = True
     delete_paragraph(paragraph)
 
 def add_wppsi(paragraph, score_data):
@@ -605,10 +605,10 @@ if submit:
         pronoun = yaml.safe_load(file)
 
     replace_word = {
-        "{{Preferred Pronouns 1}}": pronoun[preferred]['pronoun1'],
-        "{{Preferred Pronouns 1 CAP}}": pronoun[preferred]['pronoun1cap'],
-        "{{Preferred Pronouns 2}}": pronoun[preferred]['pronoun2'],
-        "{{Preferred Pronouns 2 CAP}}": pronoun[preferred]['pronoun2cap'],
+        "[[Preferred Pronouns 1]]": pronoun[preferred]['pronoun1'],
+        "[[Preferred Pronouns 1 CAP]]": pronoun[preferred]['pronoun1cap'],
+        "[[Preferred Pronouns 2]]": pronoun[preferred]['pronoun2'],
+        "[[Preferred Pronouns 2 CAP]]": pronoun[preferred]['pronoun2cap'],
     }
 
     replace_word.update(data)
@@ -641,7 +641,7 @@ if submit:
     if doc:
         # Get file name
         today_date = format_date_with_ordinal(datetime.date.today())
-        filename = f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} {today_date}.docx"
+        filename = f"{data['[[Patient First Name]]']} {data['[[Patient Last Name]]']} {today_date}.docx"
         
         ### create document style
         custom_style = doc.styles.add_style('CustomStyle', WD_STYLE_TYPE.CHARACTER)
@@ -658,7 +658,7 @@ if submit:
                 if "Social Responsiveness Scale" in paragraph.text:
                     if len(teacher_score) > 0:
                         paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n")
-                        paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}")
+                        paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['[[Teacher name, title]]']}")
                     else:
                         paragraph.add_run("\nDevelopmental History & Review of Records\n")
 
