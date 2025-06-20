@@ -26,18 +26,29 @@ for worksheet in dropdowns:
 def clear_my_cache():
     st.cache_data.clear()
 
-st.button('Reload Dropdown Data', on_click=clear_my_cache)
+with st.sidebar:
+    st.write("After editing dropdown options, please reload data using the button below to update within the form.")
+    st.link_button("Edit Dropdown Options", st.secrets['mod12_spreadsheet'])
+    st.button('Reload Dropdown Data', on_click=clear_my_cache)
 
-# Display data 
-yaml_dropdown = yaml.dump(dropdowns, sort_keys=False)
-st.code(yaml_dropdown, language=None)
+    # Display data 
+    yaml_dropdown = yaml.dump(dropdowns, sort_keys=False)
+    st.code(yaml_dropdown, language=None)
     
+    ####################################################
+    st.markdown("***Check to include score in the form:*** Scores to report:")
+    teacher_eval = st.checkbox("Teacher's SSR Scores")
+    wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
+    dppr_score = st.checkbox("Developmental Profile – Fourth Edition – Parent Report (DPPR)")
+    pls_score = st.checkbox("Preschool Language Scale – Fifth Edition (PLS)")
+    pdms_score = st.checkbox("Peabody Developmental Motor Scales – Second Edition")
+    peshv_score = st.checkbox("Preschool Evaluation Scale Home Version – Second Edition")
+    reelt_score = st.checkbox("Receptive Expressive Emergent Language Test – Fourth Edition")
+    abas_score = st.checkbox("Adaptive Behavior Assessment System – Third Edition")
+
 
 col1,col2 = st.columns(2)
 col1.title('Report Builder')
-
-with open('misc_data/states.txt', 'r') as file:
-    states = [x.strip() for x in file]
 
 def format_date_with_ordinal(date_obj):
     day = date_obj.day
@@ -102,18 +113,6 @@ if audio_behavior:
         file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Behavioral Observation.wav",
         mime="audio/wav",
     )
-
-
-####################################################
-st.markdown("***Check before proceeding with form:*** Scores to report:")
-teacher_eval = st.checkbox("Teacher's SSR Scores")
-wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
-dppr_score = st.checkbox("Developmental Profile – Fourth Edition – Parent Report (DPPR)")
-pls_score = st.checkbox("Preschool Language Scale – Fifth Edition (PLS)")
-pdms_score = st.checkbox("Peabody Developmental Motor Scales – Second Edition")
-peshv_score = st.checkbox("Preschool Evaluation Scale Home Version – Second Edition")
-reelt_score = st.checkbox("Receptive Expressive Emergent Language Test – Fourth Edition")
-abas_score = st.checkbox("Adaptive Behavior Assessment System – Third Edition")
 
 with st.form('BasicInfo'):
     ####################################################
