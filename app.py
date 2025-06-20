@@ -656,7 +656,7 @@ if submit:
         if len(optional) > 0:
             for i, paragraph in enumerate(doc.paragraphs):
                 if "Social Responsiveness Scale" in paragraph.text:
-                    if len(teacher_score) > 0:
+                    if teacher_eval:
                         paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n")
                         paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['[[Teacher name, title]]']}")
                     else:

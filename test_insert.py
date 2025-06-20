@@ -71,7 +71,7 @@ Cognitive: {{DPPR Cognitive Score}} 				Social-Emotional: {{DPPR Social-Emotiona
 Adaptive: {{DPPR Adaptive Score}} 				Physical: {{DPPR Physical Score}}
 '''
 
-doc = Document('templates/template_mod_12_noBrackets.docx')
+doc = Document('templates/template_mod_12_noScore.docx')
 if doc:
     ### create document style
     doc_style = doc.styles['Normal']
@@ -91,8 +91,9 @@ if doc:
     # if len(optional) > 0:
     for i, paragraph in enumerate(doc.paragraphs):
         if "Social Responsiveness Scale" in paragraph.text:
-            paragraph.add_run("Found you!")
-            paragraph.add_footnote('Teacher name Julia')
+            paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n")
+            paragraph.add_run(f"School Report on SRS-2 provided by Julia")
+           
         # if "Scores are reported here as standard scores" in paragraph.text:
         #     # if 'wppsi' in optional:
         #     add_wppsi(paragraph, dict())
