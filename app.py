@@ -9,16 +9,17 @@ from docx.enum.style import WD_STYLE_TYPE
 from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
 
-dropdowns = {}
+dropdowns = {
+    'PrimaryConcerns': [],
+    'EvaluationResults': [],
+}
+connections = {}
 
-# Create a connection object.
-conn = st.connection("mod12", type=GSheetsConnection)
-
-# Get the list of all worksheets
-worksheets = conn.worksheets()
-
-for worksheet in worksheets:
-    df = conn.read(sheet=worksheet.title) 
+for worksheet in dropdowns:
+    # Create a connection object.
+    connections[worksheet] = st.connection(f"mod12_{worksheet}", type=GSheetsConnection)
+    # Read object
+    df = connections[worksheet].read() 
     dropdowns[worksheet.title] = df.iloc[:, 0].tolist()
 
 # Display data 
