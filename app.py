@@ -17,10 +17,10 @@ from streamlit_gsheets import GSheetsConnection
 conn = st.connection("mod12", type=GSheetsConnection)
 
 df = conn.read(
-    worksheet="PrimaryConcerns",
-    ttl="10m",
-    usecols=[0],
-    nrows=40,
+    # worksheet="PrimaryConcerns",
+    # ttl="10m",
+    # usecols=[0],
+    # nrows=40,
 )
 
 # Print results.
