@@ -9,32 +9,22 @@ from docx.enum.style import WD_STYLE_TYPE
 from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
 
-primary_concerns = []
+dropdowns = {}
 
 # Create a connection object.
 conn = st.connection("mod12", type=GSheetsConnection)
 
-df = conn.read(
-    worksheet="PrimaryConcerns",
-    # ttl="10m",
-    # usecols=[0],
-    # nrows=40,
-)
+# Get the list of all worksheets
+worksheets = conn.worksheets()
 
-primary_concerns = df['Concerns'].tolist()
+for worksheet in worksheets:
+    df = conn.read(sheet=worksheet.title) 
+    dropdowns[worksheet.title] = df.iloc[:, 0].tolist()
 
-for item in primary_concerns:
-    st.write(item)
-
-# Print results.
-# for row in df.itertuples():
-#     st.write(f"{row.Concerns}")
-
-# Create a connection object for google sheets
-# def load_data(store_data):
-#     conn = st.connection("gsheets", type=GSheetsConnection)
-#     store_data = conn.read(worksheet="Sheet1")['Results'].tolist()
-# st.button("Reload Data", on_click=load_data(primary_concerns))
+# Display data 
+    yaml_dropdown = yaml.dump(dropdowns, sort_keys=False)
+    st.code(yaml_dropdown, language=None)
+    
 
 col1,col2 = st.columns(2)
 col1.title('Report Builder')
@@ -142,14 +132,15 @@ with st.form('BasicInfo'):
 
     bullet['Caregiver_Primary_Concerns'] = st.multiselect(
         "Caregiver\'s Primary Concerns",
-        [
-            "Speech delays impacting social opportunities.",
-            "Clarifying diagnostic presentation.",
-            "Determining service eligibility.",
-            "Language delays and difficulties.",
-            "Elopement and related safety concerns.",
-            "Determining appropriate supports."
-        ],
+        primary_concerns,
+        # [
+        #     "Speech delays impacting social opportunities.",
+        #     "Clarifying diagnostic presentation.",
+        #     "Determining service eligibility.",
+        #     "Language delays and difficulties.",
+        #     "Elopement and related safety concerns.",
+        #     "Determining appropriate supports."
+        # ],
         placeholder="Select from the choices or enter a new one",
         accept_new_options=True
     )
