@@ -493,7 +493,7 @@ def delete_paragraph(paragraph):
 def add_school(paragraph):
     p = paragraph.insert_paragraph_before()
     tab_stops = p.paragraph_format.tab_stops
-    tab_stops.clear()  # Start fresh for this paragraph only
+    # tab_stops.clear()  # Start fresh for this paragraph only
     tab_stops.add_tab_stop(Inches(3.5))
     # Add data
     p.add_run("District").font.underline = True
