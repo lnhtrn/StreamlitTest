@@ -45,9 +45,9 @@ audio_development = st.audio_input("Developmental History")
 
 # 2. Play back the recorded audio (optional)
 if audio_behavior:
+    st.text("Behavioral Observation Recording")
     st.audio(
-        audio_behavior, label="Behavioral Observation Recording",
-        format='audio/wav'
+        audio_behavior, format='audio/wav'
     )
 
     # 3. Create a download button
