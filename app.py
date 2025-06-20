@@ -11,6 +11,22 @@ from docxtpl import DocxTemplate
 
 primary_concerns = []
 
+from streamlit_gsheets import GSheetsConnection
+
+# Create a connection object.
+conn = st.connection("mod12", type=GSheetsConnection)
+
+df = conn.read(
+    worksheet="Sheet1",
+    ttl="10m",
+    # usecols=[0, 1],
+    # nrows=3,
+)
+
+# Print results.
+for row in df.itertuples():
+    st.write(f"{row.Concerns}")
+
 # Create a connection object for google sheets
 # def load_data(store_data):
 #     conn = st.connection("gsheets", type=GSheetsConnection)
