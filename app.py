@@ -684,7 +684,7 @@ if submit:
                 else:
                     paragraph.add_run("\nDevelopmental History & Review of Records\n")
 
-            if "[[District Grade School Setting]]" in paragraph:
+            if "[[District Grade School Setting]]" in paragraph.text:
                 add_school(paragraph)
         
         # Edit document
