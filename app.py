@@ -366,7 +366,7 @@ with st.form('BasicInfo'):
     ############################################
     st.header("DSM Criteria")
     
-    bullet['Deficits_in_social_emotional_reciprocity'] = st.multiselect(    
+    bullet['SocialReciprocity'] = st.multiselect(    
         "Deficits in social emotional reciprocity",
         [
             "None",
@@ -379,7 +379,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['Deficits_in_nonverbal_communicative_behaviors_used_for_social_interaction'] = st.multiselect(
+    bullet['NonverbalComm'] = st.multiselect(
         "Deficits in nonverbal communicative behaviors used for social interaction",
         [
             "None",
@@ -393,7 +393,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['Deficits_in_developing_maintaining_and_understanding_relationships'] = st.multiselect(
+    bullet['Relationships'] = st.multiselect(
         "Deficits in developing, maintaining, and understanding relationships",
         [
             "None",
@@ -405,7 +405,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['Stereotyped_or_repetitive_motor_movements_use_of_objects_or_speech'] = st.multiselect(
+    bullet['RepetitiveBehaviors'] = st.multiselect(
         "Stereotyped or repetitive motor movements, use of objects, or speech",
         [
             "None",
@@ -419,7 +419,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['Insistence_on_sameness_inflexible_adherence_to_routines_or_ritualized_behavior'] = st.multiselect(
+    bullet['SamenessRoutines'] = st.multiselect(
         "Insistence on sameness, inflexible adherence to routines or ritualized behavior",
         [
             "None",
@@ -431,7 +431,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['Highly_restricted_fixated_interests_that_are_abnormal_in_intensity_or_focus'] = st.multiselect(
+    bullet['RestrictedInterests'] = st.multiselect(
         "Highly restricted, fixated interests that are abnormal in intensity or focus",
         [
             "None",
@@ -443,7 +443,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    bullet['Hyper_or_hypo_reactivity_to_sensory_aspects_of_the_environment'] = st.multiselect(
+    bullet['SensoryReactivity'] = st.multiselect(
         "Hyper- or hypo-reactivity to sensory aspects of the environment:",
         [
             "None",
@@ -705,14 +705,14 @@ if submit:
         doc.save(filename)
 
         # Replace for lists separated by bullet points
-        # tpl=DocxTemplate(filename)
-        # print("Load template!")
+        tpl=DocxTemplate(filename)
+        print("Load template!")
 
-        # tpl.render(bullet)
-        # print("Bullet rendered!")
+        tpl.render(bullet)
+        print("Bullet rendered!")
 
-        # tpl.save(filename)
-        # print("File saved at", filename)
+        tpl.save(filename)
+        print("File saved at", filename)
 
         # Download 
         bio = io.BytesIO()
