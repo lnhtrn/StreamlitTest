@@ -23,8 +23,8 @@ for worksheet in dropdowns:
     dropdowns[worksheet] = df.iloc[:, 0].tolist()
 
 # Display data 
-    yaml_dropdown = yaml.dump(dropdowns, sort_keys=False)
-    st.code(yaml_dropdown, language=None)
+yaml_dropdown = yaml.dump(dropdowns, sort_keys=False)
+st.code(yaml_dropdown, language=None)
     
 
 col1,col2 = st.columns(2)
