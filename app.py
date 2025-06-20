@@ -498,11 +498,11 @@ def add_school(paragraph):
     # Add data
     p.add_run("District", style='CustomStyle').font.underline = True
     p.add_run(f": {data['[[School District]]']}\t", style='CustomStyle')
-    p.add_run("Grade").font.underline = True
+    p.add_run("Grade", style='CustomStyle').font.underline = True
     p.add_run(f": {data['[[Grade]]']}\n\n", style='CustomStyle')
-    p.add_run("School").font.underline = True
+    p.add_run("School", style='CustomStyle').font.underline = True
     p.add_run(f": {data['[[School Name]]']}\t", style='CustomStyle')
-    p.add_run("Setting").font.underline = True
+    p.add_run("Setting", style='CustomStyle').font.underline = True
     p.add_run(f": {data['[[Education Setting]]']}", style='CustomStyle')
     delete_paragraph(paragraph)
 
