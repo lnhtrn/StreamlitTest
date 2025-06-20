@@ -9,6 +9,22 @@ from docx.enum.style import WD_STYLE_TYPE
 from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
 
+##########################################################
+st.set_page_config(
+    page_title="Module 1-2 Report Builder",
+    page_icon="📝",
+    layout="centered",
+    initial_sidebar_state="expanded",
+    # menu_items={
+    #     'Get Help': 'https://www.extremelycoolapp.com/help',
+    #     'Report a bug': "https://www.extremelycoolapp.com/bug",
+    #     'About': "# This is a header. This is an *extremely* cool app!"
+    # }
+)
+
+##########################################################
+# Access Google Sheets
+
 dropdowns = {
     'PrimaryConcerns': [],
     'EvaluationResults': [],
@@ -27,16 +43,16 @@ def clear_my_cache():
     st.cache_data.clear()
 
 with st.sidebar:
-    st.write("After editing dropdown options, please reload data using the button below to update within the form.")
+    st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
     st.link_button("Edit Dropdown Options", st.secrets['mod12_spreadsheet'])
     st.button('Reload Dropdown Data', on_click=clear_my_cache)
 
     # Display data 
-    yaml_dropdown = yaml.dump(dropdowns, sort_keys=False)
-    st.code(yaml_dropdown, language=None)
+    # yaml_dropdown = yaml.dump(dropdowns, sort_keys=False)
+    # st.code(yaml_dropdown, language=None)
     
     ####################################################
-    st.markdown("***Check to include score in the form:*** Scores to report:")
+    st.markdown("**Check to include score in the form:** Scores to report:")
     teacher_eval = st.checkbox("Teacher's SSR Scores")
     wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
     dppr_score = st.checkbox("Developmental Profile – Fourth Edition – Parent Report (DPPR)")
@@ -48,7 +64,7 @@ with st.sidebar:
 
 
 col1,col2 = st.columns(2)
-col1.title('Report Builder')
+col1.title('Module 1-2 Report Builder')
 
 def format_date_with_ordinal(date_obj):
     day = date_obj.day
