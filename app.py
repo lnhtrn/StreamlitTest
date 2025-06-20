@@ -94,6 +94,7 @@ if audio_behavior:
     # 3. Create a download button
     st.download_button(
         label="Download Behavioral Observation Recording",
+        key="audio_behavior",
         data=audio_behavior,
         file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Behavioral Observation.wav",
         mime="audio/wav",
@@ -110,6 +111,7 @@ if audio_development:
     # 3. Create a download button
     st.download_button(
         label="Download Developmental History Recording",
+        key="audio_development",
         data=audio_development,
         file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Behavioral Observation.wav",
         mime="audio/wav",
@@ -715,6 +717,7 @@ if submit:
         
         st.download_button(
             label="Click here to download",
+            key="report_download"
             data=bio.getvalue(),
             file_name=filename,
             mime="docx"
