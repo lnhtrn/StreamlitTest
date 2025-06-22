@@ -1,6 +1,5 @@
 import streamlit as st
 import whisper
-from transformers import pipeline
 
 ##########################################################
 st.set_page_config(

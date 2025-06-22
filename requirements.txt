@@ -1,6 +1,6 @@
+openai-whisper
 pyyaml
 python-docx
 docxedit
 st-gsheets-connection
 docxtpl
-openai-whisper
