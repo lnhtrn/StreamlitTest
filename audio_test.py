@@ -27,23 +27,24 @@ whisper_model = load_whisper_model()
 # Record audio
 audio_data = st.audio_input("Speak something to transcribe")
 
-if audio_data:
-    # Save audio
-    with open("temp.wav", "wb") as f:
-        f.write(audio_data.getvalue())
+if st.button("Transcribe"):
+    if audio_data:
+        # Save audio
+        with open("temp.wav", "wb") as f:
+            f.write(audio_data.getvalue())
 
-    # Transcribe
-    with st.spinner("Transcribing...", show_time=True):
-        result = whisper_model.transcribe("temp.wav")
+        # Transcribe
+        with st.spinner("Transcribing...", show_time=True):
+            result = whisper_model.transcribe("temp.wav")
 
-    st.markdown("**Transcription:**")
-    editable_trans = st.text_area(
-        "Verify and edit transcription", 
-        result['text'],
-        key="transcript"
-    )
+        st.markdown("**Transcription:**")
+        editable_trans = st.text_area(
+            "Verify and edit transcription", 
+            result['text'],
+            key="transcript"
+        )
     
-if st.button("Show final text"):
-    st.markdown("**Finalized text:**")
-    on_upper_updated()
-    st.write(editable_trans)
+    if st.button("Show final text"):
+        st.markdown("**Finalized text:**")
+        on_upper_updated()
+        st.write(editable_trans)
