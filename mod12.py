@@ -54,14 +54,15 @@ with st.sidebar:
     
     ####################################################
     st.markdown("**Check to include score in the form:** Scores to report:")
+    scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
     teacher_eval = st.checkbox("Teacher's SSR Scores")
     wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
-    dppr_score = st.checkbox("Developmental Profile – Fourth Edition – Parent Report (DPPR)")
-    pls_score = st.checkbox("Preschool Language Scale – Fifth Edition (PLS)")
-    pdms_score = st.checkbox("Peabody Developmental Motor Scales – Second Edition")
-    peshv_score = st.checkbox("Preschool Evaluation Scale Home Version – Second Edition")
-    reelt_score = st.checkbox("Receptive Expressive Emergent Language Test – Fourth Edition")
-    abas_score = st.checkbox("Adaptive Behavior Assessment System – Third Edition")
+    dppr_score = st.checkbox("Developmental Profile – Fourth Edition - Parent Report (DPPR)")
+    pls_score = st.checkbox("Preschool Language Scale - Fifth Edition (PLS)")
+    pdms_score = st.checkbox("Peabody Developmental Motor Scales - Second Edition")
+    peshv_score = st.checkbox("Preschool Evaluation Scale Home Version - Second Edition")
+    reelt_score = st.checkbox("Receptive Expressive Emergent Language Test - Fourth Edition")
+    abas_score = st.checkbox("Adaptive Behavior Assessment System - Third Edition")
 
 
 col1,col2 = st.columns(2)
@@ -188,9 +189,10 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    data["{{Results (SCQ) - Lifetime Form}}"] = st.text_input(
-        "Results (SCQ) - Lifetime Form"
-    )
+    if scq_result:
+        data["{{Results (SCQ) - Lifetime Form}}"] = st.text_input(
+            "Results (SCQ) - Lifetime Form"
+        )
 
     data["{{SRS-2 Score Caregiver}}"] = st.text_input("Caregiver's SRS-2 Score")
     
@@ -289,7 +291,7 @@ with st.form('BasicInfo'):
 
     ##########################################################
     if wppsi_score:
-        st.header("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI)")
+        st.header("Wechsler Preschool & Primary Scales of Intelligence - Fourth Ed. (WPPSI)")
         st.markdown("*Skip this section if there is no WPPSI Score*")
         optional["wppsi"] = {}
 
@@ -301,7 +303,7 @@ with st.form('BasicInfo'):
         optional["wppsi"]['WPPSI Visual Spatial Score'] = st.text_input("WPPSI Visual Spatial Score")
     
     if dppr_score:
-        st.header("Developmental Profile – Fourth Edition – Parent Report (DPPR)")
+        st.header("Developmental Profile - Fourth Edition - Parent Report (DPPR)")
         st.markdown("*Skip this section if there is no DPPR Score*")
         optional["dppr"] = {}
 
@@ -312,7 +314,7 @@ with st.form('BasicInfo'):
         optional["dppr"]['DPPR Physical Score'] = st.text_input("DPPR Physical Score")
     
     if pls_score:
-        st.header("Preschool Language Scale – Fifth Edition (PLS)")
+        st.header("Preschool Language Scale - Fifth Edition (PLS)")
         st.markdown("*Skip this section if there is no PLS Score*")
         optional["pls"] = {}
         optional["pls"]["Test Date"] = st.date_input("PLS Test Date").strftime("%m/%Y")
@@ -321,7 +323,7 @@ with st.form('BasicInfo'):
         optional["pls"]['PLS Expressive Communication Score'] = st.text_input("PLS Expressive Communication Score")
 
     if pdms_score:
-        st.header("Peabody Developmental Motor Scales – Second Edition (PDMS)")
+        st.header("Peabody Developmental Motor Scales - Second Edition (PDMS)")
         st.markdown("*Skip this section if there is no PDMS Score*")
         optional["pdms"] = {}
         optional["pdms"]["Test Date"] = st.date_input("Test Date").strftime("%m/%Y")
@@ -329,7 +331,7 @@ with st.form('BasicInfo'):
         optional["pdms"]['PDMS Fine Motor Score'] = st.text_input("PDMS Fine Motor Score")
 
     if peshv_score:
-        st.header("Preschool Evaluation Scale Home Version – Second Edition (PESHV)")
+        st.header("Preschool Evaluation Scale Home Version - Second Edition (PESHV)")
         st.markdown("*Skip this section if there is no PESHV Score*")
         optional["peshv"] = {}
         optional["peshv"]["Test Date"] = st.date_input("PESHV Test Date").strftime("%m/%Y")
@@ -337,7 +339,7 @@ with st.form('BasicInfo'):
         optional["peshv"]['PESHV Social Emotional Score'] = st.text_input("PESHV Social Emotional Score")
     
     if peshv_score:
-        st.header("Receptive Expressive Emergent Language Test – Fourth Edition (REELT)")
+        st.header("Receptive Expressive Emergent Language Test - Fourth Edition (REELT)")
         st.markdown("*Skip this section if there is no REELT Score*")
         optional[""] = {}
         optional["peshv"]["Test Date"] = st.date_input("PESHV Test Date").strftime("%m/%Y")
@@ -345,7 +347,7 @@ with st.form('BasicInfo'):
         optional["peshv"]['PESHV Social Emotional Score'] = st.text_input("PESHV Social Emotional Score")
 
     if reelt_score:
-        st.header("Receptive Expressive Emergent Language Test – Fourth Edition (REELT)")
+        st.header("Receptive Expressive Emergent Language Test - Fourth Edition (REELT)")
         st.markdown("*Skip this section if there is no REELT Score*")
         optional["reelt"] = {}
         optional["reelt"]["Test Date"] = st.date_input("REELT Test Date").strftime("%m/%Y")
@@ -354,7 +356,7 @@ with st.form('BasicInfo'):
         optional["reelt"]['REELT Expressive Communication Score'] = st.text_input("REELT Expressive Communication Score")
 
     if abas_score:
-        st.header("Adaptive Behavior Assessment System – Third Edition (ABAS)")
+        st.header("Adaptive Behavior Assessment System - Third Edition (ABAS)")
         st.markdown("*Skip this section if there is no ABAS Score*")
         optional["abas"] = {}
         optional["abas"]["Test Date"] = st.date_input("ABAS Test Date").strftime("%m/%Y")
@@ -506,6 +508,14 @@ def add_school(paragraph):
     p.add_run(f": {data['{{Education Setting}}']}", style='CustomStyle')
     delete_paragraph(paragraph)
 
+def add_scq_form(paragraph):
+    r = paragraph.insert_paragraph_before().add_run('Social Communication Questionnaire (SCQ) – Lifetime Form', style='CustomStyle')
+    r.italic = True
+    r.font.underline = True
+    p = paragraph.insert_paragraph_before()
+    p.add_run("The SCQ evaluates for symptoms of autism spectrum disorder across developmental history. Scores above 15 are suggestive of an autism diagnosis. Based on {{Preferred Pronouns 2}} {{Caregiver type}}’s report, {{Patient First Name}}’s score was {{Results (SCQ) - Lifetime Form}}. ", style='CustomStyle')
+    p.add_run("This score is clearly consistent with autism at present.\n", style='CustomStyle').italic = True
+    delete_paragraph(paragraph)
 
 def add_srs_no_teacher(paragraph):
     r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle')
@@ -521,7 +531,7 @@ def add_srs_no_teacher(paragraph):
     observe = paragraph.insert_paragraph_before()
     observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
     observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
-    observe.add_run("My observation aligned with a {{Evaluator's level of concern}} level of concern.", style='CustomStyle').bold = True
+    observe.add_run("My observation aligned with a {{Evaluator's level of concern}} concern.", style='CustomStyle').bold = True
     delete_paragraph(paragraph)
 
 def add_srs_yes_teacher(paragraph, score_data):
@@ -545,8 +555,8 @@ def add_srs_yes_teacher(paragraph, score_data):
     observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
     observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
     observe.add_run("{{Patient First Name}}’s teacher reported a ", style='CustomStyle')
-    observe.add_run(f"{score_data['{{Teacher level of concern}}']} level of concern, and ", style='CustomStyle')
-    observe.add_run("my observation aligned with a {{Evaluator's level of concern}} level of concern.", style='CustomStyle').bold = True
+    observe.add_run(f"{score_data['{{Teacher level of concern}}']} concern, and ", style='CustomStyle')
+    observe.add_run("my observation aligned with a {{Evaluator's level of concern}} concern.", style='CustomStyle').bold = True
     delete_paragraph(paragraph)
 
 def add_wppsi(paragraph, score_data):
@@ -672,6 +682,10 @@ if submit:
                         add_abas(paragraph, optional['abas'])
                 
             if "SRS Report Information" in paragraph.text:
+                # Add SCQ
+                if scq_result:
+                    add_scq_form(paragraph)
+                # Add SRS
                 if len(teacher_score) == 0:
                     add_srs_no_teacher(paragraph)
                 else:
