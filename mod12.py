@@ -131,7 +131,7 @@ with st.form('BasicInfo'):
         accept_new_options=True,
     )
 
-    bullet['Caregiver_Primary_Concerns'] = st.multiselect(
+    bullet['CaregiverPrimaryConcerns'] = st.multiselect(
         "Caregiver\'s Primary Concerns",
         dropdowns['PrimaryConcerns'],
         # [
