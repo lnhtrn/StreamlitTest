@@ -515,7 +515,6 @@ def add_scq_form(paragraph):
     p = paragraph.insert_paragraph_before()
     p.add_run("The SCQ evaluates for symptoms of autism spectrum disorder across developmental history. Scores above 15 are suggestive of an autism diagnosis. Based on {{Preferred Pronouns 2}} {{Caregiver type}}’s report, {{Patient First Name}}’s score was {{Results (SCQ) - Lifetime Form}}. ", style='CustomStyle')
     p.add_run("This score is clearly consistent with autism at present.\n", style='CustomStyle').italic = True
-    delete_paragraph(paragraph)
 
 def add_srs_no_teacher(paragraph):
     r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle')
