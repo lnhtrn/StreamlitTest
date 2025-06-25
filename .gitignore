@@ -1,7 +1,8 @@
 output/
 templates/~$mplate_mod_12.docx
 finalized/
-.streamlit/
+.streamlit/google_sheets_access_key.json
+.streamlit/secrets.toml
 templates/~$mplate_mod_12_noScore.docx
 templates/~WRL3783.tmp
 templates/~$mplate_mod_12_noBrackets.docx
