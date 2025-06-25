@@ -1,4 +1,5 @@
 openai-whisper
+openai
 pyyaml
 python-docx
 docxedit
