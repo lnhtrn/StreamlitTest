@@ -1,5 +1,6 @@
 import streamlit as st
 import whisper
+from openai import OpenAI
 
 ##########################################################
 st.set_page_config(
@@ -24,6 +25,10 @@ def on_upper_reload(new_text):
 
 whisper_model = load_whisper_model()
 
+# Load OpenAI client 
+client = OpenAI()
+
+
 # Record audio
 audio_data = st.audio_input("Speak something to transcribe")
 
@@ -43,8 +48,21 @@ if st.button("Transcribe"):
             result['text'],
             key="transcript"
         )
+
+        response = client.responses.create(
+            prompt={
+                "id": "pmpt_685c1d7f4f4c819083a45722b78921830b7eea852e8a39f1",
+                "version": "1",
+                "variables": {
+                "transcription": result['text']
+                }
+            }       
+        )
+
+        st.markdown("**OpenAI Response:**")
+        st.write(response)
     
-    if st.button("Show final text"):
-        st.markdown("**Finalized text:**")
-        on_upper_updated()
-        st.write(editable_trans)
+    # if st.button("Show final text"):
+    #     st.markdown("**Finalized text:**")
+    #     on_upper_updated()
+    #     st.write(editable_trans)

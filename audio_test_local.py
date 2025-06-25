@@ -5,5 +5,11 @@ def load_whisper_model():
 
 whisper_model = load_whisper_model()
 
-result = whisper_model.transcribe("audio_test/testfile1.m4a")
-print(result)
+result_text = ''
+result = whisper_model.transcribe("audio_test/rozanna_behave_obs.m4a")
+result_text += result['text']
+
+result = whisper_model.transcribe("audio_test/rozanna_behave_obs_2.m4a")
+result_text += ' ' + result['text']
+
+print(result_text)
