@@ -26,7 +26,7 @@ def on_upper_reload(new_text):
 whisper_model = load_whisper_model()
 
 # Load OpenAI client 
-client = OpenAI()
+client = OpenAI(st.secrets["openai_key"])
 
 
 # Record audio
