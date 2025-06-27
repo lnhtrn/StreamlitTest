@@ -658,11 +658,14 @@ if submit:
         today_date = format_date_with_ordinal(datetime.date.today())
         filename = f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} {today_date}.docx"
         
-        ### create document style
+        ### create document 
+        norm_style = doc.styles['Normal']
+        norm_style.paragraph_format.line_spacing = 1
+
         custom_style = doc.styles.add_style('CustomStyle', WD_STYLE_TYPE.CHARACTER)
         custom_style.font.size = Pt(12)
         custom_style.font.name = 'Georgia'
-        custom_style.paragraph_format.line_spacing = 1 
+        # custom_style.paragraph_format.line_spacing = 1 
 
         # list_style = doc.styles.add_style('ListStyle', WD_STYLE.LIST_BULLET)
         # list_style.font.size = Pt(12)
