@@ -30,6 +30,8 @@ dropdowns = {
     'PrimaryConcerns': [],
     'EvaluationResults': [],
     'DiagnosisHistory': [],
+    'Services': [],
+    'Grade': [],
 }
 connections = {}
 
@@ -261,7 +263,11 @@ with st.form('BasicInfo'):
 
     data['{{Grade}}'] = st.selectbox(
         "Grade",
-        ['EPK (2023-24 school year)', 'UPK (2023-24 school year)', 'Kindergarten (2023-24 school year)'],
+        [
+            'EPK (2023-24 school year)', 
+            'UPK (2023-24 school year)', 
+            'Kindergarten (2023-24 school year)'
+        ],
         index=None,
         placeholder="Select a grade or enter a new one",
         accept_new_options=True,
@@ -656,6 +662,7 @@ if submit:
         custom_style = doc.styles.add_style('CustomStyle', WD_STYLE_TYPE.CHARACTER)
         custom_style.font.size = Pt(12)
         custom_style.font.name = 'Georgia'
+        custom_style.paragraph_format.line_spacing = 1 
 
         # list_style = doc.styles.add_style('ListStyle', WD_STYLE.LIST_BULLET)
         # list_style.font.size = Pt(12)
@@ -695,7 +702,7 @@ if submit:
                     paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n", style='CustomStyle')
                     paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
                 else:
-                    paragraph.add_run("\nDevelopmental History & Review of Records\n", style='CustomStyle')
+                    paragraph.add_run("\nDevelopmental History & Review of Records", style='CustomStyle')
 
             if "[[District Grade School Setting]]" in paragraph.text:
                 add_school(paragraph)
