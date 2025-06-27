@@ -41,6 +41,9 @@ for worksheet in dropdowns:
     # Read object
     df = connections[worksheet].read() 
     dropdowns[worksheet] = df.iloc[:, 0].tolist()
+    # add school year
+    if worksheet=="Grade":
+        dropdowns['SchoolYear'] = df.iloc[:, 1].tolist()
 
 def clear_my_cache():
     st.cache_data.clear()
@@ -264,11 +267,14 @@ with st.form('BasicInfo'):
     data['{{Grade}}'] = st.selectbox(
         "Grade",
         dropdowns['Grade'],
-        # [
-        #     'EPK (2023-24 school year)', 
-        #     'UPK (2023-24 school year)', 
-        #     'Kindergarten (2023-24 school year)'
-        # ],
+        index=None,
+        placeholder="Select a grade or enter a new one",
+        accept_new_options=True,
+    )
+
+    data['School Year'] = st.selectbox(
+        "School Year",
+        dropdowns["SchoolYear"],
         index=None,
         placeholder="Select a grade or enter a new one",
         accept_new_options=True,
@@ -285,14 +291,6 @@ with st.form('BasicInfo'):
     comma['{{Services}}'] = st.multiselect(
         "Services",
         dropdowns['Services'],
-        # [
-        #     "None",
-        #     "Speech therapy",
-        #     "Occupational therapy",
-        #     "Physical therapy",
-        #     "Extended school year services",
-        #     "Testing accommodations"
-        # ],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
@@ -509,7 +507,9 @@ def add_school(paragraph):
     p.add_run("District", style='CustomStyle').font.underline = True
     p.add_run(f": {data['{{School District}}']}\t", style='CustomStyle')
     p.add_run("Grade", style='CustomStyle').font.underline = True
-    p.add_run(f": {data['{{Grade}}']}\n\n", style='CustomStyle')
+    ### italics for school year
+    p.add_run(f": {data['{{Grade}}']} (", style='CustomStyle')
+    p.add_run(f"{data['School Year']})\n\n", style='CustomStyle').italic = True
     p.add_run("School", style='CustomStyle').font.underline = True
     p.add_run(f": {data['{{School Name}}']}\t", style='CustomStyle')
     p.add_run("Setting", style='CustomStyle').font.underline = True
