@@ -12,7 +12,7 @@ from docx.shared import Inches
 
 ##########################################################
 st.set_page_config(
-    page_title="Module 1-2 Report Builder",
+    page_title="Module 1&2",
     page_icon="📝",
     layout="centered",
     initial_sidebar_state="expanded",
@@ -68,7 +68,7 @@ with st.sidebar:
 
 
 col1,col2 = st.columns(2)
-col1.title('Module 1-2 Report Builder')
+col1.title('Module 1&2 Report Builder')
 
 def format_date_with_ordinal(date_obj):
     day = date_obj.day
