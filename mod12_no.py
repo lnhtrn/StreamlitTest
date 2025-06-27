@@ -45,11 +45,11 @@ for col_name in df.columns:
     dropdowns[col_name] = df[col_name].tolist()
 
 # Create a connection object.
-connections['All'] = st.connection(f"mod12_noAutism", type=GSheetsConnection)
+connections['noAutism'] = st.connection(f"mod12_noAutism", type=GSheetsConnection)
 # Read object
-df = connections['All'].read(
+df = connections['noAutism'].read(
     ttl="30m",
-    usecols=list(range(6)),
+    usecols=list(range(3)),
     nrows=30,
 ) 
 for col_name in df.columns:
