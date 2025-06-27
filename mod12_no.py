@@ -37,11 +37,22 @@ for worksheet in dropdowns:
     # Create a connection object.
     connections[worksheet] = st.connection(f"mod12_{worksheet}", type=GSheetsConnection)
     # Read object
-    df = connections[worksheet].read() 
-    dropdowns[worksheet] = df.iloc[:, 0].tolist()
-    # add school year
     if worksheet=="Grade":
+        df = connections[worksheet].read(
+            ttl="10m",
+            usecols=[0, 1],
+            nrows=30,
+        ) 
+        dropdowns[worksheet] = df.iloc[:, 0].tolist()
+        # add school year
         dropdowns['SchoolYear'] = df.iloc[:, 1].tolist()
+    else:
+        df = connections[worksheet].read(
+            ttl="10m",
+            usecols=[0],
+            nrows=30,
+        ) 
+        dropdowns[worksheet] = df.iloc[:, 0].tolist()
 
 def clear_my_cache():
     st.cache_data.clear()
