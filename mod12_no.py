@@ -28,6 +28,7 @@ dropdowns = {
     'Services': [],
     'Grade': [],
     'DevelopmentalConcerns': [],
+    'MedicalConcerns': [],
     'CaregiverDevelopmentalConcerns': [],
 }
 connections = {}
@@ -53,8 +54,8 @@ with st.sidebar:
     
     ####################################################
     st.markdown("**Check to include score in the form:** Scores to report:")
-    scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
-    teacher_eval = st.checkbox("Teacher's SSR Scores")
+    # scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
+    # teacher_eval = st.checkbox("Teacher's SSR Scores")
     wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
     dppr_score = st.checkbox("Developmental Profile – Fourth Edition - Parent Report (DPPR)")
     pls_score = st.checkbox("Preschool Language Scale - Fifth Edition (PLS)")
@@ -173,45 +174,6 @@ with st.form('BasicInfo'):
     
     data['{{Date Report Sent to Patient}}'] = format_date_with_ordinal(st.date_input("Date Report Sent to Patient"))
 
-    # if scq_result:
-    #     data["{{Results (SCQ) - Lifetime Form}}"] = st.text_input(
-    #         "Results (SCQ) - Lifetime Form"
-    #     )
-
-    # data["{{SRS-2 Score Caregiver}}"] = st.text_input("Caregiver's SRS-2 Score")
-    
-    # data["{{Social Communication and Interaction Score Caregiver}}"] = st.text_input("Social Communication and Interaction Score Caregiver")
-    
-    # data["{{Restricted Interests and Repetitive Behavior Score Caregiver}}"] = st.text_input("Restricted Interests and Repetitive Behavior Score Caregiver")
-
-    # data["{{Caregiver's level of concern}}"] = st.radio(
-    #     "Caregiver's level of concern",
-    #     ['no', 'mild', 'moderate', 'severe']
-    # )
-
-    # data["{{Evaluator's level of concern}}"] = st.radio(
-    #     "Evaluator's level of concern",
-    #     ['no', 'mild', 'moderate', 'severe']
-    # )
-
-    # ##########################################################
-    # if teacher_eval:
-    #     st.header("Teacher SSR Score")
-    #     st.markdown("*Skip this section if teacher did not give SSR Score*")
-
-    #     teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
-
-    #     teacher_score['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
-
-    #     teacher_score['{{Social Communication and Interaction Score Teacher}}'] = st.text_input("Social Communication and Interaction Score Teacher")
-
-    #     teacher_score['{{Restricted Interests and Repetitive Behavior Score Teacher}}'] = st.text_input("Restricted Interests and Repetitive Behavior Score Teacher")
-
-    #     teacher_score["{{Teacher level of concern}}"] = st.radio(
-    #         "Teacher's level of concern",
-    #         ['no', 'mild', 'moderate', 'severe']
-    #     )
-
     ######################################################
     st.header("Medical/Developmental History")
     
@@ -224,7 +186,7 @@ with st.form('BasicInfo'):
 
     lines['{{Medical Concerns}}'] = st.multiselect(
         "Medical Concerns",
-        ['None noted or reported.'],
+        dropdowns['MedicalConcerns'],
         placeholder="Can input multiple options",
         accept_new_options=True
     )
@@ -259,7 +221,13 @@ with st.form('BasicInfo'):
 
     data['{{Education Setting}}'] = st.selectbox(
         "Education Setting",
-        ["General Education", "Integrated Co-Taught", "12:1:1", "8:1:1", "6:1:1"],
+        [
+            "General Education", 
+            "Integrated Co-Taught", 
+            "12:1:1", 
+            "8:1:1", 
+            "6:1:1"
+        ],
         index=None,
         placeholder="Select a grade or enter a new one",
         accept_new_options=True,
@@ -379,56 +347,6 @@ def add_school(paragraph):
     p.add_run(f": {data['{{Education Setting}}']}", style='CustomStyle')
     delete_paragraph(paragraph)
 
-def add_scq_form(paragraph):
-    r = paragraph.insert_paragraph_before().add_run('Social Communication Questionnaire (SCQ) – Lifetime Form', style='CustomStyle')
-    r.italic = True
-    r.font.underline = True
-    p = paragraph.insert_paragraph_before()
-    p.add_run("The SCQ evaluates for symptoms of autism spectrum disorder across developmental history. Scores above 15 are suggestive of an autism diagnosis. Based on {{Preferred Pronouns 2}} {{Caregiver type}}’s report, {{Patient First Name}}’s score was {{Results (SCQ) - Lifetime Form}}. ", style='CustomStyle')
-    p.add_run("This score is clearly consistent with autism at present.\n", style='CustomStyle').italic = True
-
-def add_srs_no_teacher(paragraph):
-    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle')
-    r.italic = True
-    r.font.underline = True
-    paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run('\tSRS-2 Total Score: {{SRS-2 Score Caregiver}} ({{Caregiver type}})', style='CustomStyle').bold = True
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run('\tSocial Communication and Interaction: {{Social Communication and Interaction Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
-    paragraph.insert_paragraph_before().add_run('\tRestricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
-    paragraph.insert_paragraph_before()
-    observe = paragraph.insert_paragraph_before()
-    observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
-    observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
-    observe.add_run("My observation aligned with a {{Evaluator's level of concern}} concern.", style='CustomStyle').bold = True
-    delete_paragraph(paragraph)
-
-def add_srs_yes_teacher(paragraph, score_data):
-    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle')
-    r.italic = True
-    r.font.underline = True
-    paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
-    paragraph.insert_paragraph_before()
-    p = paragraph.insert_paragraph_before()
-    p.add_run('\tSRS-2 Total Score: {{SRS-2 Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle').bold = True
-    p.add_run(f"{score_data['{{SRS-2 Score Teacher}}']} (teacher)", style='CustomStyle').bold = True
-    paragraph.insert_paragraph_before()
-    p = paragraph.insert_paragraph_before()
-    p.add_run('\tSocial Communication and Interaction: {{Social Communication and Interaction Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle')
-    p.add_run(f"{score_data['{{Social Communication and Interaction Score Teacher}}']} (teacher)", style='CustomStyle')
-    p = paragraph.insert_paragraph_before()
-    p.add_run('\tRestricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle')
-    p.add_run(f'{score_data["{{Restricted Interests and Repetitive Behavior Score Teacher}}"]} (teacher)', style='CustomStyle')
-    paragraph.insert_paragraph_before()
-    observe = paragraph.insert_paragraph_before()
-    observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
-    observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
-    observe.add_run("{{Patient First Name}}’s teacher reported a ", style='CustomStyle')
-    observe.add_run(f"{score_data['{{Teacher level of concern}}']} concern, and ", style='CustomStyle')
-    observe.add_run("my observation aligned with a {{Evaluator's level of concern}} concern.", style='CustomStyle').bold = True
-    delete_paragraph(paragraph)
-
 def add_wppsi(paragraph, score_data):
     paragraph.insert_paragraph_before()
     paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed.', style='CustomStyle').italic = True
@@ -515,7 +433,6 @@ if submit:
     yaml_string = yaml_string + '\n' + yaml.dump(bullet, sort_keys=False)
     yaml_data = st.code(yaml_string, language=None)
     
-
     #### Edit document 
     doc = Document('templates/template_mod_12_no_autism.docx')
     if doc:
@@ -555,22 +472,22 @@ if submit:
                     if 'abas' in optional:
                         add_abas(paragraph, optional['abas'])
                 
-            if "SRS Report Information" in paragraph.text:
-                # Add SCQ
-                if scq_result:
-                    add_scq_form(paragraph)
-                # Add SRS
-                if len(teacher_score) == 0:
-                    add_srs_no_teacher(paragraph)
-                else:
-                    add_srs_yes_teacher(paragraph, teacher_score)
+            # if "SRS Report Information" in paragraph.text:
+            #     # Add SCQ
+            #     if scq_result:
+            #         add_scq_form(paragraph)
+            #     # Add SRS
+            #     if len(teacher_score) == 0:
+            #         add_srs_no_teacher(paragraph)
+            #     else:
+            #         add_srs_yes_teacher(paragraph, teacher_score)
             
-            if "Social Responsiveness Scale" in paragraph.text:
-                if teacher_eval:
-                    paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n", style='CustomStyle')
-                    paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
-                else:
-                    paragraph.add_run("\nDevelopmental History & Review of Records", style='CustomStyle')
+            # if "Social Responsiveness Scale" in paragraph.text:
+                # if teacher_eval:
+                #     paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n", style='CustomStyle')
+                #     paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
+                # else:
+                #     paragraph.add_run("\nDevelopmental History & Review of Records", style='CustomStyle')
 
             if "[[District Grade School Setting]]" in paragraph.text:
                 add_school(paragraph)
