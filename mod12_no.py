@@ -16,11 +16,6 @@ st.set_page_config(
     page_icon="📝",
     layout="centered",
     initial_sidebar_state="expanded",
-    # menu_items={
-    #     'Get Help': 'https://www.extremelycoolapp.com/help',
-    #     'Report a bug': "https://www.extremelycoolapp.com/bug",
-    #     'About': "# This is a header. This is an *extremely* cool app!"
-    # }
 )
 
 ##########################################################
@@ -32,6 +27,8 @@ dropdowns = {
     'DiagnosisHistory': [],
     'Services': [],
     'Grade': [],
+    'DevelopmentalConcerns': [],
+    'CaregiverDevelopmentalConcerns': [],
 }
 connections = {}
 
@@ -176,75 +173,66 @@ with st.form('BasicInfo'):
     
     data['{{Date Report Sent to Patient}}'] = format_date_with_ordinal(st.date_input("Date Report Sent to Patient"))
 
-    lines["{{Result of the evaluation}}"] = st.multiselect(
-        "Result of the evaluation",
-        dropdowns['EvaluationResults'],
-        # [
-        #     "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
-        #     "F88.0 - Global Developmental Delay (per behavioral presentation)",
-        #     "F80.2 - Mixed Receptive-Expressive Language Disorder",
-        #     "F90.2 - Attention Deficit Hyperactivity Disorder - Combined-Type",
-        #     "F50.82 Avoidant/Restrictive Food Intake Disorder",
-        #     "None"
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
+    # if scq_result:
+    #     data["{{Results (SCQ) - Lifetime Form}}"] = st.text_input(
+    #         "Results (SCQ) - Lifetime Form"
+    #     )
 
-    if scq_result:
-        data["{{Results (SCQ) - Lifetime Form}}"] = st.text_input(
-            "Results (SCQ) - Lifetime Form"
-        )
-
-    data["{{SRS-2 Score Caregiver}}"] = st.text_input("Caregiver's SRS-2 Score")
+    # data["{{SRS-2 Score Caregiver}}"] = st.text_input("Caregiver's SRS-2 Score")
     
-    data["{{Social Communication and Interaction Score Caregiver}}"] = st.text_input("Social Communication and Interaction Score Caregiver")
+    # data["{{Social Communication and Interaction Score Caregiver}}"] = st.text_input("Social Communication and Interaction Score Caregiver")
     
-    data["{{Restricted Interests and Repetitive Behavior Score Caregiver}}"] = st.text_input("Restricted Interests and Repetitive Behavior Score Caregiver")
+    # data["{{Restricted Interests and Repetitive Behavior Score Caregiver}}"] = st.text_input("Restricted Interests and Repetitive Behavior Score Caregiver")
 
-    data["{{Caregiver's level of concern}}"] = st.radio(
-        "Caregiver's level of concern",
-        ['no', 'mild', 'moderate', 'severe']
-    )
+    # data["{{Caregiver's level of concern}}"] = st.radio(
+    #     "Caregiver's level of concern",
+    #     ['no', 'mild', 'moderate', 'severe']
+    # )
 
-    data["{{Evaluator's level of concern}}"] = st.radio(
-        "Evaluator's level of concern",
-        ['no', 'mild', 'moderate', 'severe']
-    )
+    # data["{{Evaluator's level of concern}}"] = st.radio(
+    #     "Evaluator's level of concern",
+    #     ['no', 'mild', 'moderate', 'severe']
+    # )
 
-    ##########################################################
-    if teacher_eval:
-        st.header("Teacher SSR Score")
-        st.markdown("*Skip this section if teacher did not give SSR Score*")
+    # ##########################################################
+    # if teacher_eval:
+    #     st.header("Teacher SSR Score")
+    #     st.markdown("*Skip this section if teacher did not give SSR Score*")
 
-        teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
+    #     teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
 
-        teacher_score['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
+    #     teacher_score['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
 
-        teacher_score['{{Social Communication and Interaction Score Teacher}}'] = st.text_input("Social Communication and Interaction Score Teacher")
+    #     teacher_score['{{Social Communication and Interaction Score Teacher}}'] = st.text_input("Social Communication and Interaction Score Teacher")
 
-        teacher_score['{{Restricted Interests and Repetitive Behavior Score Teacher}}'] = st.text_input("Restricted Interests and Repetitive Behavior Score Teacher")
+    #     teacher_score['{{Restricted Interests and Repetitive Behavior Score Teacher}}'] = st.text_input("Restricted Interests and Repetitive Behavior Score Teacher")
 
-        teacher_score["{{Teacher level of concern}}"] = st.radio(
-            "Teacher's level of concern",
-            ['no', 'mild', 'moderate', 'severe']
-        )
+    #     teacher_score["{{Teacher level of concern}}"] = st.radio(
+    #         "Teacher's level of concern",
+    #         ['no', 'mild', 'moderate', 'severe']
+    #     )
 
     ######################################################
     st.header("Medical/Developmental History")
     
-    lines['{{Diagnosis History}}'] = st.multiselect(
-        "Diagnosis History",
-        dropdowns['DiagnosisHistory'],
-        # ['History of language and social communication delays.'],
+    lines['{{Developmental Concerns}}'] = st.multiselect(
+        "Developmental Concerns",
+        dropdowns['DevelopmentalConcerns'],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
-    lines['{{Medications}}'] = st.multiselect(
-        "Medications",
+    lines['{{Medical Concerns}}'] = st.multiselect(
+        "Medical Concerns",
         ['None noted or reported.'],
         placeholder="Can input multiple options",
+        accept_new_options=True
+    )
+
+    bullet['CaregiverDevelopmentalConcerns'] = st.multiselect(
+        "Caregiver\'s Developmental Concerns",
+        dropdowns['CaregiverDevelopmentalConcerns'],
+        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
@@ -263,11 +251,7 @@ with st.form('BasicInfo'):
 
     data['{{Grade}}'] = st.selectbox(
         "Grade",
-        [
-            'EPK (2023-24 school year)', 
-            'UPK (2023-24 school year)', 
-            'Kindergarten (2023-24 school year)'
-        ],
+        dropdowns["Grade"],
         index=None,
         placeholder="Select a grade or enter a new one",
         accept_new_options=True,
@@ -283,14 +267,7 @@ with st.form('BasicInfo'):
 
     comma['{{Services}}'] = st.multiselect(
         "Services",
-        [
-            "None",
-            "Speech therapy",
-            "Occupational therapy",
-            "Physical therapy",
-            "Extended school year services",
-            "Testing accommodations"
-        ],
+        dropdowns['Services'],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
@@ -371,119 +348,7 @@ with st.form('BasicInfo'):
         optional["abas"]['ABAS Social'] = st.text_input("ABAS Social")
         optional["abas"]['ABAS Practical'] = st.text_input("ABAS Practical")
 
-    ############################################
-    st.header("DSM Criteria")
     
-    bullet['SocialReciprocity'] = st.multiselect(    
-        "Deficits in social emotional reciprocity",
-        [
-            "None",
-            "Awkward social initiation and response",
-            "Difficulties with chit-chat",
-            "Difficulty interpreting figurative language",
-            "Limited social approach or greetings",
-        ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['NonverbalComm'] = st.multiselect(
-        "Deficits in nonverbal communicative behaviors used for social interaction",
-        [
-            "None",
-            "Limited well-directed eye contact",
-            "Difficulty reading facial expressions",
-            "Absence of joint attention",
-            "Lack of well-integrated gestures",
-            "Limited range of facial expression",
-        ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['Relationships'] = st.multiselect(
-        "Deficits in developing, maintaining, and understanding relationships",
-        [
-            "None",
-            "Limited engagement with same age peers",
-            "Difficulties adjusting behavior to social context",
-            "Difficulties forming friendships",
-        ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['RepetitiveBehaviors'] = st.multiselect(
-        "Stereotyped or repetitive motor movements, use of objects, or speech",
-        [
-            "None",
-            "Repetitive whole-body movements",
-            "Repetitive hand movements",
-            "Echolalia of sounds",
-            "Echolalia of words",
-            "Stereotyped speech",
-        ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['SamenessRoutines'] = st.multiselect(
-        "Insistence on sameness, inflexible adherence to routines or ritualized behavior",
-        [
-            "None",
-            "Difficulties with changes in routine across developmental course",
-            "Notable difficulties with transitions",
-            "Insistence on following very specific routines",
-        ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['RestrictedInterests'] = st.multiselect(
-        "Highly restricted, fixated interests that are abnormal in intensity or focus",
-        [
-            "None",
-            "Persistent pattern of perseverative interests",
-            "Notable interest in topics others may find odd",
-            "Very restricted pattern of eating and sleep time behavior",
-        ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['SensoryReactivity'] = st.multiselect(
-        "Hyper- or hypo-reactivity to sensory aspects of the environment:",
-        [
-            "None",
-            "Auditory sensitivities",
-            "Tactile defensiveness",
-            "Proprioceptive-seeking behavior",
-        ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    comma['{{Symptoms present in the early developmental period}}'] = st.multiselect(
-        "Symptoms present in the early developmental period",
-        [
-            "Confirmed by record review",
-            "None",
-        ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    comma['{{Symptoms cause clinically significant impairment}}'] = st.multiselect(
-        "Symptoms cause clinically significant impairment",
-        [
-            "Confirmed by record review",
-            "None",
-        ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -652,7 +517,7 @@ if submit:
     
 
     #### Edit document 
-    doc = Document('templates/template_mod_12.docx')
+    doc = Document('templates/template_mod_12_no_autism.docx')
     if doc:
         # Get file name
         today_date = format_date_with_ordinal(datetime.date.today())

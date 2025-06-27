@@ -263,11 +263,12 @@ with st.form('BasicInfo'):
 
     data['{{Grade}}'] = st.selectbox(
         "Grade",
-        [
-            'EPK (2023-24 school year)', 
-            'UPK (2023-24 school year)', 
-            'Kindergarten (2023-24 school year)'
-        ],
+        dropdowns['Grade'],
+        # [
+        #     'EPK (2023-24 school year)', 
+        #     'UPK (2023-24 school year)', 
+        #     'Kindergarten (2023-24 school year)'
+        # ],
         index=None,
         placeholder="Select a grade or enter a new one",
         accept_new_options=True,
@@ -283,14 +284,15 @@ with st.form('BasicInfo'):
 
     comma['{{Services}}'] = st.multiselect(
         "Services",
-        [
-            "None",
-            "Speech therapy",
-            "Occupational therapy",
-            "Physical therapy",
-            "Extended school year services",
-            "Testing accommodations"
-        ],
+        dropdowns['Services'],
+        # [
+        #     "None",
+        #     "Speech therapy",
+        #     "Occupational therapy",
+        #     "Physical therapy",
+        #     "Extended school year services",
+        #     "Testing accommodations"
+        # ],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
