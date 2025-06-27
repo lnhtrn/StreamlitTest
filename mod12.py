@@ -47,7 +47,7 @@ for worksheet in dropdowns:
         ) 
         dropdowns[worksheet] = df.iloc[:, 0].tolist()
         # add school year
-        dropdowns['SchoolYear'] = df.iloc[:, 1].tolist()
+        # dropdowns['SchoolYear'] = df.iloc[:, 1].tolist()
     else:
         df = connections[worksheet].read(
             ttl="10m",
