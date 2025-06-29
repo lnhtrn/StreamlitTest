@@ -12,50 +12,49 @@ from docx.shared import Inches
 
 ##########################################################
 st.set_page_config(
-    page_title="Module 1&2 No Autism",
+    page_title="Module 3",
     page_icon="📝",
     layout="centered",
     initial_sidebar_state="expanded",
+    # menu_items={
+    #     'Get Help': 'https://www.extremelycoolapp.com/help',
+    #     'Report a bug': "https://www.extremelycoolapp.com/bug",
+    #     'About': "# This is a header. This is an *extremely* cool app!"
+    # }
 )
 
 ##########################################################
 # Access Google Sheets
 
 dropdowns = {
-    # 'PrimaryConcerns': [],
-    # 'EvaluationResults': [],
-    # 'DiagnosisHistory': [],
-    # 'Services': [],
-    # 'Grade': [],
-    # 'DevelopmentalConcerns': [],
-    # 'MedicalConcerns': [],
-    # 'CaregiverDevelopmentalConcerns': [],
+    'PrimaryConcerns': [],
+    'EvaluationResults': [],
+    'DiagnosisHistory': [],
+    'Services': [],
+    'Grade': [],
 }
 connections = {}
 
-# Create a connection object.
-connections['All'] = st.connection(f"mod12_all", type=GSheetsConnection)
-# Read object
-df = connections['All'].read(
-    ttl="30m",
-    usecols=list(range(6)),
-    nrows=30,
-) 
-for col_name in df.columns:
-    dropdowns[col_name] = df[col_name].tolist()
-    dropdowns[col_name] = [x for x in dropdowns[col_name] if x != 'nan']
-
-# Create a connection object.
-connections['noAutism'] = st.connection(f"mod12_noAutism", type=GSheetsConnection)
-# Read object
-df = connections['noAutism'].read(
-    ttl="30m",
-    usecols=list(range(3)),
-    nrows=30,
-) 
-for col_name in df.columns:
-    dropdowns[col_name] = df[col_name].tolist()
-    dropdowns[col_name] = [x for x in dropdowns[col_name] if x != 'nan']
+for worksheet in dropdowns:
+    # Create a connection object.
+    connections[worksheet] = st.connection(f"mod12_{worksheet}", type=GSheetsConnection)
+    # Read object
+    if worksheet=="Grade":
+        df = connections[worksheet].read(
+            ttl="10m",
+            usecols=[0, 1],
+            nrows=30,
+        ) 
+        dropdowns[worksheet] = df.iloc[:, 0].tolist()
+        # add school year
+        # dropdowns['SchoolYear'] = df.iloc[:, 1].tolist()
+    else:
+        df = connections[worksheet].read(
+            ttl="10m",
+            usecols=[0],
+            nrows=30,
+        ) 
+        dropdowns[worksheet] = df.iloc[:, 0].tolist()
 
 def clear_my_cache():
     st.cache_data.clear()
@@ -71,8 +70,8 @@ with st.sidebar:
     
     ####################################################
     st.markdown("**Check to include score in the form:** Scores to report:")
-    # scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
-    # teacher_eval = st.checkbox("Teacher's SSR Scores")
+    scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
+    teacher_eval = st.checkbox("Teacher's SSR Scores")
     wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
     dppr_score = st.checkbox("Developmental Profile – Fourth Edition - Parent Report (DPPR)")
     pls_score = st.checkbox("Preschool Language Scale - Fifth Edition (PLS)")
@@ -83,7 +82,7 @@ with st.sidebar:
 
 
 col1,col2 = st.columns(2)
-col1.title('Module 1&2 No Autism Report Builder')
+col1.title('Module 1&2 Report Builder')
 
 def format_date_with_ordinal(date_obj):
     day = date_obj.day
@@ -150,7 +149,7 @@ with st.form('BasicInfo'):
 
     bullet['CaregiverPrimaryConcerns'] = st.multiselect(
         "Caregiver\'s Primary Concerns",
-        dropdowns['Caregiver\'s Primary Concerns'],
+        dropdowns['PrimaryConcerns'],
         # [
         #     "Speech delays impacting social opportunities.",
         #     "Clarifying diagnostic presentation.",
@@ -191,27 +190,75 @@ with st.form('BasicInfo'):
     
     data['{{Date Report Sent to Patient}}'] = format_date_with_ordinal(st.date_input("Date Report Sent to Patient"))
 
+    lines["{{Result of the evaluation}}"] = st.multiselect(
+        "Result of the evaluation",
+        dropdowns['EvaluationResults'],
+        # [
+        #     "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
+        #     "F88.0 - Global Developmental Delay (per behavioral presentation)",
+        #     "F80.2 - Mixed Receptive-Expressive Language Disorder",
+        #     "F90.2 - Attention Deficit Hyperactivity Disorder - Combined-Type",
+        #     "F50.82 Avoidant/Restrictive Food Intake Disorder",
+        #     "None"
+        # ],
+        placeholder="Select multiple options from the list or enter a new one",
+        accept_new_options=True
+    )
+
+    if scq_result:
+        data["{{Results (SCQ) - Lifetime Form}}"] = st.text_input(
+            "Results (SCQ) - Lifetime Form"
+        )
+
+    data["{{SRS-2 Score Caregiver}}"] = st.text_input("Caregiver's SRS-2 Score")
+    
+    data["{{Social Communication and Interaction Score Caregiver}}"] = st.text_input("Social Communication and Interaction Score Caregiver")
+    
+    data["{{Restricted Interests and Repetitive Behavior Score Caregiver}}"] = st.text_input("Restricted Interests and Repetitive Behavior Score Caregiver")
+
+    data["{{Caregiver's level of concern}}"] = st.radio(
+        "Caregiver's level of concern",
+        ['no', 'mild', 'moderate', 'severe']
+    )
+
+    data["{{Evaluator's level of concern}}"] = st.radio(
+        "Evaluator's level of concern",
+        ['no', 'mild', 'moderate', 'severe']
+    )
+
+    ##########################################################
+    if teacher_eval:
+        st.header("Teacher SSR Score")
+        st.markdown("*Skip this section if teacher did not give SSR Score*")
+
+        teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
+
+        teacher_score['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
+
+        teacher_score['{{Social Communication and Interaction Score Teacher}}'] = st.text_input("Social Communication and Interaction Score Teacher")
+
+        teacher_score['{{Restricted Interests and Repetitive Behavior Score Teacher}}'] = st.text_input("Restricted Interests and Repetitive Behavior Score Teacher")
+
+        teacher_score["{{Teacher level of concern}}"] = st.radio(
+            "Teacher's level of concern",
+            ['no', 'mild', 'moderate', 'severe']
+        )
+
     ######################################################
     st.header("Medical/Developmental History")
     
-    lines['{{Developmental Concerns}}'] = st.multiselect(
-        "Developmental Concerns",
-        dropdowns['Developmental Concerns'],
+    lines['{{Diagnosis History}}'] = st.multiselect(
+        "Diagnosis History",
+        dropdowns['DiagnosisHistory'],
+        # ['History of language and social communication delays.'],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
-    lines['{{Medical Concerns}}'] = st.multiselect(
-        "Medical Concerns",
-        dropdowns['Medical Concerns'],
+    lines['{{Medications}}'] = st.multiselect(
+        "Medications",
+        ['None noted or reported.'],
         placeholder="Can input multiple options",
-        accept_new_options=True
-    )
-
-    bullet['CaregiverDevelopmentalConcerns'] = st.multiselect(
-        "Caregiver\'s Developmental Concerns",
-        dropdowns['Caregiver\'s Developmental Concerns'],
-        placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
@@ -230,7 +277,7 @@ with st.form('BasicInfo'):
 
     data['{{Grade}}'] = st.selectbox(
         "Grade",
-        dropdowns["Grade"],
+        dropdowns['Grade'],
         index=None,
         placeholder="Select a grade or enter a new one",
         accept_new_options=True,
@@ -238,7 +285,7 @@ with st.form('BasicInfo'):
 
     data['School Year'] = st.selectbox(
         "School Year",
-        dropdowns["School Year"],
+        dropdowns["SchoolYear"],
         index=None,
         placeholder="Select a grade or enter a new one",
         accept_new_options=True,
@@ -246,13 +293,7 @@ with st.form('BasicInfo'):
 
     data['{{Education Setting}}'] = st.selectbox(
         "Education Setting",
-        [
-            "General Education", 
-            "Integrated Co-Taught", 
-            "12:1:1", 
-            "8:1:1", 
-            "6:1:1"
-        ],
+        ["General Education", "Integrated Co-Taught", "12:1:1", "8:1:1", "6:1:1"],
         index=None,
         placeholder="Select a grade or enter a new one",
         accept_new_options=True,
@@ -341,7 +382,119 @@ with st.form('BasicInfo'):
         optional["abas"]['ABAS Social'] = st.text_input("ABAS Social")
         optional["abas"]['ABAS Practical'] = st.text_input("ABAS Practical")
 
+    ############################################
+    st.header("DSM Criteria")
     
+    bullet['SocialReciprocity'] = st.multiselect(    
+        "Deficits in social emotional reciprocity",
+        [
+            "None",
+            "Awkward social initiation and response",
+            "Difficulties with chit-chat",
+            "Difficulty interpreting figurative language",
+            "Limited social approach or greetings",
+        ],
+        placeholder="Select multiple options from the list or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['NonverbalComm'] = st.multiselect(
+        "Deficits in nonverbal communicative behaviors used for social interaction",
+        [
+            "None",
+            "Limited well-directed eye contact",
+            "Difficulty reading facial expressions",
+            "Absence of joint attention",
+            "Lack of well-integrated gestures",
+            "Limited range of facial expression",
+        ],
+        placeholder="Select multiple options from the list or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['Relationships'] = st.multiselect(
+        "Deficits in developing, maintaining, and understanding relationships",
+        [
+            "None",
+            "Limited engagement with same age peers",
+            "Difficulties adjusting behavior to social context",
+            "Difficulties forming friendships",
+        ],
+        placeholder="Select multiple options from the list or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['RepetitiveBehaviors'] = st.multiselect(
+        "Stereotyped or repetitive motor movements, use of objects, or speech",
+        [
+            "None",
+            "Repetitive whole-body movements",
+            "Repetitive hand movements",
+            "Echolalia of sounds",
+            "Echolalia of words",
+            "Stereotyped speech",
+        ],
+        placeholder="Select multiple options from the list or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['SamenessRoutines'] = st.multiselect(
+        "Insistence on sameness, inflexible adherence to routines or ritualized behavior",
+        [
+            "None",
+            "Difficulties with changes in routine across developmental course",
+            "Notable difficulties with transitions",
+            "Insistence on following very specific routines",
+        ],
+        placeholder="Select multiple options from the list or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['RestrictedInterests'] = st.multiselect(
+        "Highly restricted, fixated interests that are abnormal in intensity or focus",
+        [
+            "None",
+            "Persistent pattern of perseverative interests",
+            "Notable interest in topics others may find odd",
+            "Very restricted pattern of eating and sleep time behavior",
+        ],
+        placeholder="Select multiple options from the list or enter a new one",
+        accept_new_options=True
+    )
+
+    bullet['SensoryReactivity'] = st.multiselect(
+        "Hyper- or hypo-reactivity to sensory aspects of the environment:",
+        [
+            "None",
+            "Auditory sensitivities",
+            "Tactile defensiveness",
+            "Proprioceptive-seeking behavior",
+        ],
+        placeholder="Select multiple options from the list or enter a new one",
+        accept_new_options=True
+    )
+
+    comma['{{Symptoms present in the early developmental period}}'] = st.multiselect(
+        "Symptoms present in the early developmental period",
+        [
+            "Confirmed by record review",
+            "None",
+        ],
+        placeholder="Select multiple options from the list or enter a new one",
+        accept_new_options=True
+    )
+
+    comma['{{Symptoms cause clinically significant impairment}}'] = st.multiselect(
+        "Symptoms cause clinically significant impairment",
+        [
+            "Confirmed by record review",
+            "None",
+        ],
+        placeholder="Select multiple options from the list or enter a new one",
+        accept_new_options=True
+    )
+
+
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -372,6 +525,56 @@ def add_school(paragraph):
     p.add_run(f": {data['{{School Name}}']}\t", style='CustomStyle')
     p.add_run("Setting", style='CustomStyle').font.underline = True
     p.add_run(f": {data['{{Education Setting}}']}", style='CustomStyle')
+    delete_paragraph(paragraph)
+
+def add_scq_form(paragraph):
+    r = paragraph.insert_paragraph_before().add_run('Social Communication Questionnaire (SCQ) – Lifetime Form', style='CustomStyle')
+    r.italic = True
+    r.font.underline = True
+    p = paragraph.insert_paragraph_before()
+    p.add_run("The SCQ evaluates for symptoms of autism spectrum disorder across developmental history. Scores above 15 are suggestive of an autism diagnosis. Based on {{Preferred Pronouns 2}} {{Caregiver type}}’s report, {{Patient First Name}}’s score was {{Results (SCQ) - Lifetime Form}}. ", style='CustomStyle')
+    p.add_run("This score is clearly consistent with autism at present.\n", style='CustomStyle').italic = True
+
+def add_srs_no_teacher(paragraph):
+    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle')
+    r.italic = True
+    r.font.underline = True
+    paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
+    paragraph.insert_paragraph_before()
+    paragraph.insert_paragraph_before().add_run('\tSRS-2 Total Score: {{SRS-2 Score Caregiver}} ({{Caregiver type}})', style='CustomStyle').bold = True
+    paragraph.insert_paragraph_before()
+    paragraph.insert_paragraph_before().add_run('\tSocial Communication and Interaction: {{Social Communication and Interaction Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run('\tRestricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
+    paragraph.insert_paragraph_before()
+    observe = paragraph.insert_paragraph_before()
+    observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
+    observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
+    observe.add_run("My observation aligned with a {{Evaluator's level of concern}} concern.", style='CustomStyle').bold = True
+    delete_paragraph(paragraph)
+
+def add_srs_yes_teacher(paragraph, score_data):
+    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle')
+    r.italic = True
+    r.font.underline = True
+    paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
+    paragraph.insert_paragraph_before()
+    p = paragraph.insert_paragraph_before()
+    p.add_run('\tSRS-2 Total Score: {{SRS-2 Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle').bold = True
+    p.add_run(f"{score_data['{{SRS-2 Score Teacher}}']} (teacher)", style='CustomStyle').bold = True
+    paragraph.insert_paragraph_before()
+    p = paragraph.insert_paragraph_before()
+    p.add_run('\tSocial Communication and Interaction: {{Social Communication and Interaction Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle')
+    p.add_run(f"{score_data['{{Social Communication and Interaction Score Teacher}}']} (teacher)", style='CustomStyle')
+    p = paragraph.insert_paragraph_before()
+    p.add_run('\tRestricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle')
+    p.add_run(f'{score_data["{{Restricted Interests and Repetitive Behavior Score Teacher}}"]} (teacher)', style='CustomStyle')
+    paragraph.insert_paragraph_before()
+    observe = paragraph.insert_paragraph_before()
+    observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
+    observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
+    observe.add_run("{{Patient First Name}}’s teacher reported a ", style='CustomStyle')
+    observe.add_run(f"{score_data['{{Teacher level of concern}}']} concern, and ", style='CustomStyle')
+    observe.add_run("my observation aligned with a {{Evaluator's level of concern}} concern.", style='CustomStyle').bold = True
     delete_paragraph(paragraph)
 
 def add_wppsi(paragraph, score_data):
@@ -460,8 +663,9 @@ if submit:
     yaml_string = yaml_string + '\n' + yaml.dump(bullet, sort_keys=False)
     yaml_data = st.code(yaml_string, language=None)
     
+
     #### Edit document 
-    doc = Document('templates/template_mod_12_no_autism.docx')
+    doc = Document('templates/template_mod_12.docx')
     if doc:
         # Get file name
         today_date = format_date_with_ordinal(datetime.date.today())
@@ -499,22 +703,22 @@ if submit:
                     if 'abas' in optional:
                         add_abas(paragraph, optional['abas'])
                 
-            # if "SRS Report Information" in paragraph.text:
-            #     # Add SCQ
-            #     if scq_result:
-            #         add_scq_form(paragraph)
-            #     # Add SRS
-            #     if len(teacher_score) == 0:
-            #         add_srs_no_teacher(paragraph)
-            #     else:
-            #         add_srs_yes_teacher(paragraph, teacher_score)
+            if "SRS Report Information" in paragraph.text:
+                # Add SCQ
+                if scq_result:
+                    add_scq_form(paragraph)
+                # Add SRS
+                if len(teacher_score) == 0:
+                    add_srs_no_teacher(paragraph)
+                else:
+                    add_srs_yes_teacher(paragraph, teacher_score)
             
-            # if "Social Responsiveness Scale" in paragraph.text:
-                # if teacher_eval:
-                #     paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n", style='CustomStyle')
-                #     paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
-                # else:
-                #     paragraph.add_run("\nDevelopmental History & Review of Records", style='CustomStyle')
+            if "Social Responsiveness Scale" in paragraph.text:
+                if teacher_eval:
+                    paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n", style='CustomStyle')
+                    paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
+                else:
+                    paragraph.add_run("\nDevelopmental History & Review of Records", style='CustomStyle')
 
             if "[[District Grade School Setting]]" in paragraph.text:
                 add_school(paragraph)
