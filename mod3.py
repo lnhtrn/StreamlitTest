@@ -301,7 +301,7 @@ with st.form('BasicInfo'):
 
     data['School Year'] = st.selectbox(
         "School Year",
-        dropdowns["SchoolYear"],
+        dropdowns["School Year"],
         index=None,
         placeholder="Select a grade or enter a new one",
         accept_new_options=True,
