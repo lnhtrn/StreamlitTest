@@ -26,42 +26,27 @@ st.set_page_config(
 ##########################################################
 # Access Google Sheets
 
-dropdowns = {
-    'PrimaryConcerns': [],
-    'EvaluationResults': [],
-    'DiagnosisHistory': [],
-    'Services': [],
-    'Grade': [],
-}
+dropdowns = {}
 connections = {}
 
-for worksheet in dropdowns:
-    # Create a connection object.
-    connections[worksheet] = st.connection(f"mod12_{worksheet}", type=GSheetsConnection)
-    # Read object
-    if worksheet=="Grade":
-        df = connections[worksheet].read(
-            ttl="10m",
-            usecols=[0, 1],
-            nrows=30,
-        ) 
-        dropdowns[worksheet] = df.iloc[:, 0].tolist()
-        # add school year
-        # dropdowns['SchoolYear'] = df.iloc[:, 1].tolist()
-    else:
-        df = connections[worksheet].read(
-            ttl="10m",
-            usecols=[0],
-            nrows=30,
-        ) 
-        dropdowns[worksheet] = df.iloc[:, 0].tolist()
+# Create a connection object.
+connections['All'] = st.connection(f"mod12_all", type=GSheetsConnection)
+# Read object
+df = connections['All'].read(
+    ttl="30m",
+    usecols=list(range(6)),
+    nrows=30,
+) 
+for col_name in df.columns:
+    dropdowns[col_name] = df[col_name].tolist()
+    dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
 
 def clear_my_cache():
     st.cache_data.clear()
 
 with st.sidebar:
     st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
-    st.link_button("Edit Dropdown Options", st.secrets['mod12_spreadsheet'])
+    st.link_button("Edit Dropdown Options", st.secrets['mod3_spreadsheet'])
     st.button('Reload Dropdown Data', on_click=clear_my_cache)
 
     # Display data 
@@ -82,7 +67,7 @@ with st.sidebar:
 
 
 col1,col2 = st.columns(2)
-col1.title('Module 1&2 Report Builder')
+col1.title('Module 3 Report Builder')
 
 def format_date_with_ordinal(date_obj):
     day = date_obj.day

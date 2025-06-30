@@ -21,16 +21,7 @@ st.set_page_config(
 ##########################################################
 # Access Google Sheets
 
-dropdowns = {
-    # 'PrimaryConcerns': [],
-    # 'EvaluationResults': [],
-    # 'DiagnosisHistory': [],
-    # 'Services': [],
-    # 'Grade': [],
-    # 'DevelopmentalConcerns': [],
-    # 'MedicalConcerns': [],
-    # 'CaregiverDevelopmentalConcerns': [],
-}
+dropdowns = {}
 connections = {}
 
 # Create a connection object.
@@ -43,7 +34,7 @@ df = connections['All'].read(
 ) 
 for col_name in df.columns:
     dropdowns[col_name] = df[col_name].tolist()
-    dropdowns[col_name] = [x for x in dropdowns[col_name] if x != 'nan']
+    dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
 
 # Create a connection object.
 connections['noAutism'] = st.connection(f"mod12_noAutism", type=GSheetsConnection)
@@ -55,7 +46,7 @@ df = connections['noAutism'].read(
 ) 
 for col_name in df.columns:
     dropdowns[col_name] = df[col_name].tolist()
-    dropdowns[col_name] = [x for x in dropdowns[col_name] if x != 'nan']
+    dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
 
 def clear_my_cache():
     st.cache_data.clear()
