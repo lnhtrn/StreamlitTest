@@ -160,12 +160,6 @@ with st.form('BasicInfo'):
 
     data['{{Evaluation Date}}'] = format_date_with_ordinal(st.date_input("Evaluation Date"))
 
-    data['{{Module used}}'] = st.radio("Module used", ["Module 1", "Module 2"])
-    if data['{{Module used}}'] == "Module 1":
-        data['{{Module Description}}'] = "Module 1 is designed for children with single words"
-    else:
-        data['{{Module Description}}'] = "Module 2 is designed for children with phrase speech"
-
     data['{{Location of the evaluation}}'] = st.radio(
         "Location of the evaluation",
         ['home', 'school', 'the office'],
@@ -541,11 +535,11 @@ def add_school(paragraph):
     # Add data
     p.add_run("District", style='CustomStyle').font.underline = True
     p.add_run(f": {data['{{School District}}']}\t", style='CustomStyle')
-    p.add_run("Classification").font.underline = True
+    p.add_run("Classification", style='CustomStyle').font.underline = True
     p.add_run(": {{Classification}}\n\n", style='CustomStyle')
 
     p.add_run("Setting", style='CustomStyle').font.underline = True
-    p.add_run(f": {data['{{Education Setting}}']}", style='CustomStyle')
+    p.add_run(f": {data['{{Education Setting}}']}\t", style='CustomStyle')
     p.add_run("Grade", style='CustomStyle').font.underline = True
     p.add_run(f": {data['{{Grade}}']} (", style='CustomStyle')
     p.add_run({data['School Year']}, style='CustomStyle').italic = True
@@ -747,9 +741,9 @@ if submit:
 
             if "Developmental History & Review of Records" in paragraph.text:
                 if teacher_ssr_eval:
-                    paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
+                    paragraph.add_run(f"\nSchool Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
                 if teacher_vineland_eval:
-                    paragraph.add_run(f"Report on Vineland Adaptive Behavior Scale provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
+                    paragraph.add_run(f"\nReport on Vineland Adaptive Behavior Scale provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
 
             if "[[District Grade School Setting]]" in paragraph.text:
                 add_school(paragraph)
