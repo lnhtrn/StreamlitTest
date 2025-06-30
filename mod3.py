@@ -559,7 +559,7 @@ def add_scq_form(paragraph):
     p.add_run("This score is clearly consistent with autism at present.\n", style='CustomStyle').italic = True
 
 def add_srs_no_teacher(paragraph):
-    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle')
+    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent Report', style='CustomStyle')
     r.italic = True
     r.font.underline = True
     paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
@@ -576,7 +576,7 @@ def add_srs_no_teacher(paragraph):
     delete_paragraph(paragraph)
 
 def add_srs_yes_teacher(paragraph, score_data):
-    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent', style='CustomStyle')
+    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent & Teacher Report', style='CustomStyle')
     r.italic = True
     r.font.underline = True
     paragraph.insert_paragraph_before().add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan. \nThe following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe concern. ', style='CustomStyle')
@@ -764,14 +764,14 @@ if submit:
         doc.save(filename)
 
         # Replace for lists separated by bullet points
-        tpl=DocxTemplate(filename)
-        print("Load template!")
+        # tpl=DocxTemplate(filename)
+        # print("Load template!")
 
-        tpl.render(bullet)
-        print("Bullet rendered!")
+        # tpl.render(bullet)
+        # print("Bullet rendered!")
 
-        tpl.save(filename)
-        print("File saved at", filename)
+        # tpl.save(filename)
+        # print("File saved at", filename)
 
         # Download 
         bio = io.BytesIO()
