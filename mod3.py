@@ -756,10 +756,14 @@ if submit:
 
             if "Vineland Adaptive Behavior Scales" in paragraph.text:
                 if teacher_vineland_eval:
-                    paragraph.add_run(" & Teacher Report", style='CustomStyle')
+                    r = paragraph.add_run(" & Teacher Report", style='CustomStyle')
+                    r.italic = True
+                    r.font.underline = True
                 else:
-                    paragraph.add_run(" Report", style='CustomStyle')
-
+                    r = paragraph.add_run(" Report", style='CustomStyle')
+                    r.italic = True
+                    r.font.underline = True
+            
             if "Developmental History & Review of Records" in paragraph.text:
                 if teacher_ssr_eval:
                     paragraph.add_run(f"\nSchool Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
@@ -768,6 +772,12 @@ if submit:
 
             if "[[District Grade School Setting]]" in paragraph.text:
                 add_school(paragraph)
+
+            if "[[Vineland Score Breakdown]]" in paragraph.text:
+                if teacher_vineland_eval:
+                    add_vineland_yes_teacher(paragraph)
+                else:
+                    add_vineland_no_teacher(paragraph)
         
         # Edit document
         for word in replace_word:
