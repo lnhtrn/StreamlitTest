@@ -546,8 +546,12 @@ def add_scq_form(paragraph):
     r.italic = True
     r.font.underline = True
     p = paragraph.insert_paragraph_before()
-    p.add_run("The SCQ evaluates for symptoms of autism spectrum disorder across developmental history. Scores above 15 are suggestive of an autism diagnosis. Based on {{Preferred Pronouns 2}} {{Caregiver type}}’s report, {{Patient First Name}}’s score was {{Results (SCQ) - Lifetime Form}}. ", style='CustomStyle')
-    p.add_run("This score is clearly consistent with autism at present.\n", style='CustomStyle').italic = True
+    p.add_run("The SCQ evaluates for symptoms of autism spectrum disorder across developmental history. Scores above 15 are suggestive of an autism diagnosis. Based on the {{Caregiver type}}’s report, ", style='CustomStyle')
+    p.add_run("{{Patient First Name}}’s score was {{Results (SCQ) – Lifetime Form}}. ", style='CustomStyle').bold = True
+    r = p.add_run("This score is clearly consistent with autism at present.\n", style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    delete_paragraph(paragraph)
 
 def add_vineland_no_teacher(paragraph):
     paragraph.insert_paragraph_before().add_run('\tAdaptive Behavior Composite: {{Vineland Score Caregiver}} ({{Caregiver type}})', style='CustomStyle').bold = True
@@ -740,16 +744,20 @@ if submit:
                         add_reelt(paragraph, optional['reelt'])
                     if 'abas' in optional:
                         add_abas(paragraph, optional['abas'])
-                
-            if "[[SRS Report Information]]" in paragraph.text:
+
+            if "[[SCQ Report Information]]" in paragraph.text:
                 # Add SCQ
                 if scq_result:
                     add_scq_form(paragraph)
-                # Add SRS
-                if len(teacher_score) == 0:
-                    add_srs_no_teacher(paragraph)
                 else:
+                    delete_paragraph(paragraph)
+                
+            if "[[SRS Report Information]]" in paragraph.text:
+                # Add SRS
+                if teacher_ssr_eval:
                     add_srs_yes_teacher(paragraph, teacher_score)
+                else:
+                    add_srs_no_teacher(paragraph)
             
             if "Social Responsiveness Scale" in paragraph.text:
                 if teacher_ssr_eval:
