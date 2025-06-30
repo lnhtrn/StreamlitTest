@@ -33,28 +33,43 @@ dropdowns = {
     'Services': [],
     'Grade': [],
 }
+
+# connections = {}
+
+# for worksheet in dropdowns:
+#     # Create a connection object.
+#     connections[worksheet] = st.connection(f"mod12_{worksheet}", type=GSheetsConnection)
+#     # Read object
+#     if worksheet=="Grade":
+#         df = connections[worksheet].read(
+#             ttl="10m",
+#             usecols=[0, 1],
+#             nrows=30,
+#         ) 
+#         dropdowns[worksheet] = df.iloc[:, 0].tolist()
+#         # add school year
+#         # dropdowns['SchoolYear'] = df.iloc[:, 1].tolist()
+#     else:
+#         df = connections[worksheet].read(
+#             ttl="10m",
+#             usecols=[0],
+#             nrows=30,
+#         ) 
+#         dropdowns[worksheet] = df.iloc[:, 0].tolist()
+
 connections = {}
 
-for worksheet in dropdowns:
-    # Create a connection object.
-    connections[worksheet] = st.connection(f"mod12_{worksheet}", type=GSheetsConnection)
-    # Read object
-    if worksheet=="Grade":
-        df = connections[worksheet].read(
-            ttl="10m",
-            usecols=[0, 1],
-            nrows=30,
-        ) 
-        dropdowns[worksheet] = df.iloc[:, 0].tolist()
-        # add school year
-        # dropdowns['SchoolYear'] = df.iloc[:, 1].tolist()
-    else:
-        df = connections[worksheet].read(
-            ttl="10m",
-            usecols=[0],
-            nrows=30,
-        ) 
-        dropdowns[worksheet] = df.iloc[:, 0].tolist()
+# Create a connection object.
+connections['All'] = st.connection(f"mod12_all", type=GSheetsConnection)
+# Read object
+df = connections['All'].read(
+    ttl="30m",
+    usecols=list(range(6)),
+    nrows=30,
+) 
+for col_name in df.columns:
+    dropdowns[col_name] = df[col_name].tolist()
+    dropdowns[col_name] = [x for x in dropdowns[col_name] if x != 'nan']
 
 def clear_my_cache():
     st.cache_data.clear()
@@ -149,7 +164,7 @@ with st.form('BasicInfo'):
 
     bullet['CaregiverPrimaryConcerns'] = st.multiselect(
         "Caregiver\'s Primary Concerns",
-        dropdowns['PrimaryConcerns'],
+        dropdowns["Caregiver\'s Primary Concerns"],
         # [
         #     "Speech delays impacting social opportunities.",
         #     "Clarifying diagnostic presentation.",
@@ -192,7 +207,7 @@ with st.form('BasicInfo'):
 
     lines["{{Result of the evaluation}}"] = st.multiselect(
         "Result of the evaluation",
-        dropdowns['EvaluationResults'],
+        dropdowns["Result of the evaluation"],
         # [
         #     "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
         #     "F88.0 - Global Developmental Delay (per behavioral presentation)",
@@ -249,7 +264,7 @@ with st.form('BasicInfo'):
     
     lines['{{Diagnosis History}}'] = st.multiselect(
         "Diagnosis History",
-        dropdowns['DiagnosisHistory'],
+        dropdowns['Diagnosis History'],
         # ['History of language and social communication delays.'],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
@@ -285,7 +300,7 @@ with st.form('BasicInfo'):
 
     data['School Year'] = st.selectbox(
         "School Year",
-        dropdowns["SchoolYear"],
+        dropdowns["School Year"],
         index=None,
         placeholder="Select a grade or enter a new one",
         accept_new_options=True,
