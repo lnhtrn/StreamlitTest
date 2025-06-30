@@ -178,7 +178,7 @@ with st.form('BasicInfo'):
 
     lines["{{Result of the evaluation}}"] = st.multiselect(
         "Result of the evaluation",
-        dropdowns['EvaluationResults'],
+        dropdowns['Result of the evaluation'],
         # [
         #     "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
         #     "F88.0 - Global Developmental Delay (per behavioral presentation)",
