@@ -188,7 +188,7 @@ with st.form('BasicInfo'):
     ##########################################################
     if scq_result:
         st.header("(SCQ) - Lifetime Form")
-        data["{{Results (SCQ) - Lifetime Form}}"] = st.text_input(
+        data["Results (SCQ) Lifetime Form"] = st.text_input(
             "Results (SCQ) - Lifetime Form"
         )
 
@@ -547,7 +547,8 @@ def add_scq_form(paragraph):
     r.font.underline = True
     p = paragraph.insert_paragraph_before()
     p.add_run("The SCQ evaluates for symptoms of autism spectrum disorder across developmental history. Scores above 15 are suggestive of an autism diagnosis. Based on the {{Caregiver type}}’s report, ", style='CustomStyle')
-    p.add_run("{{Patient First Name}}’s score was {{Results (SCQ) – Lifetime Form}}. ", style='CustomStyle').bold = True
+    p.add_run("{{Patient First Name}}’s score was ", style='CustomStyle').bold = True
+    p.add_run(f"{data['Results (SCQ) Lifetime Form']}. ", style='CustomStyle').bold = True
     r = p.add_run("This score is clearly consistent with autism at present.\n", style='CustomStyle')
     r.bold = True
     r.italic = True
