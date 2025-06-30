@@ -27,11 +27,11 @@ st.set_page_config(
 # Access Google Sheets
 
 dropdowns = {
-    'PrimaryConcerns': [],
-    'EvaluationResults': [],
-    'DiagnosisHistory': [],
-    'Services': [],
-    'Grade': [],
+    # 'PrimaryConcerns': [],
+    # 'EvaluationResults': [],
+    # 'DiagnosisHistory': [],
+    # 'Services': [],
+    # 'Grade': [],
 }
 
 # connections = {}
@@ -69,7 +69,7 @@ df = connections['All'].read(
 ) 
 for col_name in df.columns:
     dropdowns[col_name] = df[col_name].tolist()
-    dropdowns[col_name] = [x for x in dropdowns[col_name] if x != 'nan']
+    dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
 
 def clear_my_cache():
     st.cache_data.clear()
