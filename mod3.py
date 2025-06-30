@@ -30,7 +30,7 @@ dropdowns = {}
 connections = {}
 
 # Create a connection object.
-connections['All'] = st.connection(f"mod12_all", type=GSheetsConnection)
+connections['All'] = st.connection(f"mod3_all", type=GSheetsConnection)
 # Read object
 df = connections['All'].read(
     ttl="30m",
