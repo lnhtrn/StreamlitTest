@@ -259,7 +259,7 @@ with st.form('BasicInfo'):
         #     "Teacher's level of concern for Vineland Score",
         #     ['no', 'mild', 'moderate', 'severe']
         # )
-        
+
     ######################################################
     st.header("Medical/Developmental History")
     
@@ -537,18 +537,19 @@ def add_school(paragraph):
     p = paragraph.insert_paragraph_before()
     tab_stops = p.paragraph_format.tab_stops
     # tab_stops.clear()  # Start fresh for this paragraph only
-    tab_stops.add_tab_stop(Inches(3.5))
+    tab_stops.add_tab_stop(Inches(3))
     # Add data
     p.add_run("District", style='CustomStyle').font.underline = True
     p.add_run(f": {data['{{School District}}']}\t", style='CustomStyle')
-    p.add_run("Grade", style='CustomStyle').font.underline = True
-    ### italics for school year
-    p.add_run(f": {data['{{Grade}}']} (", style='CustomStyle')
-    p.add_run(f"{data['School Year']})\n\n", style='CustomStyle').italic = True
-    p.add_run("School", style='CustomStyle').font.underline = True
-    p.add_run(f": {data['{{School Name}}']}\t", style='CustomStyle')
+    p.add_run("Classification").font.underline = True
+    p.add_run(": {{Classification}}\n\n", style='CustomStyle')
+
     p.add_run("Setting", style='CustomStyle').font.underline = True
     p.add_run(f": {data['{{Education Setting}}']}", style='CustomStyle')
+    p.add_run("Grade", style='CustomStyle').font.underline = True
+    p.add_run(f": {data['{{Grade}}']} (", style='CustomStyle')
+    p.add_run({data['School Year']}, style='CustomStyle').italic = True
+    p.add_run(")\n\n", style='CustomStyle')
     delete_paragraph(paragraph)
 
 def add_scq_form(paragraph):
@@ -689,7 +690,7 @@ if submit:
     
 
     #### Edit document 
-    doc = Document('templates/template_mod_12.docx')
+    doc = Document('templates/template_mod_3.docx')
     if doc:
         # Get file name
         today_date = format_date_with_ordinal(datetime.date.today())
@@ -739,10 +740,16 @@ if submit:
             
             if "Social Responsiveness Scale" in paragraph.text:
                 if teacher_ssr_eval:
-                    paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n", style='CustomStyle')
+                    paragraph.add_run(" & teacher", style='CustomStyle')
+
+            if "Vineland Adaptive Behavior Scale 3" in paragraph.text:
+                    paragraph.add_run(" & teacher", style='CustomStyle')
+
+            if "Developmental History & Review of Records" in paragraph.text:
+                if teacher_ssr_eval:
                     paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
-                else:
-                    paragraph.add_run("\nDevelopmental History & Review of Records", style='CustomStyle')
+                if teacher_vineland_eval:
+                    paragraph.add_run(f"Report on Vineland Adaptive Behavior Scale provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
 
             if "[[District Grade School Setting]]" in paragraph.text:
                 add_school(paragraph)
