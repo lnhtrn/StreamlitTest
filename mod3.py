@@ -531,7 +531,7 @@ def add_school(paragraph):
     p = paragraph.insert_paragraph_before()
     tab_stops = p.paragraph_format.tab_stops
     # tab_stops.clear()  # Start fresh for this paragraph only
-    tab_stops.add_tab_stop(Inches(3))
+    tab_stops.add_tab_stop(Inches(2.5))
     # Add data
     p.add_run("District", style='CustomStyle').font.underline = True
     p.add_run(f": {data['{{School District}}']}\t", style='CustomStyle')
@@ -543,7 +543,7 @@ def add_school(paragraph):
     p.add_run("Grade", style='CustomStyle').font.underline = True
     p.add_run(f": {data['{{Grade}}']} (", style='CustomStyle')
     p.add_run({data['School Year']}, style='CustomStyle').italic = True
-    p.add_run(")\n\n", style='CustomStyle')
+    p.add_run(")", style='CustomStyle')
     delete_paragraph(paragraph)
 
 def add_scq_form(paragraph):
