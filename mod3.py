@@ -589,7 +589,7 @@ def add_srs_no_teacher(paragraph):
     observe = paragraph.insert_paragraph_before()
     observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
     observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
-    observe.add_run("My observation aligned with a {{Evaluator's level of concern}} concern.", style='CustomStyle').bold = True
+    observe.add_run("My observation aligned with a {{Evaluator's level of concern}} concern.\n", style='CustomStyle').bold = True
     delete_paragraph(paragraph)
 
 def add_srs_yes_teacher(paragraph, score_data):
@@ -617,7 +617,7 @@ def add_srs_yes_teacher(paragraph, score_data):
     observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
     observe.add_run("{{Patient First Name}}’s teacher reported a ", style='CustomStyle')
     observe.add_run(f"{score_data['{{Teacher level of concern}}']} concern, and ", style='CustomStyle')
-    observe.add_run("my observation aligned with a {{Evaluator's level of concern}} concern.", style='CustomStyle').bold = True
+    observe.add_run("my observation aligned with a {{Evaluator's level of concern}} concern.\n", style='CustomStyle').bold = True
     delete_paragraph(paragraph)
 
 def add_wppsi(paragraph, score_data):
