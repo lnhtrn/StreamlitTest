@@ -554,6 +554,20 @@ def add_scq_form(paragraph):
     p.add_run("The SCQ evaluates for symptoms of autism spectrum disorder across developmental history. Scores above 15 are suggestive of an autism diagnosis. Based on {{Preferred Pronouns 2}} {{Caregiver type}}’s report, {{Patient First Name}}’s score was {{Results (SCQ) - Lifetime Form}}. ", style='CustomStyle')
     p.add_run("This score is clearly consistent with autism at present.\n", style='CustomStyle').italic = True
 
+def add_vineland_no_teacher(paragraph):
+    paragraph.insert_paragraph_before().add_run('\tAdaptive Behavior Composite: {{Vineland Score Caregiver}} ({{Caregiver type}})', style='CustomStyle').bold = True
+    paragraph.insert_paragraph_before().add_run('\t\tCommunication: {{Communication Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run('\t\tDaily Living Skills: {{Daily Living Skills Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run('\t\tSocialization: {{Socialization Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
+    delete_paragraph(paragraph)
+
+def add_vineland_yes_teacher(paragraph):
+    paragraph.insert_paragraph_before().add_run('\tAdaptive Behavior Composite: {{Vineland Score Caregiver}} ({{Caregiver type}}), {{Vineland Score Teacher}} (teacher)', style='CustomStyle').bold = True
+    paragraph.insert_paragraph_before().add_run('\t\tCommunication: {{Communication Score Caregiver}} ({{Caregiver type}}), {{Communication Score Teacher}} (teacher)', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run('\t\tDaily Living Skills: {{Daily Living Skills Score Caregiver}} ({{Caregiver type}}), {{Daily Living Skills Score Teacher}} (teacher)', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run('\t\tSocialization: {{Socialization Score Caregiver}} ({{Caregiver type}}), {{Socialization Score Teacher}} (teacher)', style='CustomStyle')
+    delete_paragraph(paragraph)
+
 def add_srs_no_teacher(paragraph):
     r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent Report', style='CustomStyle')
     r.italic = True
@@ -737,7 +751,14 @@ if submit:
                     paragraph.add_run(" & teacher", style='CustomStyle')
 
             if "Vineland Adaptive Behavior Scale 3" in paragraph.text:
+                if teacher_vineland_eval:
                     paragraph.add_run(" & teacher", style='CustomStyle')
+
+            if "Vineland Adaptive Behavior Scales" in paragraph.text:
+                if teacher_vineland_eval:
+                    paragraph.add_run(" & Teacher Report", style='CustomStyle')
+                else:
+                    paragraph.add_run(" Report", style='CustomStyle')
 
             if "Developmental History & Review of Records" in paragraph.text:
                 if teacher_ssr_eval:
