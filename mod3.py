@@ -255,10 +255,11 @@ with st.form('BasicInfo'):
         
         teacher_score["{{Socialization Score Teacher}}"] = st.text_input("Socialization Score Teacher")
 
-        teacher_score["{{Teacher level of concern Vineland}}"] = st.radio(
-            "Teacher's level of concern for Vineland Score",
-            ['no', 'mild', 'moderate', 'severe']
-        )
+        # teacher_score["{{Teacher level of concern Vineland}}"] = st.radio(
+        #     "Teacher's level of concern for Vineland Score",
+        #     ['no', 'mild', 'moderate', 'severe']
+        # )
+        
     ######################################################
     st.header("Medical/Developmental History")
     
