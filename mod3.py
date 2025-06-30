@@ -241,18 +241,13 @@ with st.form('BasicInfo'):
     if teacher_vineland_eval:
         st.header("Vineland Adaptive Behavior Scales - Teacher's Scores")
 
-        teacher_score["{{Vineland Score Teacher}}"] = st.text_input("Vineland Score Teacher")
+        data["{{Vineland Score Teacher}}"] = st.text_input("Vineland Score Teacher")
         
-        teacher_score["{{Communication Score Teacher}}"] = st.text_input("Communication Score Teacher")
+        data["{{Communication Score Teacher}}"] = st.text_input("Communication Score Teacher")
         
-        teacher_score["{{Daily Living Skills Score Teacher}}"] = st.text_input("Daily Living Skills Score Teacher")
+        data["{{Daily Living Skills Score Teacher}}"] = st.text_input("Daily Living Skills Score Teacher")
         
-        teacher_score["{{Socialization Score Teacher}}"] = st.text_input("Socialization Score Teacher")
-
-        # teacher_score["{{Teacher level of concern Vineland}}"] = st.radio(
-        #     "Teacher's level of concern for Vineland Score",
-        #     ['no', 'mild', 'moderate', 'severe']
-        # )
+        data["{{Socialization Score Teacher}}"] = st.text_input("Socialization Score Teacher")
 
     ######################################################
     st.header("Medical/Developmental History")
