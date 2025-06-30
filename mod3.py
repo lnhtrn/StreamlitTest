@@ -56,7 +56,8 @@ with st.sidebar:
     ####################################################
     st.markdown("**Check to include score in the form:** Scores to report:")
     scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
-    teacher_eval = st.checkbox("Teacher's SSR Scores")
+    teacher_ssr_eval = st.checkbox("Teacher's SSR Scores")
+    teacher_vineland_eval = st.checkbox("Teacher's Vineland Adaptive Behavior Scales")
     wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
     dppr_score = st.checkbox("Developmental Profile – Fourth Edition - Parent Report (DPPR)")
     pls_score = st.checkbox("Preschool Language Scale - Fifth Edition (PLS)")
@@ -134,7 +135,7 @@ with st.form('BasicInfo'):
 
     bullet['CaregiverPrimaryConcerns'] = st.multiselect(
         "Caregiver\'s Primary Concerns",
-        dropdowns['PrimaryConcerns'],
+        dropdowns["Caregiver\'s Primary Concerns"],
         # [
         #     "Speech delays impacting social opportunities.",
         #     "Clarifying diagnostic presentation.",
@@ -189,11 +190,16 @@ with st.form('BasicInfo'):
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
-
+    
+    ##########################################################
     if scq_result:
+        st.header("(SCQ) - Lifetime Form")
         data["{{Results (SCQ) - Lifetime Form}}"] = st.text_input(
             "Results (SCQ) - Lifetime Form"
         )
+
+    ##########################################################
+    st.header("SRS-2 Caregiver Score")
 
     data["{{SRS-2 Score Caregiver}}"] = st.text_input("Caregiver's SRS-2 Score")
     
@@ -212,11 +218,9 @@ with st.form('BasicInfo'):
     )
 
     ##########################################################
-    if teacher_eval:
+    if teacher_ssr_eval:
         st.header("Teacher SSR Score")
         st.markdown("*Skip this section if teacher did not give SSR Score*")
-
-        teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
 
         teacher_score['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
 
@@ -228,17 +232,41 @@ with st.form('BasicInfo'):
             "Teacher's level of concern",
             ['no', 'mild', 'moderate', 'severe']
         )
+    
+    ##########################################################
+    st.header("Vineland Adaptive Behavior Scales - Caregiver's Scores")
 
+    data["{{Vineland Score Caregiver}}"] = st.text_input("Vineland Score Caregiver")
+    
+    data["{{Communication Score Caregiver}}"] = st.text_input("Communication Score Caregiver")
+    
+    data["{{Daily Living Skills Score Caregiver}}"] = st.text_input("Daily Living Skills Score Caregiver")
+    
+    data["{{Socialization Score Caregiver}}"] = st.text_input("Socialization Score Caregiver")
+
+    if teacher_vineland_eval:
+        st.header("Vineland Adaptive Behavior Scales - Teacher's Scores")
+
+        teacher_score["{{Vineland Score Teacher}}"] = st.text_input("Vineland Score Caregiver")
+        
+        teacher_score["{{Communication Score Teacher}}"] = st.text_input("Communication Score Caregiver")
+        
+        teacher_score["{{Daily Living Skills Score Teacher}}"] = st.text_input("Daily Living Skills Score Caregiver")
+        
+        teacher_score["{{Socialization Score Teacher}}"] = st.text_input("Socialization Score Caregiver")
+
+        teacher_score["{{Teacher level of concern Vineland}}"] = st.radio(
+            "Teacher's level of concern",
+            ['no', 'mild', 'moderate', 'severe']
+        )
     ######################################################
     st.header("Medical/Developmental History")
     
-    lines['{{Diagnosis History}}'] = st.multiselect(
-        "Diagnosis History",
-        dropdowns['DiagnosisHistory'],
-        # ['History of language and social communication delays.'],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
+    data['{{Developmental History}}'] = st.text_input(
+        "Developmental History")
+
+    data['{{Medical Diagnoses}}'] = st.text_input(
+        "Medical Diagnoses")
 
     lines['{{Medications}}'] = st.multiselect(
         "Medications",
@@ -258,7 +286,10 @@ with st.form('BasicInfo'):
         accept_new_options=True,
     )
 
-    data['{{School Name}}'] = st.text_input("School Name")
+    # data['{{School Name}}'] = st.text_input("School Name")
+
+    if teacher_ssr_eval or teacher_vineland_eval:
+        teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
 
     data['{{Grade}}'] = st.selectbox(
         "Grade",
@@ -287,6 +318,13 @@ with st.form('BasicInfo'):
     comma['{{Services}}'] = st.multiselect(
         "Services",
         dropdowns['Services'],
+        placeholder="Select multiple options from the list or enter a new one",
+        accept_new_options=True
+    )
+
+    comma['{{Classification}}'] = st.multiselect(
+        "Classification",
+        dropdowns['Classification'],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
@@ -341,8 +379,8 @@ with st.form('BasicInfo'):
         optional["peshv"]['PESHV Social Emotional Score'] = st.text_input("PESHV Social Emotional Score")
     
     if peshv_score:
-        st.header("Receptive Expressive Emergent Language Test - Fourth Edition (REELT)")
-        st.markdown("*Skip this section if there is no REELT Score*")
+        st.header("Preschool Evaluation Scale Home Version – Second Edition (PESHV)")
+        st.markdown("*Skip this section if there is no PESHV Score*")
         optional[""] = {}
         optional["peshv"]["Test Date"] = st.date_input("PESHV Test Date").strftime("%m/%Y")
         optional["peshv"]['Total Language'] = st.text_input("Total Language")
@@ -699,7 +737,7 @@ if submit:
                     add_srs_yes_teacher(paragraph, teacher_score)
             
             if "Social Responsiveness Scale" in paragraph.text:
-                if teacher_eval:
+                if teacher_ssr_eval:
                     paragraph.add_run(" & teacher\nDevelopmental History & Review of Records\n", style='CustomStyle')
                     paragraph.add_run(f"School Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
                 else:

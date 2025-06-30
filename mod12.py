@@ -341,8 +341,8 @@ with st.form('BasicInfo'):
         optional["peshv"]['PESHV Social Emotional Score'] = st.text_input("PESHV Social Emotional Score")
     
     if peshv_score:
-        st.header("Receptive Expressive Emergent Language Test - Fourth Edition (REELT)")
-        st.markdown("*Skip this section if there is no REELT Score*")
+        st.header("Preschool Evaluation Scale Home Version – Second Edition (PESHV)")
+        st.markdown("*Skip this section if there is no PESHV Score*")
         optional[""] = {}
         optional["peshv"]["Test Date"] = st.date_input("PESHV Test Date").strftime("%m/%Y")
         optional["peshv"]['Total Language'] = st.text_input("Total Language")
