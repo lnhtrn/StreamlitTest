@@ -44,7 +44,7 @@ for col_name in df.columns:
 
 connections['DSM'] = st.connection(f"dsm", type=GSheetsConnection)
 # Read object
-df = connections['All'].read(
+df = connections['DSM'].read(
     ttl="30m",
     usecols=list(range(7)),
     nrows=15,
