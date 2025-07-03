@@ -41,7 +41,7 @@ for col_name in df.columns:
     dropdowns[col_name] = df[col_name].tolist()
     dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
 
-
+# DSM dropdowns
 connections['DSM'] = st.connection(f"dsm", type=GSheetsConnection)
 # Read object
 df = connections['DSM'].read(
@@ -54,6 +54,8 @@ for col_name in df.columns:
     dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
     dropdowns[col_name].append("None")
 
+##################################################
+# Set up side bar
 def clear_my_cache():
     st.cache_data.clear()
 

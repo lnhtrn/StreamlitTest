@@ -41,6 +41,21 @@ for col_name in df.columns:
     dropdowns[col_name] = df[col_name].tolist()
     dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
 
+# DSM dropdowns
+connections['DSM'] = st.connection(f"dsm", type=GSheetsConnection)
+# Read object
+df = connections['DSM'].read(
+    ttl="30m",
+    usecols=list(range(7)),
+    nrows=15,
+) 
+for col_name in df.columns:
+    dropdowns[col_name] = df[col_name].tolist()
+    dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
+    dropdowns[col_name].append("None")
+
+##################################################
+# Set up side bar
 def clear_my_cache():
     st.cache_data.clear()
 
@@ -372,89 +387,96 @@ with st.form('BasicInfo'):
     
     bullet['SocialReciprocity'] = st.multiselect(    
         "Deficits in social emotional reciprocity",
-        [
-            "None",
-            "Awkward social initiation and response",
-            "Difficulties with chit-chat",
-            "Difficulty interpreting figurative language",
-            "Limited social approach or greetings",
-        ],
+        dropdowns['SocialReciprocity'],
+        # [
+        #     "None",
+        #     "Awkward social initiation and response",
+        #     "Difficulties with chit-chat",
+        #     "Difficulty interpreting figurative language",
+        #     "Limited social approach or greetings",
+        # ],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
     bullet['NonverbalComm'] = st.multiselect(
         "Deficits in nonverbal communicative behaviors used for social interaction",
-        [
-            "None",
-            "Limited well-directed eye contact",
-            "Difficulty reading facial expressions",
-            "Absence of joint attention",
-            "Lack of well-integrated gestures",
-            "Limited range of facial expression",
-        ],
+        dropdowns['NonverbalComm'],
+        # [
+        #     "None",
+        #     "Limited well-directed eye contact",
+        #     "Difficulty reading facial expressions",
+        #     "Absence of joint attention",
+        #     "Lack of well-integrated gestures",
+        #     "Limited range of facial expression",
+        # ],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
     bullet['Relationships'] = st.multiselect(
         "Deficits in developing, maintaining, and understanding relationships",
-        [
-            "None",
-            "Limited engagement with same age peers",
-            "Difficulties adjusting behavior to social context",
-            "Difficulties forming friendships",
-        ],
+        dropdowns['Relationships'],
+        # [
+        #     "None",
+        #     "Limited engagement with same age peers",
+        #     "Difficulties adjusting behavior to social context",
+        #     "Difficulties forming friendships",
+        # ],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
     bullet['RepetitiveBehaviors'] = st.multiselect(
         "Stereotyped or repetitive motor movements, use of objects, or speech",
-        [
-            "None",
-            "Repetitive whole-body movements",
-            "Repetitive hand movements",
-            "Echolalia of sounds",
-            "Echolalia of words",
-            "Stereotyped speech",
-        ],
+        dropdowns['RepetitiveBehaviors'],
+        # [
+        #     "None",
+        #     "Repetitive whole-body movements",
+        #     "Repetitive hand movements",
+        #     "Echolalia of sounds",
+        #     "Echolalia of words",
+        #     "Stereotyped speech",
+        # ],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
     bullet['SamenessRoutines'] = st.multiselect(
         "Insistence on sameness, inflexible adherence to routines or ritualized behavior",
-        [
-            "None",
-            "Difficulties with changes in routine across developmental course",
-            "Notable difficulties with transitions",
-            "Insistence on following very specific routines",
-        ],
+        dropdowns['SamenessRoutines'],
+        # [
+        #     "None",
+        #     "Difficulties with changes in routine across developmental course",
+        #     "Notable difficulties with transitions",
+        #     "Insistence on following very specific routines",
+        # ],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
     bullet['RestrictedInterests'] = st.multiselect(
         "Highly restricted, fixated interests that are abnormal in intensity or focus",
-        [
-            "None",
-            "Persistent pattern of perseverative interests",
-            "Notable interest in topics others may find odd",
-            "Very restricted pattern of eating and sleep time behavior",
-        ],
+        dropdowns['RestrictedInterests'],
+        # [
+        #     "None",
+        #     "Persistent pattern of perseverative interests",
+        #     "Notable interest in topics others may find odd",
+        #     "Very restricted pattern of eating and sleep time behavior",
+        # ],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
     bullet['SensoryReactivity'] = st.multiselect(
-        "Hyper- or hypo-reactivity to sensory aspects of the environment:",
-        [
-            "None",
-            "Auditory sensitivities",
-            "Tactile defensiveness",
-            "Proprioceptive-seeking behavior",
-        ],
+        "Hyper- or hypo-reactivity to sensory aspects of the environment",
+        dropdowns['SensoryReactivity'],
+        # [
+        #     "None",
+        #     "Auditory sensitivities",
+        #     "Tactile defensiveness",
+        #     "Proprioceptive-seeking behavior",
+        # ],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
