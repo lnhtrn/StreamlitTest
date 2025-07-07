@@ -4,6 +4,7 @@ from openai import OpenAI
 import yaml
 from docx import Document
 import io
+import os
 
 ##########################################################
 st.set_page_config(
@@ -42,6 +43,14 @@ def transcribe_audio(audio_file):
         # Transcribe
         with st.spinner("Transcribing...", show_time=True):
             result = whisper_model.transcribe("temp.wav")
+
+        try:
+            os.remove("temp.wav")
+            print(f"File temp.wav deleted successfully.")
+        except FileNotFoundError:
+            print(f"Error: File temp.wav not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
         st.markdown("## Transcription:")
         st.write(result['text'])
@@ -108,7 +117,7 @@ with st.form('EditResponse'):
     submit = st.form_submit_button('Submit')
     
 if submit:
-    st.session_state.final_text = data['Transcription']
+    # st.session_state.final_text = data['Transcription']
     # Display data 
     yaml_string = yaml.dump(data, sort_keys=False)
     yaml_data = st.code(yaml_string, language=None)
