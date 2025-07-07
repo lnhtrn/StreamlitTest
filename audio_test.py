@@ -148,7 +148,7 @@ def delete_paragraph(paragraph):
 
 def add_behavior_presentation(paragraph, transcript):
     # separate transcript
-    small_para = transcript.split('\n')
+    small_para = transcript.split('\n\n')
 
     st.write(small_para)
 
@@ -165,7 +165,7 @@ def add_behavior_presentation(paragraph, transcript):
 
 def add_developmental_history(paragraph, transcript):
     # separate transcript
-    small_para = transcript.split('\n')
+    small_para = transcript.split('\n\n')
     st.write(small_para)
 
     for sub_para in small_para:
