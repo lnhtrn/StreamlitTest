@@ -40,14 +40,19 @@ client = OpenAI(api_key=st.secrets["openai_key"])
 ##################################################################
 def transcribe_audio(audio_file, name='temp'):
     if audio_file:
-        with open(f"{name}.wav", "wb") as f:
-            f.write(audio_file.getvalue())
+        # with open(f"{name}.wav", "wb") as f:
+        #     f.write(audio_file.getvalue())
 
         # Transcribe
         with st.spinner("Transcribing...", show_time=True):
-            result = whisper_model.transcribe(f"{name}.wav")
+            # result = whisper_model.transcribe(f"{name}.wav")
+            result = client.audio.transcriptions.create(
+                model="whisper-1", 
+                file=audio_file, 
+                response_format="text"
+            )
         
-        return result['text']
+        return result #['text']
 
 ##################################################################
 # Form Builder Simulation 
