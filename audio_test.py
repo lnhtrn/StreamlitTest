@@ -46,9 +46,11 @@ def transcribe_audio(audio_file, name='temp'):
         
         return result['text']
 
-# Record audio
-# audio_data = st.audio_input("Speak something to transcribe")
-
+##################################################################
+# Form Builder Simulation 
+st.header("Appointment Summary")
+data['{{Patient First Name}}'] = st.text_input('Patient First Name')
+data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
 audio_behavior = st.audio_input("Behavioral Observation")
 audio_development = st.audio_input("Developmental History")
 
@@ -136,8 +138,3 @@ if submit:
             file_name=filename,
             mime="docx"
         )
-
-# # Step 4: Show final output
-# if st.session_state.final_text:
-#     st.header("3. Final Output")
-#     st.write(st.session_state.final_text)
