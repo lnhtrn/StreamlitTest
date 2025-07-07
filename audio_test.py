@@ -15,11 +15,6 @@ st.set_page_config(
 )
 
 ##########################################################
-# Load Whisper model
-@st.cache_resource
-def load_whisper_model():
-    return whisper.load_model("base")
-
 # Session state keys: 
 if 'behavior_observation' not in st.session_state:
     st.session_state.behavior_observation = ""
@@ -31,8 +26,6 @@ if 'final_text' not in st.session_state:
 data = {}
 behavior_observation = ""
 development_history = ""
-
-whisper_model = load_whisper_model()
 
 # Load OpenAI client 
 client = OpenAI(api_key=st.secrets["openai_key"])
@@ -76,7 +69,7 @@ if st.button("Transcribe"):
         
         response = client.responses.create(
             prompt={
-                "id": "pmpt_685c006586b88197ad9eadc51d2c3a9d09050f5a6c7b0fe3",
+                "id": st.secrets["behavior_prompt_id"],
                 # "version": "3",
                 "variables": {
                     "first_name": data['{{Patient First Name}}'],
@@ -86,8 +79,8 @@ if st.button("Transcribe"):
                 }
             }
         )
-        # st.session_state.behavior_observation = response.output_text
-        behavior_observation = response.output_text
+        st.session_state.behavior_observation = response.output_text
+        # behavior_observation = response.output_text
 
         # calculate tokens
         st.write("Input tokens:", response.usage.input_tokens)
@@ -95,7 +88,7 @@ if st.button("Transcribe"):
 
         response = client.responses.create(
             prompt={
-                "id": "pmpt_685bf79bc6b08197b8a8c250220724240f6a5af56604f91e",
+                "id": st.secrets["development_prompt_id"],
                 # "version": "5",
                 "variables": {
                     "first_name": data['{{Patient First Name}}'],
@@ -105,8 +98,8 @@ if st.button("Transcribe"):
                 }
             }
         )
-        # st.session_state.development_history = response.output_text
-        development_history = response.output_text
+        st.session_state.development_history = response.output_text
+        # development_history = response.output_text
         
         # calculate tokens
         st.write("Input tokens:", response.usage.input_tokens)
@@ -118,16 +111,16 @@ with st.form('EditResponse'):
     # st.markdown("**Behavioral Observation:**")
     data['behavior_observation'] = st.text_area(
         "Behavioral Observation: Edit the response before submitting the form", 
-        behavior_observation,
-        # st.session_state.behavior_observation,
+        # behavior_observation,
+        st.session_state.behavior_observation,
         height=200,
     )
 
     # st.markdown("**Developmental History:**")
     data['development_history'] = st.text_area(
         "Developmental History: Edit the response before submitting the form", 
-        development_history,
-        # st.session_state.development_history,
+        # development_history,
+        st.session_state.development_history,
         height=200,
     )
     

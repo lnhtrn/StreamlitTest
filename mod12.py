@@ -10,6 +10,8 @@ from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
 from docx.shared import Inches, Pt
 from docx.oxml.shared import OxmlElement, qn
+from openai import OpenAI
+
 
 ##########################################################
 st.set_page_config(
@@ -23,6 +25,16 @@ st.set_page_config(
     #     'About': "# This is a header. This is an *extremely* cool app!"
     # }
 )
+
+##########################################################
+# Set up OpenAI 
+if 'behavior_observation' not in st.session_state:
+    st.session_state.behavior_observation = ""
+if 'development_history' not in st.session_state:
+    st.session_state.development_history = ""
+
+# Load OpenAI client 
+client = OpenAI(api_key=st.secrets["openai_key"])
 
 ##########################################################
 # Access Google Sheets
@@ -288,7 +300,7 @@ with st.form('BasicInfo'):
         "School Year",
         dropdowns["School Year"],
         index=None,
-        placeholder="Select a grade or enter a new one",
+        placeholder="Select a school year or enter a new one",
         accept_new_options=True,
     )
 
@@ -296,7 +308,7 @@ with st.form('BasicInfo'):
         "Education Setting",
         ["General Education", "Integrated Co-Taught", "12:1:1", "8:1:1", "6:1:1"],
         index=None,
-        placeholder="Select a grade or enter a new one",
+        placeholder="Select an education setting or enter a new one",
         accept_new_options=True,
     )
 
