@@ -27,7 +27,10 @@ if 'development_history' not in st.session_state:
     st.session_state.development_history = ""
 if 'final_text' not in st.session_state:
     st.session_state.final_text = ""
+
 data = {}
+behavior_observation = ""
+development_history = ""
 
 whisper_model = load_whisper_model()
 
@@ -51,6 +54,10 @@ def transcribe_audio(audio_file, name='temp'):
 st.header("Appointment Summary")
 data['{{Patient First Name}}'] = st.text_input('Patient First Name')
 data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
+preferred = st.selectbox(
+        "Patient's Preferred Pronoun",
+        ("They/them", "He/him", "She/her"),
+    )
 audio_behavior = st.audio_input("Behavioral Observation")
 audio_development = st.audio_input("Developmental History")
 
@@ -64,25 +71,33 @@ if st.button("Transcribe"):
         
         response = client.responses.create(
             prompt={
-                "id": "pmpt_685c1d7f4f4c819083a45722b78921830b7eea852e8a39f1",
-                "version": "1",
+                "id": "pmpt_685c006586b88197ad9eadc51d2c3a9d09050f5a6c7b0fe3",
+                # "version": "3",
                 "variables": {
-                "transcription": transcript_behavior
+                    "first_name": data['{{Patient First Name}}'],
+                    "pronouns": preferred,
+                    "diagnosis": "having autism",
+                    "transcription": transcript_behavior
                 }
-            }       
+            }
         )
-        st.session_state.behavior_observation = response.output_text
+        # st.session_state.behavior_observation = response.output_text
+        behavior_observation = response.output_text
 
         response = client.responses.create(
             prompt={
-                "id": "pmpt_685c1d7f4f4c819083a45722b78921830b7eea852e8a39f1",
-                "version": "1",
+                "id": "pmpt_685bf79bc6b08197b8a8c250220724240f6a5af56604f91e",
+                # "version": "5",
                 "variables": {
-                "transcription": transcript_development
+                    "first_name": data['{{Patient First Name}}'],
+                    "pronouns": preferred,
+                    "diagnosis": "having autism",
+                    "transcription": transcript_development
                 }
-            }       
+            }
         )
-        st.session_state.development_history = response.output_text
+        # st.session_state.development_history = response.output_text
+        development_history = response.output_text
 
 with st.form('EditResponse'):
     st.header("Edit OpenAI Response")
@@ -90,14 +105,16 @@ with st.form('EditResponse'):
     # st.markdown("**Behavioral Observation:**")
     data['behavior_observation'] = st.text_area(
         "Behavioral Observation: Edit the response before submitting the form", 
-        st.session_state.behavior_observation,
+        behavior_observation,
+        # st.session_state.behavior_observation,
         height=200,
     )
 
     # st.markdown("**Developmental History:**")
     data['development_history'] = st.text_area(
         "Developmental History: Edit the response before submitting the form", 
-        st.session_state.development_history,
+        development_history,
+        # st.session_state.development_history,
         height=200,
     )
     
