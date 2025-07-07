@@ -1075,7 +1075,10 @@ if submit:
         custom_style = doc.styles.add_style('CustomStyle', WD_STYLE_TYPE.CHARACTER)
         custom_style.font.size = Pt(12)
         custom_style.font.name = 'Georgia'
-        # custom_style.paragraph_format.line_spacing = 1 
+
+        custom_style_2 = doc.styles.add_style('CustomStyle2', WD_STYLE_TYPE.CHARACTER)
+        custom_style_2.font.size = Pt(11.5)
+        custom_style_2.font.name = 'Georgia'
 
         list_style = doc.styles['Bullet New']
         list_style.paragraph_format.line_spacing = 1

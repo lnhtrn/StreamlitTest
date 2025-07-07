@@ -6,10 +6,10 @@ def load_whisper_model():
 whisper_model = load_whisper_model()
 
 result_text = ''
-result = whisper_model.transcribe("audio_test/rozanna_behave_obs.m4a")
+result = whisper_model.transcribe("audio_test\Chase Propper - behavioral observation.m4a")
 result_text += result['text']
 
-result = whisper_model.transcribe("audio_test/rozanna_behave_obs_2.m4a")
-result_text += ' ' + result['text']
+result = whisper_model.transcribe("audio_test\Chase Propper - developmental history.m4a")
+result_text += '\n\n ' + result['text']
 
 print(result_text)
