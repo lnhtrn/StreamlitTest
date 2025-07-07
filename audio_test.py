@@ -89,6 +89,10 @@ if st.button("Transcribe"):
         # st.session_state.behavior_observation = response.output_text
         behavior_observation = response.output_text
 
+        # calculate tokens
+        print("Prompt tokens:", response.usage.prompt_tokens)
+        print("Completion tokens:", response.usage.completion_tokens)
+
         response = client.responses.create(
             prompt={
                 "id": "pmpt_685bf79bc6b08197b8a8c250220724240f6a5af56604f91e",
@@ -103,6 +107,9 @@ if st.button("Transcribe"):
         )
         # st.session_state.development_history = response.output_text
         development_history = response.output_text
+        # calculate tokens
+        print("Prompt tokens:", response.usage.prompt_tokens)
+        print("Completion tokens:", response.usage.completion_tokens)
 
 with st.form('EditResponse'):
     st.header("Edit OpenAI Response")
