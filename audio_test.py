@@ -84,16 +84,16 @@ if st.button("Transcribe"):
 with st.form('EditResponse'):
     st.header("Edit OpenAI Response")
 
-    st.markdown("**Behavioral Observation:**")
+    # st.markdown("**Behavioral Observation:**")
     data['behavior_observation'] = st.text_area(
-        "Edit the response before submitting the form", 
+        "Behavioral Observation: Edit the response before submitting the form", 
         st.session_state.behavior_observation,
         height=200,
     )
 
-    st.markdown("**Developmental History:**")
+    # st.markdown("**Developmental History:**")
     data['development_history'] = st.text_area(
-        "Edit the response before submitting the form", 
+        "Developmental History: Edit the response before submitting the form", 
         st.session_state.development_history,
         height=200,
     )
