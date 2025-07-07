@@ -32,6 +32,7 @@ client = OpenAI(api_key=st.secrets["openai_key"])
 # Record audio
 audio_data = st.audio_input("Speak something to transcribe")
 transcript_data = None
+editable_trans = ""
 
 if st.button("Transcribe"):
     if audio_data:
@@ -64,7 +65,7 @@ if st.button("Transcribe"):
 
 with st.form('EditResponse'):
     st.header("Edit OpenAI Response")
-    
+
     if transcript_data:
         st.markdown("## OpenAI Response:")
         st.write(response.output_text)
