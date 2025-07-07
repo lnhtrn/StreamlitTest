@@ -68,8 +68,8 @@ if st.button("Transcribe"):
                 response.output_text,
                 key="transcript"
             )
-
-        submit = st.form_submit_button('Submit')
+            
+            submit = st.form_submit_button('Submit')
 
         if submit:
             st.markdown("## Final Version")
