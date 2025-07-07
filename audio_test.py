@@ -76,7 +76,6 @@ with st.form('EditResponse'):
     st.header("Edit OpenAI Response")
 
     st.markdown("## OpenAI Response:")
-    st.write(response.output_text)
     editable_trans = st.text_area(
         "Edit OpenAI response before submitting the form", 
         st.session_state.openai_output,
