@@ -60,7 +60,7 @@ if st.button("Transcribe"):
         )
 
         st.markdown("**OpenAI Response:**")
-        st.write(response)
+        st.write(response.output_text)
     
     # if st.button("Show final text"):
     #     st.markdown("**Finalized text:**")
