@@ -42,12 +42,13 @@ if st.button("Transcribe"):
         with st.spinner("Transcribing...", show_time=True):
             result = whisper_model.transcribe("temp.wav")
 
-        st.markdown("**Transcription:**")
-        editable_trans = st.text_area(
-            "Verify and edit transcription", 
-            result['text'],
-            key="transcript"
-        )
+        st.markdown("## Transcription:")
+        st.write(result['text'])
+        # editable_trans = st.text_area(
+        #     "Verify and edit transcription", 
+        #     result['text'],
+        #     key="transcript"
+        # )
 
         response = client.responses.create(
             prompt={
@@ -59,8 +60,21 @@ if st.button("Transcribe"):
             }       
         )
 
-        st.markdown("**OpenAI Response:**")
-        st.write(response.output_text)
+        with st.form('EditResponse'):
+            st.markdown("## OpenAI Response:")
+            st.write(response.output_text)
+            editable_trans = st.text_area(
+                "Edit OpenAI response before submitting the form", 
+                response.output_text,
+                key="transcript"
+            )
+
+        submit = st.form_submit_button('Submit')
+
+        if submit:
+            st.markdown("## Final Version")
+            st.write(editable_trans)
+        
     
     # if st.button("Show final text"):
     #     st.markdown("**Finalized text:**")
