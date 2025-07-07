@@ -296,12 +296,12 @@ with st.form('BasicInfo'):
     if teacher_ssr_eval or teacher_vineland_eval:
         teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
 
-    data['{{Grade}}'] = st.selectbox(
+    data['{{Grade}}'] = st.text_input(
         "Grade",
-        dropdowns['Grade'],
-        index=None,
-        placeholder="Select a grade or enter a new one",
-        accept_new_options=True,
+        # dropdowns['Grade'],
+        # index=None,
+        # placeholder="Select a grade or enter a new one",
+        # accept_new_options=True,
     )
 
     data['School Year'] = st.selectbox(
