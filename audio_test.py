@@ -149,8 +149,6 @@ def delete_paragraph(paragraph):
 def add_behavior_presentation(paragraph, transcript):
     # separate transcript
     small_para = transcript.split('\n')
-    small_para[1] = small_para[1].split(":")
-    small_para[2] = small_para[2].split(":")
 
     paragraph.insert_paragraph_before().add_run(small_para[0], style='CustomStyle')
     paragraph.insert_paragraph_before()
