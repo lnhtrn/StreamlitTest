@@ -116,7 +116,7 @@ with st.form('EditResponse'):
         "Behavioral Observation: Edit the response before submitting the form", 
         # behavior_observation,
         st.session_state.behavior_observation,
-        height=800,
+        height=400,
     )
 
     # st.markdown("**Developmental History:**")
@@ -124,7 +124,7 @@ with st.form('EditResponse'):
         "Developmental History: Edit the response before submitting the form", 
         # development_history,
         st.session_state.development_history,
-        height=800,
+        height=400,
     )
     
     data['{{Residence City/State}}'] = st.text_input("Residence City/State")
@@ -152,7 +152,7 @@ def add_behavior_presentation(paragraph, transcript):
     small_para[1] = small_para[1].split(":")
     small_para[2] = small_para[2].split(":")
 
-    paragraph.insert_paragraph_before(small_para[0], style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run(small_para[0], style='CustomStyle')
     paragraph.insert_paragraph_before()
 
     for sub_para in small_para[1:]:
