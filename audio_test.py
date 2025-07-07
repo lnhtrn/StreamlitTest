@@ -62,8 +62,10 @@ if st.button("Transcribe"):
         )
         transcript_data = response.output_text
 
-if transcript_data:
-    with st.form('EditResponse'):
+with st.form('EditResponse'):
+    st.header("Edit OpenAI Response")
+    
+    if transcript_data:
         st.markdown("## OpenAI Response:")
         st.write(response.output_text)
         editable_trans = st.text_area(
@@ -71,8 +73,10 @@ if transcript_data:
             response.output_text,
             key="transcript"
         )
+    else:
+        st.write('No Transcription Yet!')
 
-        submit = st.form_submit_button('Submit')
+    submit = st.form_submit_button('Submit')
 
 if submit:
     st.markdown("## Final Version")
