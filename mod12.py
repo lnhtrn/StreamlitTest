@@ -436,7 +436,7 @@ with st.form('BasicInfo'):
         "Behavioral Observation: Edit the response before submitting the form", 
         # behavior_observation,
         st.session_state.behavior_observation,
-        height=800,
+        height=400,
     )
 
     ########################################################
@@ -445,7 +445,7 @@ with st.form('BasicInfo'):
         "Developmental History: Edit the response before submitting the form", 
         # development_history,
         st.session_state.development_history,
-        height=800,
+        height=400,
     )
 
     ########################################################
@@ -595,6 +595,37 @@ def delete_paragraph(paragraph):
     p = paragraph._element
     p.getparent().remove(p)
     p._p = p._element = None
+
+
+def add_behavior_presentation(paragraph, transcript):
+    # separate transcript
+    small_para = transcript.split('\n\n')
+
+    st.write(small_para)
+
+    paragraph.insert_paragraph_before().add_run(small_para[0], style='CustomStyle')
+    paragraph.insert_paragraph_before()
+
+    for sub_para in small_para[1:]:
+        sub_para = sub_para.split(":")
+        p = paragraph.insert_paragraph_before()
+        p.add_run(sub_para[0], style='CustomStyle').italic = True
+        p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
+        
+    delete_paragraph(paragraph)
+
+def add_developmental_history(paragraph, transcript):
+    # separate transcript
+    small_para = transcript.split('\n\n')
+    st.write(small_para)
+
+    for sub_para in small_para:
+        sub_para = sub_para.split(":")
+        p = paragraph.insert_paragraph_before()
+        p.add_run(sub_para[0], style='CustomStyle').italic = True
+        p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
+        
+    delete_paragraph(paragraph)
 
 def add_school(paragraph):
     p = paragraph.insert_paragraph_before()
@@ -1067,6 +1098,12 @@ if submit:
                         add_reelt(paragraph, optional['reelt'])
                     if 'abas' in optional:
                         add_abas(paragraph, optional['abas'])
+
+            if "[[Behavioral Presentation]]" in paragraph.text:
+                add_behavior_presentation(paragraph, st.session_state.behavior_observation)
+            
+            if "[[Developmental History]]" in paragraph.text:
+                add_behavior_presentation(paragraph, st.session_state.behavior_observation)
 
             if "[[Recommendations]]" in paragraph.text:
                 if check_developmental_pediatrics:
