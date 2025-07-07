@@ -50,16 +50,17 @@ def transcribe_audio(audio_file, name='temp'):
 # audio_data = st.audio_input("Speak something to transcribe")
 
 audio_behavior = st.audio_input("Behavioral Observation")
+if audio_behavior:
+    transcript_behavior = transcribe_audio(audio_behavior, name='behavior')
+    st.markdown(f"**Transcription:** {transcript_behavior}")
+
 audio_development = st.audio_input("Developmental History")
+if audio_development:
+    transcript_development = transcribe_audio(audio_development, name='development')
+    st.markdown(f"**Transcription:** {transcript_development}")
 
 if st.button("Transcribe"):
-    if audio_behavior and audio_development:
-        transcript_behavior = transcribe_audio(audio_behavior, name='behavior')
-        st.markdown(f"**Transcription:** {transcript_behavior}")
-
-        transcript_development = transcribe_audio(audio_development, name='development')
-        st.markdown(f"**Transcription:** {transcript_development}")
-        
+    if transcript_behavior and transcript_development:
         response = client.responses.create(
             prompt={
                 "id": "pmpt_685c1d7f4f4c819083a45722b78921830b7eea852e8a39f1",
