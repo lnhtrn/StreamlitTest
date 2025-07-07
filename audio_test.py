@@ -35,25 +35,14 @@ whisper_model = load_whisper_model()
 client = OpenAI(api_key=st.secrets["openai_key"])
 
 ##################################################################
-def transcribe_audio(audio_file):
+def transcribe_audio(audio_file, name='temp'):
     if audio_file:
-        with open("temp.wav", "wb") as f:
+        with open(f"{name}.wav", "wb") as f:
             f.write(audio_behavior.getvalue())
 
         # Transcribe
         with st.spinner("Transcribing...", show_time=True):
-            result = whisper_model.transcribe("temp.wav")
-
-        try:
-            os.remove("temp.wav")
-            print(f"File temp.wav deleted successfully.")
-        except FileNotFoundError:
-            print(f"Error: File temp.wav not found.")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-
-        st.markdown("## Transcription:")
-        st.write(result['text'])
+            result = whisper_model.transcribe(f"{name}.wav")
         
         return result['text']
 
@@ -65,8 +54,11 @@ audio_development = st.audio_input("Developmental History")
 
 if st.button("Transcribe"):
     if audio_behavior and audio_development:
-        transcript_behavior = transcribe_audio(audio_behavior)
-        transcript_development = transcribe_audio(audio_development)
+        transcript_behavior = transcribe_audio(audio_behavior, name='behavior')
+        st.markdown(f"**Transcription:** {transcript_behavior}")
+
+        transcript_development = transcribe_audio(audio_development, name='development')
+        st.markdown(f"**Transcription:** {transcript_development}")
         
         response = client.responses.create(
             prompt={
