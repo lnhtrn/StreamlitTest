@@ -36,6 +36,19 @@ if 'development_history' not in st.session_state:
 # Load OpenAI client 
 client = OpenAI(api_key=st.secrets["openai_key"])
 
+##################################################################
+def transcribe_audio(audio_file, name='temp'):
+    if audio_file:
+        # Transcribe
+        with st.spinner("Transcribing...", show_time=True):
+            # result = whisper_model.transcribe(f"{name}.wav")
+            result = client.audio.transcriptions.create(
+                model="whisper-1", 
+                file=audio_file, 
+                response_format="text"
+            )
+        return result 
+
 ##########################################################
 # Access Google Sheets
 
@@ -110,42 +123,64 @@ bullet = {}
 lines = {}
 comma = {}
 
-####################################################
+#############################################################
+# Start of form 
 st.header("Appointment Summary")
 data['{{Patient First Name}}'] = st.text_input('Patient First Name')
 data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
+preferred = st.selectbox(
+    "Patient's Preferred Pronoun",
+    ("They/them", "He/him", "She/her"),
+)
+
+# Audio section 
+st.markdown(f"**Behavioral Observation:** Things to mention: eye contact, attention to task, social affect and restricted and repetitive behavior.")
 audio_behavior = st.audio_input("Behavioral Observation")
-# Play back the recorded audio (optional)
-if audio_behavior:
-    # 3. Create a download button
-    st.download_button(
-        label="Download Behavioral Observation Recording",
-        key="audio_behavior",
-        data=audio_behavior,
-        file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Behavioral Observation.wav",
-        mime="audio/wav",
-    )
 
+st.markdown(f"**Developmental History:** Things to mention: social communication skills, repetitive behavior and related behavioral concerns.")
 audio_development = st.audio_input("Developmental History")
-# Play back the recorded audio (optional)
-if audio_development:
-    # 3. Create a download button
-    st.download_button(
-        label="Download Developmental History Recording",
-        key="audio_development",
-        data=audio_development,
-        file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Behavioral Observation.wav",
-        mime="audio/wav",
-    )
 
+if st.button("Transcribe"):
+    if audio_behavior and audio_development:
+        transcript_behavior = transcribe_audio(audio_behavior, name='behavior')
+        st.markdown(f"**Transcription:** {transcript_behavior}")
+
+        transcript_development = transcribe_audio(audio_development, name='development')
+        st.markdown(f"**Transcription:** {transcript_development}")
+        
+        response = client.responses.create(
+            prompt={
+                "id": st.secrets["behavior_prompt_id"],
+                # "version": "3",
+                "variables": {
+                    "first_name": data['{{Patient First Name}}'],
+                    "pronouns": preferred,
+                    "diagnosis": "having autism",
+                    "transcription": transcript_behavior
+                }
+            }
+        )
+        st.session_state.behavior_observation = response.output_text
+
+        response = client.responses.create(
+            prompt={
+                "id": st.secrets["development_prompt_id"],
+                # "version": "5",
+                "variables": {
+                    "first_name": data['{{Patient First Name}}'],
+                    "pronouns": preferred,
+                    "diagnosis": "having autism",
+                    "transcription": transcript_development
+                }
+            }
+        )
+        st.session_state.development_history = response.output_text
+        
+################################################################
+# Start form
 with st.form('BasicInfo'):
-    ####################################################
     st.header("Patient's data")
-    # Dict to store data
-    preferred = st.selectbox(
-        "Patient's Preferred Pronoun",
-        ("They/them", "He/him", "She/her"),
-    )
+    
     data["{{Patient Age}}"] = st.number_input("Patient's Age", 0, 100)
     data['{{Patient age unit}}'] = st.radio(
         "Year/month?",
@@ -395,7 +430,25 @@ with st.form('BasicInfo'):
         optional["abas"]['ABAS Social'] = st.text_input("ABAS Social")
         optional["abas"]['ABAS Practical'] = st.text_input("ABAS Practical")
 
-    ############################################
+    ########################################################
+    st.header("Behavioral Presentation")
+    data['behavior_observation'] = st.text_area(
+        "Behavioral Observation: Edit the response before submitting the form", 
+        # behavior_observation,
+        st.session_state.behavior_observation,
+        height=800,
+    )
+
+    ########################################################
+    st.header("Developmental History")
+    data['development_history'] = st.text_area(
+        "Developmental History: Edit the response before submitting the form", 
+        # development_history,
+        st.session_state.development_history,
+        height=800,
+    )
+
+    ########################################################
     st.header("DSM Criteria")
     
     bullet['SocialReciprocity'] = st.multiselect(    

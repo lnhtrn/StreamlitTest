@@ -4,7 +4,16 @@ from openai import OpenAI
 import yaml
 from docx import Document
 import io
-import os
+import docx
+import yaml
+import io
+import docxedit
+import datetime
+from docx.enum.style import WD_STYLE_TYPE
+from streamlit_gsheets import GSheetsConnection
+from docxtpl import DocxTemplate
+from docx.shared import Inches, Pt
+from docx.oxml.shared import OxmlElement, qn
 
 ##########################################################
 st.set_page_config(
@@ -24,8 +33,6 @@ if 'final_text' not in st.session_state:
     st.session_state.final_text = ""
 
 data = {}
-behavior_observation = ""
-development_history = ""
 
 # Load OpenAI client 
 client = OpenAI(api_key=st.secrets["openai_key"])
@@ -33,9 +40,6 @@ client = OpenAI(api_key=st.secrets["openai_key"])
 ##################################################################
 def transcribe_audio(audio_file, name='temp'):
     if audio_file:
-        # with open(f"{name}.wav", "wb") as f:
-        #     f.write(audio_file.getvalue())
-
         # Transcribe
         with st.spinner("Transcribing...", show_time=True):
             # result = whisper_model.transcribe(f"{name}.wav")
@@ -44,8 +48,7 @@ def transcribe_audio(audio_file, name='temp'):
                 file=audio_file, 
                 response_format="text"
             )
-        
-        return result #['text']
+        return result 
 
 ##################################################################
 # Form Builder Simulation 
@@ -113,7 +116,7 @@ with st.form('EditResponse'):
         "Behavioral Observation: Edit the response before submitting the form", 
         # behavior_observation,
         st.session_state.behavior_observation,
-        height=200,
+        height=800,
     )
 
     # st.markdown("**Developmental History:**")
@@ -121,7 +124,7 @@ with st.form('EditResponse'):
         "Developmental History: Edit the response before submitting the form", 
         # development_history,
         st.session_state.development_history,
-        height=200,
+        height=800,
     )
     
     data['{{Residence City/State}}'] = st.text_input("Residence City/State")
@@ -132,7 +135,47 @@ with st.form('EditResponse'):
     data['{{Narrative}}'] = st.text_area('Narrative to finish \"Patient lives with...\"')
     
     submit = st.form_submit_button('Submit')
-    
+
+def format_date_with_ordinal(date_obj):
+    day = date_obj.day
+    suffix = 'th' if 11 <= day <= 13 else {1: 'st', 2: 'nd', 3: 'rd'}.get(day % 10, 'th')
+    return date_obj.strftime(f"%B {day}{suffix}, %Y")
+
+def delete_paragraph(paragraph):
+    p = paragraph._element
+    p.getparent().remove(p)
+    p._p = p._element = None
+
+def add_behavior_presentation(paragraph, transcript):
+    # separate transcript
+    small_para = transcript.split('\n')
+    small_para[1] = small_para[1].split(":")
+    small_para[2] = small_para[2].split(":")
+
+    paragraph.insert_paragraph_before(small_para[0], style='CustomStyle')
+    paragraph.insert_paragraph_before()
+
+    for sub_para in small_para[1:]:
+        sub_para = sub_para.split(":")
+        p = paragraph.insert_paragraph_before()
+        p.add_run(sub_para[0], style='CustomStyle').italic = True
+        p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
+        
+    delete_paragraph(paragraph)
+
+def add_developmental_history(paragraph, transcript):
+    # separate transcript
+    small_para = transcript.split('\n')
+
+    for sub_para in small_para:
+        sub_para = sub_para.split(":")
+        p = paragraph.insert_paragraph_before()
+        p.add_run(sub_para[0], style='CustomStyle').italic = True
+        p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
+        
+    delete_paragraph(paragraph)
+
+
 if submit:
     # st.session_state.final_text = data['Transcription']
     # Display data 
@@ -142,11 +185,30 @@ if submit:
     #### Edit document 
     doc = Document('templates/template_mod_12.docx')
     if doc:
-        doc.add_paragraph(data['behavior_observation'])
-        doc.add_paragraph(data['development_history'])
+        # Get file name
+        today_date = format_date_with_ordinal(datetime.date.today())
+        filename = f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} {today_date}.docx"
+        
+        ### create document 
+        norm_style = doc.styles['Normal']
+        norm_style.paragraph_format.line_spacing = 1
+
+        custom_style = doc.styles.add_style('CustomStyle', WD_STYLE_TYPE.CHARACTER)
+        custom_style.font.size = Pt(12)
+        custom_style.font.name = 'Georgia'
+        # custom_style.paragraph_format.line_spacing = 1 
+
+        list_style = doc.styles['Bullet New']
+        list_style.paragraph_format.line_spacing = 1
+
+        # Add scores 
+        for i, paragraph in enumerate(doc.paragraphs):
+            if "[[Behavioral Presentation]]" in paragraph.text:
+                add_behavior_presentation(paragraph, st.session_state.behavior_observation)
+            if "[[Developmental History]]" in paragraph.text:
+                add_behavior_presentation(paragraph, st.session_state.behavior_observation)
 
         # Save content to file
-        filename = "Test_audio.docx"
         doc.save(filename)
 
         # Download 
