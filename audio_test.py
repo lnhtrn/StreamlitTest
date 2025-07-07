@@ -150,6 +150,8 @@ def add_behavior_presentation(paragraph, transcript):
     # separate transcript
     small_para = transcript.split('\n')
 
+    st.write(small_para)
+
     paragraph.insert_paragraph_before().add_run(small_para[0], style='CustomStyle')
     paragraph.insert_paragraph_before()
 
@@ -164,6 +166,7 @@ def add_behavior_presentation(paragraph, transcript):
 def add_developmental_history(paragraph, transcript):
     # separate transcript
     small_para = transcript.split('\n')
+    st.write(small_para)
 
     for sub_para in small_para:
         sub_para = sub_para.split(":")
