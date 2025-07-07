@@ -114,7 +114,7 @@ if audio_behavior:
         mime="audio/wav",
     )
 
-audio_development = st.audio_input("Developmental History (press play after record to listen and press the mic to re-record)")
+audio_development = st.audio_input("Developmental History")
 # Play back the recorded audio (optional)
 if audio_development:
     # 3. Create a download button

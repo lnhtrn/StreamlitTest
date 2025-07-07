@@ -2,6 +2,8 @@ import streamlit as st
 import whisper
 from openai import OpenAI
 import yaml
+from docx import Document
+import io
 
 ##########################################################
 st.set_page_config(
@@ -17,16 +19,11 @@ st.set_page_config(
 def load_whisper_model():
     return whisper.load_model("base")
 
-# Use text_area key to modify it 
-# def on_upper_updated():
-#     st.session_state.transcript = st.session_state.transcript.upper()
-
-# def on_upper_reload(new_text):
-#     st.session_state.transcript = new_text
-
-# Session state keys: 'openai_output', 'final_text'
-if 'openai_output' not in st.session_state:
-    st.session_state.openai_output = ""
+# Session state keys: 
+if 'behavior_observation' not in st.session_state:
+    st.session_state.behavior_observation = ""
+if 'development_history' not in st.session_state:
+    st.session_state.development_history = ""
 if 'final_text' not in st.session_state:
     st.session_state.final_text = ""
 data = {}
@@ -36,16 +33,11 @@ whisper_model = load_whisper_model()
 # Load OpenAI client 
 client = OpenAI(api_key=st.secrets["openai_key"])
 
-# Record audio
-audio_data = st.audio_input("Speak something to transcribe")
-transcript_data = None
-editable_trans = ""
-
-if st.button("Transcribe"):
-    if audio_data:
-        # Save audio
+##################################################################
+def transcribe_audio(audio_file):
+    if audio_file:
         with open("temp.wav", "wb") as f:
-            f.write(audio_data.getvalue())
+            f.write(audio_behavior.getvalue())
 
         # Transcribe
         with st.spinner("Transcribing...", show_time=True):
@@ -53,35 +45,58 @@ if st.button("Transcribe"):
 
         st.markdown("## Transcription:")
         st.write(result['text'])
-        # editable_trans = st.text_area(
-        #     "Verify and edit transcription", 
-        #     result['text'],
-        #     key="transcript"
-        # )
+        
+        return result['text']
+
+# Record audio
+# audio_data = st.audio_input("Speak something to transcribe")
+
+audio_behavior = st.audio_input("Behavioral Observation")
+audio_development = st.audio_input("Developmental History")
+
+if st.button("Transcribe"):
+    if audio_behavior and audio_development:
+        transcript_behavior = transcribe_audio(audio_behavior)
+        transcript_development = transcribe_audio(audio_development)
+        
+        response = client.responses.create(
+            prompt={
+                "id": "pmpt_685c1d7f4f4c819083a45722b78921830b7eea852e8a39f1",
+                "version": "1",
+                "variables": {
+                "transcription": transcript_behavior
+                }
+            }       
+        )
+        st.session_state.behavior_observation = response.output_text
 
         response = client.responses.create(
             prompt={
                 "id": "pmpt_685c1d7f4f4c819083a45722b78921830b7eea852e8a39f1",
                 "version": "1",
                 "variables": {
-                "transcription": result['text']
+                "transcription": transcript_development
                 }
             }       
         )
-        # with open("temp.txt", "w") as file:
-        #     file.write(response.output_text)
-        st.session_state.openai_output = response.output_text
+        st.session_state.development_history = response.output_text
 
 with st.form('EditResponse'):
     st.header("Edit OpenAI Response")
 
-    st.markdown("## OpenAI Response:")
-    data['Transcription'] = st.text_area(
-        "Edit OpenAI response before submitting the form", 
-        st.session_state.openai_output,
+    st.markdown("**Behavioral Observation:**")
+    data['behavior_observation'] = st.text_area(
+        "Edit the response before submitting the form", 
+        st.session_state.behavior_observation,
         height=200,
     )
 
+    st.markdown("**Developmental History:**")
+    data['development_history'] = st.text_area(
+        "Edit the response before submitting the form", 
+        st.session_state.development_history,
+        height=200,
+    )
     
     data['{{Residence City/State}}'] = st.text_input("Residence City/State")
     # st.selectbox(
@@ -98,7 +113,30 @@ if submit:
     yaml_string = yaml.dump(data, sort_keys=False)
     yaml_data = st.code(yaml_string, language=None)
 
-# Step 4: Show final output
-if st.session_state.final_text:
-    st.header("3. Final Output")
-    st.write(st.session_state.final_text)
+    #### Edit document 
+    doc = Document('templates/template_mod_12.docx')
+    if doc:
+        doc.add_paragraph(data['behavior_observation'])
+        doc.add_paragraph(data['development_history'])
+
+        # Save content to file
+        filename = "Test_audio.docx"
+        doc.save(filename)
+
+        # Download 
+        bio = io.BytesIO()
+        document = Document(filename)
+        document.save(bio)
+
+        st.download_button(
+            label="Click here to download",
+            key="report_download",
+            data=bio.getvalue(),
+            file_name=filename,
+            mime="docx"
+        )
+
+# # Step 4: Show final output
+# if st.session_state.final_text:
+#     st.header("3. Final Output")
+#     st.write(st.session_state.final_text)
