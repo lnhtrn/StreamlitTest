@@ -76,7 +76,7 @@ with st.form('EditResponse'):
     st.header("Edit OpenAI Response")
 
     st.markdown("## OpenAI Response:")
-    editable_trans = st.text_area(
+    data['Transcription'] = st.text_area(
         "Edit OpenAI response before submitting the form", 
         st.session_state.openai_output,
         height=200,
@@ -93,7 +93,7 @@ with st.form('EditResponse'):
     submit = st.form_submit_button('Submit')
     
 if submit:
-    st.session_state.final_text = editable_trans
+    st.session_state.final_text = data['Transcription']
     # Display data 
     yaml_string = yaml.dump(data, sort_keys=False)
     yaml_data = st.code(yaml_string, language=None)
