@@ -1106,7 +1106,7 @@ if submit:
                 add_behavior_presentation(paragraph, st.session_state.behavior_observation)
             
             if "[[Developmental History]]" in paragraph.text:
-                add_developmental_history(paragraph, st.session_state.behavior_observation)
+                add_developmental_history(paragraph, st.session_state.development_history)
 
             if "[[Recommendations]]" in paragraph.text:
                 if check_developmental_pediatrics:
