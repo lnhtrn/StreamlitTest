@@ -31,6 +31,7 @@ client = OpenAI(api_key=st.secrets["openai_key"])
 
 # Record audio
 audio_data = st.audio_input("Speak something to transcribe")
+transcript_data = None
 
 if st.button("Transcribe"):
     if audio_data:
@@ -59,24 +60,21 @@ if st.button("Transcribe"):
                 }
             }       
         )
+        transcript_data = response.output_text
 
-        with st.form('EditResponse'):
-            st.markdown("## OpenAI Response:")
-            st.write(response.output_text)
-            editable_trans = st.text_area(
-                "Edit OpenAI response before submitting the form", 
-                response.output_text,
-                key="transcript"
-            )
-            
-            submit = st.form_submit_button('Submit')
+if transcript_data:
+    with st.form('EditResponse'):
+        st.markdown("## OpenAI Response:")
+        st.write(response.output_text)
+        editable_trans = st.text_area(
+            "Edit OpenAI response before submitting the form", 
+            response.output_text,
+            key="transcript"
+        )
 
-        if submit:
-            st.markdown("## Final Version")
-            st.write(editable_trans)
+        submit = st.form_submit_button('Submit')
+
+if submit:
+    st.markdown("## Final Version")
+    st.write(editable_trans)
         
-    
-    # if st.button("Show final text"):
-    #     st.markdown("**Finalized text:**")
-    #     on_upper_updated()
-    #     st.write(editable_trans)
