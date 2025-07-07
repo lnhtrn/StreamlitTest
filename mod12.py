@@ -136,9 +136,27 @@ preferred = st.selectbox(
 # Audio section 
 st.markdown(f"**Behavioral Observation:** Things to mention: eye contact, attention to task, social affect and restricted and repetitive behavior.")
 audio_behavior = st.audio_input("Behavioral Observation")
+if audio_behavior:
+    # 3. Create a download button
+    st.download_button(
+        label="Download Behavioral Observation Recording",
+        key="audio_behavior",
+        data=audio_behavior,
+        file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Behavioral Observation.wav",
+        mime="audio/wav",
+    )
 
 st.markdown(f"**Developmental History:** Things to mention: social communication skills, repetitive behavior and related behavioral concerns.")
 audio_development = st.audio_input("Developmental History")
+if audio_development:
+    # 3. Create a download button
+    st.download_button(
+        label="Download Developmental History Recording",
+        key="audio_development",
+        data=audio_development,
+        file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Developmental History.wav",
+        mime="audio/wav",
+    )
 
 if st.button("Transcribe"):
     if audio_behavior and audio_development:
