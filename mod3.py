@@ -1,14 +1,16 @@
 import streamlit as st
 from docx import Document
+import docx
 import yaml
 import io
 import docxedit
 import datetime
-from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE
 from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
-from docx.shared import Inches
+from docx.shared import Inches, Pt
+from docx.oxml.shared import OxmlElement, qn
+from openai import OpenAI
 
 ##########################################################
 st.set_page_config(
@@ -17,6 +19,29 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="expanded",
 )
+
+##########################################################
+# Set up OpenAI 
+if 'behavior_observation_mod3' not in st.session_state:
+    st.session_state.behavior_observation_mod3 = ""
+if 'development_history_mod3' not in st.session_state:
+    st.session_state.development_history_mod3 = ""
+
+# Load OpenAI client 
+client = OpenAI(api_key=st.secrets["openai_key"])
+
+##################################################################
+def transcribe_audio(audio_file, name='temp'):
+    if audio_file:
+        # Transcribe
+        with st.spinner("Transcribing...", show_time=True):
+            # result = whisper_model.transcribe(f"{name}.wav")
+            result = client.audio.transcriptions.create(
+                model="whisper-1", 
+                file=audio_file, 
+                response_format="text"
+            )
+        return result 
 
 ##########################################################
 # Access Google Sheets
@@ -95,15 +120,26 @@ comma = {}
 
 ####################################################
 st.header("Appointment Summary")
+
 data['{{Patient First Name}}'] = st.text_input('Patient First Name')
+
 data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
+
 preferred = st.selectbox(
     "Patient's Preferred Pronoun",
     ("They/them", "He/him", "She/her"),
 )
 
+data['{{Location of the evaluation}}'] = st.radio(
+    "Location of the evaluation",
+    ['home', 'school', 'the office'],
+    index=None,
+)
+
+
+# Audio section 
+st.markdown(f"**Behavioral Observation:** Things to mention: eye contact, attention to task, social affect and restricted and repetitive behavior.")
 audio_behavior = st.audio_input("Behavioral Observation")
-# Play back the recorded audio (optional)
 if audio_behavior:
     # 3. Create a download button
     st.download_button(
@@ -114,8 +150,8 @@ if audio_behavior:
         mime="audio/wav",
     )
 
+st.markdown(f"**Developmental History:** Things to mention: social communication skills, repetitive behavior and related behavioral concerns.")
 audio_development = st.audio_input("Developmental History")
-# Play back the recorded audio (optional)
 if audio_development:
     # 3. Create a download button
     st.download_button(
@@ -126,8 +162,43 @@ if audio_development:
         mime="audio/wav",
     )
 
+if st.button("Transcribe"):
+    if audio_behavior and audio_development:
+        transcript_behavior = transcribe_audio(audio_behavior, name='behavior')
+        st.markdown(f"**Transcription:** {transcript_behavior}")
+
+        transcript_development = transcribe_audio(audio_development, name='development')
+        st.markdown(f"**Transcription:** {transcript_development}")
+        
+        response = client.responses.create(
+            prompt={
+                "id": st.secrets["behavior_prompt_mod3_id"],
+                # "version": "3",
+                "variables": {
+                    "first_name": data['{{Patient First Name}}'],
+                    "pronouns": preferred,
+                    "evaluation_location": data['{{Location of the evaluation}}'],
+                    "transcription": transcript_behavior
+                }
+            }
+        )
+        st.session_state.behavior_observation_mod3 = response.output_text
+
+        response = client.responses.create(
+            prompt={
+                "id": st.secrets["development_prompt_mod3_id"],
+                # "version": "5",
+                "variables": {
+                    "first_name": data['{{Patient First Name}}'],
+                    "pronouns": preferred,
+                    "transcription": transcript_development
+                }
+            }
+        )
+        st.session_state.development_history_mod3 = response.output_text
+   
+####################################################
 with st.form('BasicInfo'):
-    ####################################################
     st.header("Patient's data")
 
     data["{{Patient Age}}"] = st.number_input("Patient's Age", 0, 100)
@@ -147,22 +218,11 @@ with st.form('BasicInfo'):
     bullet['CaregiverPrimaryConcerns'] = st.multiselect(
         "Caregiver\'s Primary Concerns",
         dropdowns["Caregiver\'s Primary Concerns"],
-        # [
-        #     "Speech delays impacting social opportunities.",
-        #     "Clarifying diagnostic presentation.",
-        #     "Determining service eligibility.",
-        #     "Language delays and difficulties.",
-        #     "Elopement and related safety concerns.",
-        #     "Determining appropriate supports."
-        # ],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
     
     data['{{Residence City/State}}'] = st.text_input("Residence City/State")
-    # st.selectbox(
-    #     "Residence City/State", states, index=None,
-    # )
 
     data['{{Narrative}}'] = st.text_area('Narrative to finish \"Patient lives with...\"')
 
@@ -170,12 +230,6 @@ with st.form('BasicInfo'):
     st.header("BRH Evaluation Details")
 
     data['{{Evaluation Date}}'] = format_date_with_ordinal(st.date_input("Evaluation Date"))
-
-    data['{{Location of the evaluation}}'] = st.radio(
-        "Location of the evaluation",
-        ['home', 'school', 'the office'],
-        index=None,
-    )
 
     data['{{Results Shared Date}}'] = format_date_with_ordinal(st.date_input("Results Shared Date"))
     
@@ -294,18 +348,10 @@ with st.form('BasicInfo'):
 
     data['{{Grade}}'] = st.text_input(
         "Grade",
-        # dropdowns['Grade'],
-        # index=None,
-        # placeholder="Select a grade or enter a new one",
-        # accept_new_options=True,
     )
 
     data['School Year'] = st.text_input(
         "School Year",
-        # dropdowns["School Year"],
-        # index=None,
-        # placeholder="Select a grade or enter a new one",
-        # accept_new_options=True,
     )
 
     data['{{Education Setting}}'] = st.selectbox(
@@ -405,6 +451,24 @@ with st.form('BasicInfo'):
         optional["abas"]['ABAS Conceptual'] = st.text_input("ABAS Conceptual")
         optional["abas"]['ABAS Social'] = st.text_input("ABAS Social")
         optional["abas"]['ABAS Practical'] = st.text_input("ABAS Practical")
+
+    ########################################################
+    st.header("Behavioral Presentation")
+    data['behavior_observation'] = st.text_area(
+        "Behavioral Observation: Edit the response before submitting the form", 
+        # behavior_observation,
+        st.session_state.behavior_observation_mod3,
+        height=400,
+    )
+
+    ########################################################
+    st.header("Developmental History")
+    data['development_history'] = st.text_area(
+        "Developmental History: Edit the response before submitting the form", 
+        # development_history,
+        st.session_state.development_history_mod3,
+        height=400,
+    )
 
     ############################################
     st.header("DSM Criteria")
@@ -539,6 +603,36 @@ def delete_paragraph(paragraph):
     p = paragraph._element
     p.getparent().remove(p)
     p._p = p._element = None
+
+def add_behavior_presentation(paragraph, transcript):
+    # separate transcript
+    small_para = transcript.split('\n\n')
+
+    st.write(small_para)
+
+    paragraph.insert_paragraph_before().add_run(small_para[0], style='CustomStyle')
+    paragraph.insert_paragraph_before()
+
+    for sub_para in small_para[1:]:
+        sub_para = sub_para.split(":")
+        p = paragraph.insert_paragraph_before()
+        p.add_run(sub_para[0], style='CustomStyle').italic = True
+        p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
+        
+    delete_paragraph(paragraph)
+
+def add_developmental_history(paragraph, transcript):
+    # separate transcript
+    small_para = transcript.split('\n\n')
+    st.write(small_para)
+
+    for sub_para in small_para:
+        sub_para = sub_para.split(":")
+        p = paragraph.insert_paragraph_before()
+        p.add_run(sub_para[0], style='CustomStyle').italic = True
+        p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
+        
+    delete_paragraph(paragraph)
 
 def add_school(paragraph):
     p = paragraph.insert_paragraph_before()
@@ -688,6 +782,10 @@ def add_bullet(paragraph, list_data):
 
 
 if submit:
+    # Update session state 
+    st.session_state.behavior_observation_mod3 = data['behavior_observation']
+    st.session_state.development_history_mod3 = data['development_history'] 
+
     # handle word to replace 
     # pronouns
     with open("misc_data/pronouns.yaml", "r") as file:
@@ -739,11 +837,13 @@ if submit:
         custom_style = doc.styles.add_style('CustomStyle', WD_STYLE_TYPE.CHARACTER)
         custom_style.font.size = Pt(12)
         custom_style.font.name = 'Georgia'
-        # custom_style.paragraph_format.line_spacing = 1 
 
-        # list_style = doc.styles.add_style('ListStyle', WD_STYLE.LIST_BULLET)
-        # list_style.font.size = Pt(12)
-        # list_style.font.name = 'Georgia'
+        custom_style_2 = doc.styles.add_style('CustomStyle2', WD_STYLE_TYPE.CHARACTER)
+        custom_style_2.font.size = Pt(11.5)
+        custom_style_2.font.name = 'Georgia'
+
+        list_style = doc.styles['Bullet New']
+        list_style.paragraph_format.line_spacing = 1
 
         # Add scores 
         for i, paragraph in enumerate(doc.paragraphs):
@@ -763,6 +863,12 @@ if submit:
                         add_reelt(paragraph, optional['reelt'])
                     if 'abas' in optional:
                         add_abas(paragraph, optional['abas'])
+            
+            if "[[Behavioral Presentation]]" in paragraph.text:
+                add_behavior_presentation(paragraph, st.session_state.behavior_observation_mod3)
+            
+            if "[[Developmental History]]" in paragraph.text:
+                add_developmental_history(paragraph, st.session_state.development_history_mod3)
 
             if "[[SCQ Report Information]]" in paragraph.text:
                 # Add SCQ

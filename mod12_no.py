@@ -114,11 +114,20 @@ comma = {}
 
 ####################################################
 st.header("Appointment Summary")
+
 data['{{Patient First Name}}'] = st.text_input('Patient First Name')
+
 data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
+
 preferred = st.selectbox(
     "Patient's Preferred Pronoun",
     ("They/them", "He/him", "She/her"),
+)
+
+data['{{Location of the evaluation}}'] = st.radio(
+    "Location of the evaluation",
+    ['home', 'school', 'the office'],
+    index=None,
 )
 
 # Audio section 
@@ -192,12 +201,6 @@ with st.form('BasicInfo'):
         data['{{Module Description}}'] = "Module 1 is designed for children with single words"
     else:
         data['{{Module Description}}'] = "Module 2 is designed for children with phrase speech"
-
-    data['{{Location of the evaluation}}'] = st.radio(
-        "Location of the evaluation",
-        ['home', 'school', 'the office'],
-        index=None,
-    )
 
     data['{{Results Shared Date}}'] = format_date_with_ordinal(st.date_input("Results Shared Date"))
     

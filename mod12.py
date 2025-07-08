@@ -23,10 +23,10 @@ st.set_page_config(
 
 ##########################################################
 # Set up OpenAI 
-if 'behavior_observation' not in st.session_state:
-    st.session_state.behavior_observation = ""
-if 'development_history' not in st.session_state:
-    st.session_state.development_history = ""
+if 'behavior_observation_mod12' not in st.session_state:
+    st.session_state.behavior_observation_mod12 = ""
+if 'development_history_mod12' not in st.session_state:
+    st.session_state.development_history_mod12 = ""
 
 # Load OpenAI client 
 client = OpenAI(api_key=st.secrets["openai_key"])
@@ -121,11 +121,20 @@ comma = {}
 #############################################################
 # Start of form 
 st.header("Appointment Summary")
+
 data['{{Patient First Name}}'] = st.text_input('Patient First Name')
+
 data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
+
 preferred = st.selectbox(
     "Patient's Preferred Pronoun",
     ("They/them", "He/him", "She/her"),
+)
+
+data['{{Location of the evaluation}}'] = st.radio(
+    "Location of the evaluation",
+    ['home', 'school', 'the office'],
+    index=None,
 )
 
 # Audio section 
@@ -168,12 +177,12 @@ if st.button("Transcribe"):
                 "variables": {
                     "first_name": data['{{Patient First Name}}'],
                     "pronouns": preferred,
-                    "diagnosis": "having autism",
+                    "evaluation_location": data['{{Location of the evaluation}}'],
                     "transcription": transcript_behavior
                 }
             }
         )
-        st.session_state.behavior_observation = response.output_text
+        st.session_state.behavior_observation_mod12 = response.output_text
 
         response = client.responses.create(
             prompt={
@@ -182,12 +191,11 @@ if st.button("Transcribe"):
                 "variables": {
                     "first_name": data['{{Patient First Name}}'],
                     "pronouns": preferred,
-                    "diagnosis": "having autism",
                     "transcription": transcript_development
                 }
             }
         )
-        st.session_state.development_history = response.output_text
+        st.session_state.development_history_mod12 = response.output_text
         
 ################################################################
 # Start form
@@ -240,12 +248,6 @@ with st.form('BasicInfo'):
         data['{{Module Description}}'] = "Module 1 is designed for children with single words"
     else:
         data['{{Module Description}}'] = "Module 2 is designed for children with phrase speech"
-
-    data['{{Location of the evaluation}}'] = st.radio(
-        "Location of the evaluation",
-        ['home', 'school', 'the office'],
-        index=None,
-    )
 
     data['{{Results Shared Date}}'] = format_date_with_ordinal(st.date_input("Results Shared Date"))
     
@@ -448,7 +450,7 @@ with st.form('BasicInfo'):
     data['behavior_observation'] = st.text_area(
         "Behavioral Observation: Edit the response before submitting the form", 
         # behavior_observation,
-        st.session_state.behavior_observation,
+        st.session_state.behavior_observation_mod12,
         height=400,
     )
 
@@ -457,7 +459,7 @@ with st.form('BasicInfo'):
     data['development_history'] = st.text_area(
         "Developmental History: Edit the response before submitting the form", 
         # development_history,
-        st.session_state.development_history,
+        st.session_state.development_history_mod12,
         height=400,
     )
 
@@ -1038,8 +1040,8 @@ def add_bullet(paragraph, list_data):
 
 if submit:
     # Update session state 
-    st.session_state.behavior_observation = data['behavior_observation']
-    st.session_state.development_history = data['development_history'] 
+    st.session_state.behavior_observation_mod12 = data['behavior_observation']
+    st.session_state.development_history_mod12 = data['development_history'] 
 
     # handle word to replace 
     # pronouns
@@ -1120,10 +1122,10 @@ if submit:
                         add_abas(paragraph, optional['abas'])
 
             if "[[Behavioral Presentation]]" in paragraph.text:
-                add_behavior_presentation(paragraph, st.session_state.behavior_observation)
+                add_behavior_presentation(paragraph, st.session_state.behavior_observation_mod12)
             
             if "[[Developmental History]]" in paragraph.text:
-                add_developmental_history(paragraph, st.session_state.development_history)
+                add_developmental_history(paragraph, st.session_state.development_history_mod12)
 
             if "[[Recommendations]]" in paragraph.text:
                 if check_developmental_pediatrics:
