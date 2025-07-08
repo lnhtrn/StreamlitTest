@@ -1,13 +1,14 @@
 import streamlit as st
 from docx import Document
+import docx
 import yaml
 import io
 import docxedit
 import datetime
-from docx.shared import Pt, Inches
 from docx.enum.style import WD_STYLE_TYPE
 from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
+from docx.shared import Inches, Pt
 from docx.oxml.shared import OxmlElement, qn
 from openai import OpenAI
 
