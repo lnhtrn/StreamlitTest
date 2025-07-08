@@ -168,7 +168,7 @@ if st.button("Transcribe"):
         
         response = client.responses.create(
             prompt={
-                "id": st.secrets["behavior_prompt_id"],
+                "id": st.secrets["behavior_prompt_mod12_id"],
                 # "version": "3",
                 "variables": {
                     "first_name": data['{{Patient First Name}}'],
@@ -182,7 +182,7 @@ if st.button("Transcribe"):
 
         response = client.responses.create(
             prompt={
-                "id": st.secrets["development_prompt_id"],
+                "id": st.secrets["development_prompt_mod12_id"],
                 # "version": "5",
                 "variables": {
                     "first_name": data['{{Patient First Name}}'],
@@ -349,12 +349,12 @@ with st.form('BasicInfo'):
         # accept_new_options=True,
     )
 
-    data['School Year'] = st.selectbox(
+    data['School Year'] = st.text_input(
         "School Year",
-        dropdowns["School Year"],
-        index=None,
-        placeholder="Select a school year or enter a new one",
-        accept_new_options=True,
+        # dropdowns["School Year"],
+        # index=None,
+        # placeholder="Select a school year or enter a new one",
+        # accept_new_options=True,
     )
 
     data['{{Education Setting}}'] = st.selectbox(
@@ -1042,6 +1042,10 @@ def add_bullet(paragraph, list_data):
 
 
 if submit:
+    # Update session state 
+    st.session_state.behavior_observation = data['behavior_observation']
+    st.session_state.development_history = data['development_history'] 
+
     # handle word to replace 
     # pronouns
     with open("misc_data/pronouns.yaml", "r") as file:

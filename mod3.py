@@ -304,12 +304,12 @@ with st.form('BasicInfo'):
         # accept_new_options=True,
     )
 
-    data['School Year'] = st.selectbox(
+    data['School Year'] = st.text_input(
         "School Year",
-        dropdowns["School Year"],
-        index=None,
-        placeholder="Select a grade or enter a new one",
-        accept_new_options=True,
+        # dropdowns["School Year"],
+        # index=None,
+        # placeholder="Select a grade or enter a new one",
+        # accept_new_options=True,
     )
 
     data['{{Education Setting}}'] = st.selectbox(

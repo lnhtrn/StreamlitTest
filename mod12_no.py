@@ -9,6 +9,7 @@ from docx.enum.style import WD_STYLE_TYPE
 from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
 from docx.shared import Inches
+from openai import OpenAI
 
 ##########################################################
 st.set_page_config(
@@ -17,6 +18,27 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="expanded",
 )
+
+##########################################################
+# Set up OpenAI 
+if 'behavior_observation' not in st.session_state:
+    st.session_state.behavior_observation = ""
+
+# Load OpenAI client 
+client = OpenAI(api_key=st.secrets["openai_key"])
+
+##################################################################
+def transcribe_audio(audio_file, name='temp'):
+    if audio_file:
+        # Transcribe
+        with st.spinner("Transcribing...", show_time=True):
+            # result = whisper_model.transcribe(f"{name}.wav")
+            result = client.audio.transcriptions.create(
+                model="whisper-1", 
+                file=audio_file, 
+                response_format="text"
+            )
+        return result 
 
 ##########################################################
 # Access Google Sheets
@@ -93,8 +115,14 @@ comma = {}
 st.header("Appointment Summary")
 data['{{Patient First Name}}'] = st.text_input('Patient First Name')
 data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
+preferred = st.selectbox(
+    "Patient's Preferred Pronoun",
+    ("They/them", "He/him", "She/her"),
+)
+
+# Audio section 
+st.markdown(f"**Behavioral Observation:** Things to mention: eye contact, attention to task, social affect and restricted and repetitive behavior.")
 audio_behavior = st.audio_input("Behavioral Observation")
-# Play back the recorded audio (optional)
 if audio_behavior:
     # 3. Create a download button
     st.download_button(
@@ -105,17 +133,24 @@ if audio_behavior:
         mime="audio/wav",
     )
 
-audio_development = st.audio_input("Developmental History (press play after record to listen and press the mic to re-record)")
-# Play back the recorded audio (optional)
-if audio_development:
-    # 3. Create a download button
-    st.download_button(
-        label="Download Developmental History Recording",
-        key="audio_development",
-        data=audio_development,
-        file_name=f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} - Developmental History.wav",
-        mime="audio/wav",
-    )
+if st.button("Transcribe"):
+    if audio_behavior:
+        transcript_behavior = transcribe_audio(audio_behavior, name='behavior')
+        st.markdown(f"**Transcription:** {transcript_behavior}")
+        
+        response = client.responses.create(
+            prompt={
+                "id": st.secrets["behavior_prompt_mod12no_id"],
+                # "version": "3",
+                "variables": {
+                    "first_name": data['{{Patient First Name}}'],
+                    "pronouns": preferred,
+                    "diagnosis": "having autism",
+                    "transcription": transcript_behavior
+                }
+            }
+        )
+        st.session_state.behavior_observation = response.output_text
 
 with st.form('BasicInfo'):
     ####################################################
@@ -227,12 +262,12 @@ with st.form('BasicInfo'):
         # accept_new_options=True,
     )
 
-    data['School Year'] = st.selectbox(
+    data['School Year'] = st.text_input(
         "School Year",
-        dropdowns["School Year"],
-        index=None,
-        placeholder="Select a grade or enter a new one",
-        accept_new_options=True,
+        # dropdowns["School Year"],
+        # index=None,
+        # placeholder="Select a grade or enter a new one",
+        # accept_new_options=True,
     )
 
     data['{{Education Setting}}'] = st.selectbox(
@@ -332,6 +367,15 @@ with st.form('BasicInfo'):
         optional["abas"]['ABAS Social'] = st.text_input("ABAS Social")
         optional["abas"]['ABAS Practical'] = st.text_input("ABAS Practical")
 
+    ########################################################
+    st.header("Behavioral Presentation")
+    data['behavior_observation'] = st.text_area(
+        "Behavioral Observation: Edit the response before submitting the form", 
+        # behavior_observation,
+        st.session_state.behavior_observation,
+        height=400,
+    )
+
     
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -346,6 +390,23 @@ def delete_paragraph(paragraph):
     p = paragraph._element
     p.getparent().remove(p)
     p._p = p._element = None
+
+def add_behavior_presentation(paragraph, transcript):
+    # separate transcript
+    small_para = transcript.split('\n\n')
+
+    st.write(small_para)
+
+    paragraph.insert_paragraph_before().add_run(small_para[0], style='CustomStyle')
+    paragraph.insert_paragraph_before()
+
+    for sub_para in small_para[1:]:
+        sub_para = sub_para.split(":")
+        p = paragraph.insert_paragraph_before()
+        p.add_run(sub_para[0], style='CustomStyle').italic = True
+        p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
+        
+    delete_paragraph(paragraph)
 
 def add_school(paragraph):
     p = paragraph.insert_paragraph_before()
@@ -415,6 +476,9 @@ def add_bullet(paragraph, list_data):
 
 
 if submit:
+    # Update session state 
+    st.session_state.behavior_observation = data['behavior_observation']
+
     # handle word to replace 
     # pronouns
     with open("misc_data/pronouns.yaml", "r") as file:
@@ -507,6 +571,9 @@ if submit:
                 # else:
                 #     paragraph.add_run("\nDevelopmental History & Review of Records", style='CustomStyle')
 
+            if "[[Behavioral Presentation]]" in paragraph.text:
+                add_behavior_presentation(paragraph, st.session_state.behavior_observation)
+            
             if "[[District Grade School Setting]]" in paragraph.text:
                 add_school(paragraph)
         
