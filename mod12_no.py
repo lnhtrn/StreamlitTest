@@ -21,7 +21,7 @@ st.set_page_config(
 
 ##########################################################
 # Set up OpenAI 
-if 'behavior_observation' not in st.session_state:
+if 'behavior_observation_no_autism' not in st.session_state:
     st.session_state.behavior_observation_no_autism = ""
 
 # Load OpenAI client 
