@@ -19,11 +19,6 @@ st.set_page_config(
     page_icon="📝",
     layout="centered",
     initial_sidebar_state="expanded",
-    # menu_items={
-    #     'Get Help': 'https://www.extremelycoolapp.com/help',
-    #     'Report a bug': "https://www.extremelycoolapp.com/bug",
-    #     'About': "# This is a header. This is an *extremely* cool app!"
-    # }
 )
 
 ##########################################################
@@ -649,7 +644,7 @@ def add_school(paragraph):
     p = paragraph.insert_paragraph_before()
     tab_stops = p.paragraph_format.tab_stops
     # tab_stops.clear()  # Start fresh for this paragraph only
-    tab_stops.add_tab_stop(Inches(3.5))
+    tab_stops.add_tab_stop(Inches(3))
     # Add data
     p.add_run("District", style='CustomStyle').font.underline = True
     p.add_run(f": {data['{{School District}}']}\t", style='CustomStyle')
@@ -965,7 +960,6 @@ def add_effective_treatments(paragraph):
 
     paragraph.insert_paragraph_before(style=norm_style)
 
-
 def add_elopement_plan(paragraph):
     p = paragraph.insert_paragraph_before()
     r = p.add_run('Elopement Plan. ', style='CustomStyle')
@@ -996,10 +990,11 @@ def add_develop_disability_office(paragraph):
     p.add_run('I discussed DDRO case management and Medicaid Waiver services with {{Patient First Name}}’s {{Caregiver type}}. To qualify for services, a person must have a diagnosis of a developmental disability along with documentation of cognitive and/or adaptive deficits. Based on {{Preferred Pronouns 2}} presentation and chart review, I believe that {{Patient First Name}} ought to quality for OPWDD waiver services due to {{Preferred Pronouns 2}} adaptive and cognitive delays. More information on Front Door Sessions can be found online at: ', style='CustomStyle')
     add_hyperlink(p, 'https://opwdd.ny.gov/get-started/information-sessions')
     paragraph.insert_paragraph_before()
-
     
     p = paragraph.insert_paragraph_before()
-    p.add_run('Information can be obtained through the Office of Persons with Developmental Disabilities (OPWDD), Front Door Office Finger Lakes at 855-679-3335', style='CustomStyle')
+    p.add_run('Information can be obtained through the Office of Persons with Developmental Disabilities (OPWDD), ', style='CustomStyle')
+    p.add_run('Front Door Office Finger Lakes', style='CustomStyle').bold = True
+    p.add_run(' at 855-679-3335', style='CustomStyle')
     paragraph.insert_paragraph_before()
 
 def add_evidence_therapy(paragraph):

@@ -16,11 +16,6 @@ st.set_page_config(
     page_icon="📝",
     layout="centered",
     initial_sidebar_state="expanded",
-    # menu_items={
-    #     'Get Help': 'https://www.extremelycoolapp.com/help',
-    #     'Report a bug': "https://www.extremelycoolapp.com/bug",
-    #     'About': "# This is a header. This is an *extremely* cool app!"
-    # }
 )
 
 ##########################################################
@@ -102,6 +97,11 @@ comma = {}
 st.header("Appointment Summary")
 data['{{Patient First Name}}'] = st.text_input('Patient First Name')
 data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
+preferred = st.selectbox(
+    "Patient's Preferred Pronoun",
+    ("They/them", "He/him", "She/her"),
+)
+
 audio_behavior = st.audio_input("Behavioral Observation")
 # Play back the recorded audio (optional)
 if audio_behavior:
@@ -129,11 +129,7 @@ if audio_development:
 with st.form('BasicInfo'):
     ####################################################
     st.header("Patient's data")
-    # Dict to store data
-    preferred = st.selectbox(
-        "Patient's Preferred Pronoun",
-        ("They/them", "He/him", "She/her"),
-    )
+
     data["{{Patient Age}}"] = st.number_input("Patient's Age", 0, 100)
     data['{{Patient age unit}}'] = st.radio(
         "Year/month?",
