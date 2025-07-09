@@ -155,7 +155,7 @@ if st.button("Transcribe"):
                 "variables": {
                     "first_name": data['{{Patient First Name}}'],
                     "pronouns": preferred,
-                    "diagnosis": "having autism",
+                    "evaluation_location": data['{{Location of the evaluation}}'],
                     "transcription": transcript_behavior
                 }
             }
