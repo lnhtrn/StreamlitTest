@@ -103,7 +103,7 @@ with st.sidebar:
 
 
 col1,col2 = st.columns(2)
-col1.title('Module 3 Report Builder')
+col1.title('Module 3 No Autism Report Builder')
 
 def format_date_with_ordinal(date_obj):
     day = date_obj.day
