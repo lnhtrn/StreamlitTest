@@ -457,7 +457,7 @@ with st.form('BasicInfo'):
     ##########################################################
     st.header("Diagnostic Formulation")
 
-    st.markdown = "Elaboration on Diagnostic Formulation. Goes after this: *Based on observation, history, and clinical measures, Norah does not meet the criteria for autism spectrum disorder.*"
+    st.markdown("Elaboration on Diagnostic Formulation. Goes after this: *Based on observation, history, and clinical measures, Norah does not meet the criteria for autism spectrum disorder.*")
     data['{{Diagnostic Formulation}}'] = st.text_area(
         "Elaboration on Diagnostic Formulation",
         f"{data['{{Patient First Name}}']} constellation of concerns and developmental history suggest that their difficulties relating to others and self-care derive from mental health difficulties...",
