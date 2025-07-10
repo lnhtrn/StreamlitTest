@@ -14,7 +14,7 @@ from openai import OpenAI
 
 ##########################################################
 st.set_page_config(
-    page_title="Module 3",
+    page_title="Module 3 No Autism",
     page_icon="📝",
     layout="centered",
     initial_sidebar_state="expanded",
@@ -22,10 +22,10 @@ st.set_page_config(
 
 ##########################################################
 # Set up OpenAI 
-if 'behavior_observation_mod3' not in st.session_state:
-    st.session_state.behavior_observation_mod3 = ""
-if 'development_history_mod3' not in st.session_state:
-    st.session_state.development_history_mod3 = ""
+if 'behavior_observation_mod3_no_autism' not in st.session_state:
+    st.session_state.behavior_observation_mod3_no_autism = ""
+if 'development_history_mod3_no_autism' not in st.session_state:
+    st.session_state.development_history_mod3_no_autism = ""
 
 # Load OpenAI client 
 client = OpenAI(api_key=st.secrets["openai_key"])
@@ -181,7 +181,7 @@ if st.button("Transcribe"):
                 }
             }
         )
-        st.session_state.behavior_observation_mod3 = response.output_text
+        st.session_state.behavior_observation_mod3_no_autism = response.output_text
 
         response = client.responses.create(
             prompt={
@@ -194,7 +194,7 @@ if st.button("Transcribe"):
                 }
             }
         )
-        st.session_state.development_history_mod3 = response.output_text
+        st.session_state.development_history_mod3_no_autism = response.output_text
    
 ####################################################
 with st.form('BasicInfo'):
@@ -233,22 +233,23 @@ with st.form('BasicInfo'):
     data['{{Results Shared Date}}'] = format_date_with_ordinal(st.date_input("Results Shared Date"))
     
     data['{{Date Report Sent to Patient}}'] = format_date_with_ordinal(st.date_input("Date Report Sent to Patient"))
+    
+    #########################################################
+    st.header("Medical/Developmental History")
+    
+    data['{{Developmental History}}'] = st.text_input(
+        "Developmental History")
 
-    lines["{{Result of the evaluation}}"] = st.multiselect(
-        "Result of the evaluation",
-        dropdowns['Result of the evaluation'],
-        # [
-        #     "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
-        #     "F88.0 - Global Developmental Delay (per behavioral presentation)",
-        #     "F80.2 - Mixed Receptive-Expressive Language Disorder",
-        #     "F90.2 - Attention Deficit Hyperactivity Disorder - Combined-Type",
-        #     "F50.82 Avoidant/Restrictive Food Intake Disorder",
-        #     "None"
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
+    data['{{Medical Diagnoses}}'] = st.text_input(
+        "Medical Diagnoses")
+
+    lines['{{Medications}}'] = st.multiselect(
+        "Medications",
+        ['None noted or reported.'],
+        placeholder="Can input multiple options",
         accept_new_options=True
     )
-    
+
     ##########################################################
     if scq_result:
         st.header("(SCQ) - Lifetime Form")
@@ -312,22 +313,6 @@ with st.form('BasicInfo'):
         data["{{Daily Living Skills Score Teacher}}"] = st.text_input("Daily Living Skills Score Teacher")
         
         data["{{Socialization Score Teacher}}"] = st.text_input("Socialization Score Teacher")
-
-    ######################################################
-    st.header("Medical/Developmental History")
-    
-    data['{{Developmental History}}'] = st.text_input(
-        "Developmental History")
-
-    data['{{Medical Diagnoses}}'] = st.text_input(
-        "Medical Diagnoses")
-
-    lines['{{Medications}}'] = st.multiselect(
-        "Medications",
-        ['None noted or reported.'],
-        placeholder="Can input multiple options",
-        accept_new_options=True
-    )
 
     ###############################################
     st.header("Educational Background")
@@ -456,7 +441,7 @@ with st.form('BasicInfo'):
     data['behavior_observation'] = st.text_area(
         "Behavioral Observation: Edit the response before submitting the form", 
         # behavior_observation,
-        st.session_state.behavior_observation_mod3,
+        st.session_state.behavior_observation_mod3_no_autism,
         height=400,
     )
 
@@ -465,131 +450,27 @@ with st.form('BasicInfo'):
     data['development_history'] = st.text_area(
         "Developmental History: Edit the response before submitting the form", 
         # development_history,
-        st.session_state.development_history_mod3,
+        st.session_state.development_history_mod3_no_autism,
         height=400,
     )
 
-    ############################################
-    st.header("DSM Criteria")
-    
-    bullet['SocialReciprocity'] = st.multiselect(    
-        "Deficits in social emotional reciprocity",
-        dropdowns['SocialReciprocity'],
-        # [
-        #     "None",
-        #     "Awkward social initiation and response",
-        #     "Difficulties with chit-chat",
-        #     "Difficulty interpreting figurative language",
-        #     "Limited social approach or greetings",
-        # ],
+    ##########################################################
+    st.header("Diagnostic Formulation")
+
+    data['{{Diagnostic Formulation}}'] = st.text_area(
+        "Elaboration on Diagnostic Formulation",
+        f"{data['{{Patient First Name}}']} constellation of concerns and developmental history suggest that their difficulties relating to others and self-care derive from mental health difficulties...",
+        help="Elaboration on Diagnostic Formulation. Goes after '*Based on observation, history, and clinical measures, Norah does not meet the criteria for autism spectrum disorder.*'",
+        height=300,
+    )
+
+    lines["{{Result of the evaluation}}"] = st.multiselect(
+        "Result of the evaluation",
+        dropdowns['Result of the evaluation'],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
 
-    bullet['NonverbalComm'] = st.multiselect(
-        "Deficits in nonverbal communicative behaviors used for social interaction",
-        dropdowns['NonverbalComm'],
-        # [
-        #     "None",
-        #     "Limited well-directed eye contact",
-        #     "Difficulty reading facial expressions",
-        #     "Absence of joint attention",
-        #     "Lack of well-integrated gestures",
-        #     "Limited range of facial expression",
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['Relationships'] = st.multiselect(
-        "Deficits in developing, maintaining, and understanding relationships",
-        dropdowns['Relationships'],
-        # [
-        #     "None",
-        #     "Limited engagement with same age peers",
-        #     "Difficulties adjusting behavior to social context",
-        #     "Difficulties forming friendships",
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['RepetitiveBehaviors'] = st.multiselect(
-        "Stereotyped or repetitive motor movements, use of objects, or speech",
-        dropdowns['RepetitiveBehaviors'],
-        # [
-        #     "None",
-        #     "Repetitive whole-body movements",
-        #     "Repetitive hand movements",
-        #     "Echolalia of sounds",
-        #     "Echolalia of words",
-        #     "Stereotyped speech",
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['SamenessRoutines'] = st.multiselect(
-        "Insistence on sameness, inflexible adherence to routines or ritualized behavior",
-        dropdowns['SamenessRoutines'],
-        # [
-        #     "None",
-        #     "Difficulties with changes in routine across developmental course",
-        #     "Notable difficulties with transitions",
-        #     "Insistence on following very specific routines",
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['RestrictedInterests'] = st.multiselect(
-        "Highly restricted, fixated interests that are abnormal in intensity or focus",
-        dropdowns['RestrictedInterests'],
-        # [
-        #     "None",
-        #     "Persistent pattern of perseverative interests",
-        #     "Notable interest in topics others may find odd",
-        #     "Very restricted pattern of eating and sleep time behavior",
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['SensoryReactivity'] = st.multiselect(
-        "Hyper- or hypo-reactivity to sensory aspects of the environment",
-        dropdowns['SensoryReactivity'],
-        # [
-        #     "None",
-        #     "Auditory sensitivities",
-        #     "Tactile defensiveness",
-        #     "Proprioceptive-seeking behavior",
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    comma['{{Symptoms present in the early developmental period}}'] = st.multiselect(
-        "Symptoms present in the early developmental period",
-        [
-            "Confirmed by record review",
-            "None",
-        ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    comma['{{Symptoms cause clinically significant impairment}}'] = st.multiselect(
-        "Symptoms cause clinically significant impairment",
-        [
-            "Confirmed by record review",
-            "None",
-        ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-
-    # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -782,8 +663,8 @@ def add_bullet(paragraph, list_data):
 
 if submit:
     # Update session state 
-    st.session_state.behavior_observation_mod3 = data['behavior_observation']
-    st.session_state.development_history_mod3 = data['development_history'] 
+    st.session_state.behavior_observation_mod3_no_autism = data['behavior_observation']
+    st.session_state.development_history_mod3_no_autism = data['development_history'] 
 
     # handle word to replace 
     # pronouns
@@ -795,6 +676,7 @@ if submit:
         "{{Preferred Pronouns 1 CAP}}": pronoun[preferred]['pronoun1cap'],
         "{{Preferred Pronouns 2}}": pronoun[preferred]['pronoun2'],
         "{{Preferred Pronouns 2 CAP}}": pronoun[preferred]['pronoun2cap'],
+        "{{Gender}}": pronoun[preferred['gender']],
     }
 
     replace_word.update(data)
@@ -864,10 +746,10 @@ if submit:
                         add_abas(paragraph, optional['abas'])
             
             if "[[Behavioral Presentation]]" in paragraph.text:
-                add_behavior_presentation(paragraph, st.session_state.behavior_observation_mod3)
+                add_behavior_presentation(paragraph, st.session_state.behavior_observation_mod3_no_autism)
             
             if "[[Developmental History]]" in paragraph.text:
-                add_developmental_history(paragraph, st.session_state.development_history_mod3)
+                add_developmental_history(paragraph, st.session_state.development_history_mod3_no_autism)
 
             if "[[SCQ Report Information]]" in paragraph.text:
                 # Add SCQ

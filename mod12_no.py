@@ -22,8 +22,8 @@ st.set_page_config(
 
 ##########################################################
 # Set up OpenAI 
-if 'behavior_observation_no_autism' not in st.session_state:
-    st.session_state.behavior_observation_no_autism = ""
+if 'behavior_observation_mod12_no_autism' not in st.session_state:
+    st.session_state.behavior_observation_mod12_no_autism = ""
 
 # Load OpenAI client 
 client = OpenAI(api_key=st.secrets["openai_key"])
@@ -160,7 +160,7 @@ if st.button("Transcribe"):
                 }
             }
         )
-        st.session_state.behavior_observation_no_autism = response.output_text
+        st.session_state.behavior_observation_mod12_no_autism = response.output_text
 
 ####################################################
 with st.form('BasicInfo'):
@@ -353,7 +353,7 @@ with st.form('BasicInfo'):
     data['behavior_observation'] = st.text_area(
         "Behavioral Observation: Edit the response before submitting the form", 
         # behavior_observation,
-        st.session_state.behavior_observation_no_autism,
+        st.session_state.behavior_observation_mod12_no_autism,
         height=400,
     )
 
@@ -625,7 +625,7 @@ def add_develop_disability_office(paragraph):
 
 if submit:
     # Update session state 
-    st.session_state.behavior_observation_no_autism = data['behavior_observation']
+    st.session_state.behavior_observation_mod12_no_autism = data['behavior_observation']
 
     # handle word to replace 
     # pronouns
@@ -736,7 +736,7 @@ if submit:
                 #     paragraph.add_run("\nDevelopmental History & Review of Records", style='CustomStyle')
 
             if "[[Behavioral Presentation]]" in paragraph.text:
-                add_behavior_presentation(paragraph, st.session_state.behavior_observation_no_autism)
+                add_behavior_presentation(paragraph, st.session_state.behavior_observation_mod12_no_autism)
             
             if "[[District Grade School Setting]]" in paragraph.text:
                 add_school(paragraph)
