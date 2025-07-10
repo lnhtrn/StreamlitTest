@@ -676,7 +676,7 @@ if submit:
         "{{Preferred Pronouns 1 CAP}}": pronoun[preferred]['pronoun1cap'],
         "{{Preferred Pronouns 2}}": pronoun[preferred]['pronoun2'],
         "{{Preferred Pronouns 2 CAP}}": pronoun[preferred]['pronoun2cap'],
-        "{{Gender}}": pronoun[preferred['gender']],
+        "{{Gender}}": pronoun[preferred]['gender'],
     }
 
     replace_word.update(data)
@@ -705,7 +705,7 @@ if submit:
     
 
     #### Edit document 
-    doc = Document('templates/template_mod_3.docx')
+    doc = Document('templates/template_mod_3_no_autism.docx')
     if doc:
         # Get file name
         today_date = format_date_with_ordinal(datetime.date.today())
