@@ -81,7 +81,7 @@ def clear_my_cache():
     st.cache_data.clear()
 
 with st.sidebar:
-    # st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
+    st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
     st.link_button("Edit Dropdown Options", st.secrets['mod12_spreadsheet'])
     st.button('Reload Dropdown Data', on_click=clear_my_cache)
 
