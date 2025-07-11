@@ -92,7 +92,7 @@ with st.sidebar:
     ####################################################
     st.markdown("**Check to include score in the form:** Scores to report:")
     scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
-    teacher_eval = st.checkbox("Teacher's SSR Scores")
+    teacher_eval = st.checkbox("Teacher's SRS Scores")
     wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
     dppr_score = st.checkbox("Developmental Profile – Fourth Edition - Parent Report (DPPR)")
     pls_score = st.checkbox("Preschool Language Scale - Fifth Edition (PLS)")
@@ -291,8 +291,8 @@ with st.form('BasicInfo'):
 
     ##########################################################
     if teacher_eval:
-        st.header("Teacher SSR Score")
-        st.markdown("*Skip this section if teacher did not give SSR Score*")
+        st.header("Teacher SRS Score")
+        st.markdown("*Skip this section if teacher did not give SRS Score*")
 
         teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
 

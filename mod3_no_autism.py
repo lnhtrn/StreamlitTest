@@ -91,7 +91,9 @@ with st.sidebar:
     ####################################################
     st.markdown("**Check to include score in the form:** Scores to report:")
     scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
-    teacher_ssr_eval = st.checkbox("Teacher's SSR Scores")
+    teacher_srs_eval = st.checkbox("Teacher's SRS Scores")
+    caregiver_srs_eval = st.checkbox("Teacher's SRS Scores")
+    caregiver_vineland_eval = st.checkbox("Caregiver's Vineland Adaptive Behavior Scales")
     teacher_vineland_eval = st.checkbox("Teacher's Vineland Adaptive Behavior Scales")
     wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
     dppr_score = st.checkbox("Developmental Profile – Fourth Edition - Parent Report (DPPR)")
@@ -258,28 +260,29 @@ with st.form('BasicInfo'):
         )
 
     ##########################################################
-    st.header("SRS-2 Caregiver Score")
+    if caregiver_srs_eval:
+        st.header("SRS-2 Caregiver Score")
 
-    data["{{SRS-2 Score Caregiver}}"] = st.text_input("Caregiver's SRS-2 Score")
-    
-    data["{{Social Communication and Interaction Score Caregiver}}"] = st.text_input("Social Communication and Interaction Score Caregiver")
-    
-    data["{{Restricted Interests and Repetitive Behavior Score Caregiver}}"] = st.text_input("Restricted Interests and Repetitive Behavior Score Caregiver")
+        data["{{SRS-2 Score Caregiver}}"] = st.text_input("Caregiver's SRS-2 Score")
+        
+        data["{{Social Communication and Interaction Score Caregiver}}"] = st.text_input("Social Communication and Interaction Score Caregiver")
+        
+        data["{{Restricted Interests and Repetitive Behavior Score Caregiver}}"] = st.text_input("Restricted Interests and Repetitive Behavior Score Caregiver")
 
-    data["{{Caregiver's level of concern}}"] = st.radio(
-        "Caregiver's level of concern",
-        ['no', 'mild', 'moderate', 'severe']
-    )
+        data["{{Caregiver's level of concern}}"] = st.radio(
+            "Caregiver's level of concern",
+            ['no', 'mild', 'moderate', 'severe']
+        )
 
-    data["{{Evaluator's level of concern}}"] = st.radio(
-        "Evaluator's level of concern",
-        ['no', 'mild', 'moderate', 'severe']
-    )
+        data["{{Evaluator's level of concern}}"] = st.radio(
+            "Evaluator's level of concern",
+            ['no', 'mild', 'moderate', 'severe']
+        )
 
     ##########################################################
-    if teacher_ssr_eval:
-        st.header("Teacher SSR Score")
-        st.markdown("*Skip this section if teacher did not give SSR Score*")
+    if teacher_srs_eval:
+        st.header("Teacher SRS Score")
+        st.markdown("*Skip this section if teacher did not give SRS Score*")
 
         teacher_score['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
 
@@ -293,15 +296,16 @@ with st.form('BasicInfo'):
         )
     
     ##########################################################
-    st.header("Vineland Adaptive Behavior Scales - Caregiver's Scores")
+    if caregiver_vineland_eval:
+        st.header("Vineland Adaptive Behavior Scales - Caregiver's Scores")
 
-    data["{{Vineland Score Caregiver}}"] = st.text_input("Vineland Score Caregiver")
-    
-    data["{{Communication Score Caregiver}}"] = st.text_input("Communication Score Caregiver")
-    
-    data["{{Daily Living Skills Score Caregiver}}"] = st.text_input("Daily Living Skills Score Caregiver")
-    
-    data["{{Socialization Score Caregiver}}"] = st.text_input("Socialization Score Caregiver")
+        data["{{Vineland Score Caregiver}}"] = st.text_input("Vineland Score Caregiver")
+        
+        data["{{Communication Score Caregiver}}"] = st.text_input("Communication Score Caregiver")
+        
+        data["{{Daily Living Skills Score Caregiver}}"] = st.text_input("Daily Living Skills Score Caregiver")
+        
+        data["{{Socialization Score Caregiver}}"] = st.text_input("Socialization Score Caregiver")
 
     if teacher_vineland_eval:
         st.header("Vineland Adaptive Behavior Scales - Teacher's Scores")
@@ -327,7 +331,7 @@ with st.form('BasicInfo'):
 
     # data['{{School Name}}'] = st.text_input("School Name")
 
-    if teacher_ssr_eval or teacher_vineland_eval:
+    if teacher_srs_eval or teacher_vineland_eval:
         teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
 
     data['{{Grade}}'] = st.text_input(
@@ -471,6 +475,23 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
+    ##########################################################
+    st.header("Recommendations")
+
+    check_accomodations = st.checkbox("Accommodations")
+    check_check_in_anxiety = st.checkbox("Check-in Support for Anxiety")
+    check_hearing_assistive = st.checkbox("Hearing Assistive Technology")
+    check_additional_reading_suggestions = st.checkbox("Additional Suggestions")
+    check_home_community = st.checkbox("Home/Community Based Supports")
+    check_coordinated_care = st.checkbox("Coordinated Care")
+    check_therapeutic_supports = st.checkbox("Therapeutic Supports")
+    check_coordinated_healthcare = st.checkbox("Coordinated Healthcare")
+    check_executive_functioning = st.checkbox("Executive Functioning Accommodations")
+    check_support = st.checkbox("Support")
+    check_adult_career = st.checkbox("Adult Career and Continuing Education Services-Vocational Rehabilitation (ACCES-VR)")
+    check_elopement_plan = st.checkbox("Elopement Plan")
+    check_occupational_therapy = st.checkbox("Occupational Therapy")
+
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -547,18 +568,30 @@ def add_scq_form(paragraph):
     delete_paragraph(paragraph)
 
 def add_vineland_no_teacher(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Vineland Adaptive Behavior Scales – 3rd Ed. (VABS-3) – Parent Report', style='CustomStyle')
+    r.italic = True
+    r.font.underline = True
+
+    paragraph.insert_paragraph_before().add_run("The VABS-3 yields information about an individual’s adaptive functioning, which is the ability to independently perform daily activities for personal and social sufficiency. The Adaptive Behavior Composite measures overall adaptive functioning, while separate scores provide more details about communication, daily living skills, and socialization.\n\nStandard scores on the VABS-3 have a mean of 100 and a standard deviation of 15.  Scores between 85 and 115 are within the average range for this test, scores between 70 and 84 are considered moderately low, and scores below 70 are considered very low.\n", style='CustomStyle')
+    
     paragraph.insert_paragraph_before().add_run('\tAdaptive Behavior Composite: {{Vineland Score Caregiver}} ({{Caregiver type}})', style='CustomStyle').bold = True
     paragraph.insert_paragraph_before().add_run('\t\tCommunication: {{Communication Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
     paragraph.insert_paragraph_before().add_run('\t\tDaily Living Skills: {{Daily Living Skills Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
     paragraph.insert_paragraph_before().add_run('\t\tSocialization: {{Socialization Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
-    delete_paragraph(paragraph)
 
 def add_vineland_yes_teacher(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Vineland Adaptive Behavior Scales – 3rd Ed. (VABS-3) – Parent & Teacher Report', style='CustomStyle')
+    r.italic = True
+    r.font.underline = True
+
+    paragraph.insert_paragraph_before().add_run("The VABS-3 yields information about an individual’s adaptive functioning, which is the ability to independently perform daily activities for personal and social sufficiency. The Adaptive Behavior Composite measures overall adaptive functioning, while separate scores provide more details about communication, daily living skills, and socialization.\n\nStandard scores on the VABS-3 have a mean of 100 and a standard deviation of 15.  Scores between 85 and 115 are within the average range for this test, scores between 70 and 84 are considered moderately low, and scores below 70 are considered very low.\n", style='CustomStyle')
+    
     paragraph.insert_paragraph_before().add_run('\tAdaptive Behavior Composite: {{Vineland Score Caregiver}} ({{Caregiver type}}), {{Vineland Score Teacher}} (teacher)', style='CustomStyle').bold = True
     paragraph.insert_paragraph_before().add_run('\t\tCommunication: {{Communication Score Caregiver}} ({{Caregiver type}}), {{Communication Score Teacher}} (teacher)', style='CustomStyle')
     paragraph.insert_paragraph_before().add_run('\t\tDaily Living Skills: {{Daily Living Skills Score Caregiver}} ({{Caregiver type}}), {{Daily Living Skills Score Teacher}} (teacher)', style='CustomStyle')
     paragraph.insert_paragraph_before().add_run('\t\tSocialization: {{Socialization Score Caregiver}} ({{Caregiver type}}), {{Socialization Score Teacher}} (teacher)', style='CustomStyle')
-    delete_paragraph(paragraph)
 
 def add_srs_no_teacher(paragraph):
     r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent Report', style='CustomStyle')
@@ -660,6 +693,219 @@ def add_bullet(paragraph, list_data):
         paragraph.insert_paragraph_before().add_run(item, style='ListStyle')
     delete_paragraph(paragraph)
 
+   
+###############################################################
+# Recommendations
+
+def add_hyperlink(paragraph, url, size=24):
+    """
+    A function that places a hyperlink within a paragraph object with custom font and size.
+
+    :param paragraph: The paragraph we are adding the hyperlink to.
+    :param url: A string containing the required url
+    :param text: The text displayed for the url
+    :param color: Hex color string (e.g., '0000FF')
+    :param underline: Bool indicating whether the link is underlined
+    :return: The hyperlink object
+    """
+
+    part = paragraph.part
+    r_id = part.relate_to(url, docx.opc.constants.RELATIONSHIP_TYPE.HYPERLINK, is_external=True)
+
+    hyperlink = OxmlElement('w:hyperlink')
+    hyperlink.set(qn('r:id'), r_id)
+
+    new_run = OxmlElement('w:r')
+    rPr = OxmlElement('w:rPr')
+
+    # Set font to Georgia
+    rFonts = OxmlElement('w:rFonts')
+    rFonts.set(qn('w:ascii'), 'Georgia')
+    rFonts.set(qn('w:hAnsi'), 'Georgia')
+    rPr.append(rFonts)
+
+    # Set font size to 11.5pt (23 half-points)
+    sz = OxmlElement('w:sz')
+    sz.set(qn('w:val'), f'{size}')
+    rPr.append(sz)
+
+    c = OxmlElement('w:color')
+    c.set(qn('w:val'), '1155cc')
+    rPr.append(c)
+
+    # Set underline
+    u = OxmlElement('w:u')
+    u.set(qn('w:val'), 'single')
+    rPr.append(u)
+
+    new_run.append(rPr)
+
+    # Add text
+    text_elem = OxmlElement('w:t')
+    text_elem.text = url
+    new_run.append(text_elem)
+
+    hyperlink.append(new_run)
+    paragraph._p.append(hyperlink)
+
+    return hyperlink
+
+def add_accomodations(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Accommodations. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('I would recommend that a designated location be determined for assessments, especially those with a timed component. There is also value providing {{Patient First Name}} with additional time and supports to remember to ask for accommodations.\n', style='CustomStyle')
+
+def add_check_in_anxiety(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Check-in Support for Anxiety. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('{{Patient First Name}}’s parents reported that {{Preferred Pronouns 1}} has an anxiety diagnosis, and we would recommend adding counseling supports to help determine if anxiety is contributing to difficulties with auditory filtering or attention on assessments.\n', style='CustomStyle')
+
+def add_hearing_assistive(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Hearing Assistive Technology. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run("Given {{Patient First Name}}'s presentation, results of assessments, and behavioral observations across settings, we recommend trialing the use of a hearing assistive technology to address concerns related to auditory filtering and attention.\n", style='CustomStyle')
+
+def add_additional_reading_suggestions(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Additional Suggestions. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run("Given {{Patient First Name}}'s reading difficulties, I recommend the following:\n", style='CustomStyle')
+
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    p.paragraph_format.left_indent = Inches(0.5)
+    p.add_run('Enlarged font with strategic spacing between lines of text for assignments\n', style='CustomStyle')
+
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    p.paragraph_format.left_indent = Inches(0.5)
+    p.add_run('Hearing assistive technology to rule-out potential auditory or attention concerns\n', style='CustomStyle')
+
+    p = paragraph.insert_paragraph_before()
+    p.add_run("In so far as {{Patient First Name}}'s difficulties could be attributed to, in part, to auditory processing or filtering concerns, I think there’s value in trialing the use of a hearing assistive tech.", style='CustomStyle').italic = True
+    
+def add_home_community(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Home/Community Based Supports. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('Based on the report by {{Preferred Pronouns 2}} mother and our observations today, we recommend considering therapeutic supports through organizations that provide specialized care. To that end, we recommend the following organizations: \n', style='CustomStyle')
+
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    p.paragraph_format.left_indent = Inches(0.5)
+    p.add_run('URMC Pediatric Behavioral Health and Wellness:\n', style='CustomStyle')
+    p = paragraph.insert_paragraph_before(style='Normal')
+    p.paragraph_format.left_indent = Inches(0.5)
+    add_hyperlink(p, 'https://www.urmc.rochester.edu/childrens-hospital/behavioral-health-wellness/outpatient')
+
+def add_coordinated_care(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Coordinated Care. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('We encourage collaboration between home, school, and medical providers to ensure a unified approach to supporting {{Patient First Name}}’s needs across settings.\n', style='CustomStyle')
+
+def add_therapeutic_supports(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Therapeutic Supports. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('Based on the report by {{Preferred Pronouns 2}} mother and our observations today, we recommend considering therapeutic supports through organizations that provide specialized care. To that end, we recommend the following organizations: \n', style='CustomStyle')
+
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    p.paragraph_format.left_indent = Inches(0.5)
+    p.add_run('URMC Pediatric Behavioral Health and Wellness:\n', style='CustomStyle')
+    p = paragraph.insert_paragraph_before(style='Normal')
+    p.paragraph_format.left_indent = Inches(0.5)
+    add_hyperlink(p, 'https://www.urmc.rochester.edu/childrens-hospital/behavioral-health-wellness/outpatient')
+
+    paragraph.insert_paragraph_before()
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    p.paragraph_format.left_indent = Inches(0.5)
+    p.add_run('Genesee Valley Psychology: ', style='CustomStyle')
+    add_hyperlink(p, 'https://gviproc.org/about')
+    paragraph.insert_paragraph_before()
+
+def add_coordinated_healthcare(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Therapeutic Supports. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run("Based on {{Patient First Name}}'s history of mental health and inter-related social concerns, we think there is value in pursuing coordinated healthcare such as:\n", style='CustomStyle')
+
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    p.paragraph_format.left_indent = Inches(0.5)
+    add_hyperlink(p, 'https://www.rochesterregional.org/services/adult-mental-health/pros')
+
+    paragraph.insert_paragraph_before()
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    add_hyperlink(p, 'https://www.hhuny.org/')
+    paragraph.insert_paragraph_before()
+
+def add_executive_functioning(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Executive Functioning Accommodations. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run("{{Patient First Name}} will need frequent check-ins to review {{Preferred Pronouns 2}} daily and weekly activities to make sure {{Preferred Pronouns 1}} remains on target with longer-term assignments. Organization of materials is a critical component of this process, and, as such, we recommend daily adult support to initiate and complete work for {{Patient First Name}}.\n\nOne approach that might be worth pursuing at school would be:\n", style='CustomStyle')
+
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    p.paragraph_format.left_indent = Inches(0.5)
+    p.add_run("Unstuck & On Target - ", style='CustomStyle')
+    add_hyperlink(p, 'https://www.rochesterregional.org/services/adult-mental-health/pros')
+
+def add_support(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Support. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('We think that {{Patient First Name}} would benefit from the school’s behavioral specialist to accommodate {{Preferred Pronouns 2}} day-to-day management needs at school. We encourage opportunities to engage with {{Preferred Pronouns 2}} peers as well as executive functioning suggestions outlined above.\n', style='CustomStyle')
+
+def add_adult_career(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Adult Career and Continuing Education Services-Vocational Rehabilitation (ACCES-VR)', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('{{Patient First Name}} may benefit from vocational support to help maintain employment and supported {{Preferred Pronouns 2}} independent living. Information can be found on the NYSD Department’s website: ', style='CustomStyle')
+    add_hyperlink(p, 'https://www.acces.nysed.gov/vr')
+    paragraph.insert_paragraph_before()
+
+def add_elopement_plan(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Elopement Plan. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('Given {{Patient First Name}}’s predisposition to wander and bolt if not closely monitored, I think that it is medically necessary for {{Preferred Pronouns 2}} team to have in place a series of preventative and responsive procedures related to {{Preferred Pronouns 2}} elopement. This could be done in consultation with the school team (teacher, social worker) and a behavior specialist.\nResources to consider include:\n', style='CustomStyle')
+    
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    p.paragraph_format.left_indent = Inches(0.5)
+    p.add_run('Big Red Safety Toolkit - ', style='CustomStyle')
+    p = paragraph.insert_paragraph_before(style='Normal')
+    p.paragraph_format.left_indent = Inches(0.5)
+    add_hyperlink(p, 'https://nationalautismassociation.org/docs/BigRedSafetyToolkit.pdf')
+
+    paragraph.insert_paragraph_before()
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    p.paragraph_format.left_indent = Inches(0.5)
+    p.add_run('Angel Sense - ', style='CustomStyle')
+    add_hyperlink(p, 'https://www.angelsense.com/gps-tracker-lifesaving-features/')
+
+    paragraph.insert_paragraph_before(style='Normal')
+
+def add_occupational_therapy(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Occupational Therapy. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('Based on {{Preferred Pronouns 2}} parents’ report, there is a clear pattern of concerns related to auditory aversions that set to the occasion for potential elopement. As such, I would recommend reaching out to URMC Pediatric Occupational Therapy:\n', style='CustomStyle')
+    
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    add_hyperlink(p, 'https://www.urmc.rochester.edu/locations/pediatric-neurology')
 
 if submit:
     # Update session state 
@@ -751,6 +997,34 @@ if submit:
             if "[[Developmental History]]" in paragraph.text:
                 add_developmental_history(paragraph, st.session_state.development_history_mod3_no_autism)
 
+            if "[[Recommendations]]" in paragraph.text:
+                if check_accomodations:
+                    add_accomodations(paragraph)
+                if check_check_in_anxiety:
+                    add_check_in_anxiety(paragraph)
+                if check_hearing_assistive:
+                    add_hearing_assistive(paragraph)
+                if check_additional_reading_suggestions:
+                    add_additional_reading_suggestions(paragraph)
+                if check_home_community:
+                    add_home_community(paragraph)
+                if check_coordinated_care:
+                    add_coordinated_care(paragraph)
+                if check_therapeutic_supports:
+                    add_therapeutic_supports(paragraph)
+                if check_coordinated_healthcare:
+                    add_coordinated_healthcare(paragraph)
+                if check_executive_functioning:
+                    add_executive_functioning(paragraph)
+                if check_support:
+                    add_support(paragraph)
+                if check_adult_career:
+                    add_adult_career(paragraph)
+                if check_elopement_plan:
+                    add_elopement_plan(paragraph)
+                if check_occupational_therapy:
+                    add_occupational_therapy(paragraph)
+
             if "[[SCQ Report Information]]" in paragraph.text:
                 # Add SCQ
                 if scq_result:
@@ -760,43 +1034,47 @@ if submit:
                 
             if "[[SRS Report Information]]" in paragraph.text:
                 # Add SRS
-                if teacher_ssr_eval:
-                    add_srs_yes_teacher(paragraph, teacher_score)
-                else:
-                    add_srs_no_teacher(paragraph)
+                if caregiver_srs_eval:
+                    if teacher_srs_eval:
+                        add_srs_yes_teacher(paragraph, teacher_score)
+                    else:
+                        add_srs_no_teacher(paragraph)
+                # if nothing 
+                delete_paragraph(paragraph)
             
             if "Social Responsiveness Scale" in paragraph.text:
-                if teacher_ssr_eval:
+                if teacher_srs_eval:
                     paragraph.add_run(" & teacher", style='CustomStyle')
 
-            if "Vineland Adaptive Behavior Scale 3" in paragraph.text:
-                if teacher_vineland_eval:
-                    paragraph.add_run(" & teacher", style='CustomStyle')
+            if "[[Assessment Procedures]]" in paragraph.text:
+                if scq_result:
+                    paragraph.insert_paragraph_before().add_run("Social Communication Questionnaire (SCQ): Completed by {{Preferred Pronouns 2}} {{Caregiver type}}", style='CustomStyle')
 
-            if "Vineland Adaptive Behavior Scales" in paragraph.text:
-                if teacher_vineland_eval:
-                    r = paragraph.add_run(" & Teacher Report", style='CustomStyle')
-                    r.italic = True
-                    r.font.underline = True
-                else:
-                    r = paragraph.add_run(" Report", style='CustomStyle')
-                    r.italic = True
-                    r.font.underline = True
+                ### add SRS
+
+                if caregiver_vineland_eval:
+                    if teacher_vineland_eval:
+                        paragraph.insert_paragraph_before().add_run("Vineland Adaptive Behavior Scale 3rd Edition: Completed by {{Preferred Pronouns 2}} {{Caregiver type}} & teacher", style='CustomStyle')
+                    else:
+                        paragraph.insert_paragraph_before().add_run("Vineland Adaptive Behavior Scale 3rd Edition: Completed by {{Preferred Pronouns 2}} {{Caregiver type}}", style='CustomStyle')
+
+            if "[[Vineland Scale Information]]" in paragraph.text:
+                if caregiver_vineland_eval:
+                    if teacher_vineland_eval:
+                        add_vineland_yes_teacher(paragraph)
+                    else:
+                        add_vineland_no_teacher(paragraph)
+                # if nothing 
+                delete_paragraph(paragraph)
             
             if "Developmental History & Review of Records" in paragraph.text:
-                if teacher_ssr_eval:
+                if teacher_srs_eval:
                     paragraph.add_run(f"\nSchool Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
                 if teacher_vineland_eval:
                     paragraph.add_run(f"\nReport on Vineland Adaptive Behavior Scale provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
 
             if "[[District Grade School Setting]]" in paragraph.text:
                 add_school(paragraph)
-
-            if "[[Vineland Score Breakdown]]" in paragraph.text:
-                if teacher_vineland_eval:
-                    add_vineland_yes_teacher(paragraph)
-                else:
-                    add_vineland_no_teacher(paragraph)
         
         # Edit document
         for word in replace_word:

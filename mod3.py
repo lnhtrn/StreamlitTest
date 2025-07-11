@@ -91,7 +91,7 @@ with st.sidebar:
     ####################################################
     st.markdown("**Check to include score in the form:** Scores to report:")
     scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
-    teacher_ssr_eval = st.checkbox("Teacher's SSR Scores")
+    teacher_srs_eval = st.checkbox("Teacher's SRS Scores")
     teacher_vineland_eval = st.checkbox("Teacher's Vineland Adaptive Behavior Scales")
     wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
     dppr_score = st.checkbox("Developmental Profile – Fourth Edition - Parent Report (DPPR)")
@@ -276,9 +276,9 @@ with st.form('BasicInfo'):
     )
 
     ##########################################################
-    if teacher_ssr_eval:
-        st.header("Teacher SSR Score")
-        st.markdown("*Skip this section if teacher did not give SSR Score*")
+    if teacher_srs_eval:
+        st.header("Teacher SRS Score")
+        st.markdown("*Skip this section if teacher did not give SRS Score*")
 
         teacher_score['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
 
@@ -342,7 +342,7 @@ with st.form('BasicInfo'):
 
     # data['{{School Name}}'] = st.text_input("School Name")
 
-    if teacher_ssr_eval or teacher_vineland_eval:
+    if teacher_srs_eval or teacher_vineland_eval:
         teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
 
     data['{{Grade}}'] = st.text_input(
@@ -878,13 +878,13 @@ if submit:
                 
             if "[[SRS Report Information]]" in paragraph.text:
                 # Add SRS
-                if teacher_ssr_eval:
+                if teacher_srs_eval:
                     add_srs_yes_teacher(paragraph, teacher_score)
                 else:
                     add_srs_no_teacher(paragraph)
             
             if "Social Responsiveness Scale" in paragraph.text:
-                if teacher_ssr_eval:
+                if teacher_srs_eval:
                     paragraph.add_run(" & teacher", style='CustomStyle')
 
             if "Vineland Adaptive Behavior Scale 3" in paragraph.text:
@@ -902,7 +902,7 @@ if submit:
                     r.font.underline = True
             
             if "Developmental History & Review of Records" in paragraph.text:
-                if teacher_ssr_eval:
+                if teacher_srs_eval:
                     paragraph.add_run(f"\nSchool Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
                 if teacher_vineland_eval:
                     paragraph.add_run(f"\nReport on Vineland Adaptive Behavior Scale provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
