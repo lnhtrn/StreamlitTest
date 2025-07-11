@@ -357,7 +357,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    comma['{{Classification}}'] = st.selectbox(
+    data['{{Classification}}'] = st.selectbox(
         "Classification",
         dropdowns['Classification'],
         index=None,
