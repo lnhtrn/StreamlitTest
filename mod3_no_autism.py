@@ -91,8 +91,8 @@ with st.sidebar:
     ####################################################
     st.markdown("**Check to include score in the form:** Scores to report:")
     scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
+    caregiver_srs_eval = st.checkbox("Caregiver's SRS Scores")
     teacher_srs_eval = st.checkbox("Teacher's SRS Scores")
-    caregiver_srs_eval = st.checkbox("Teacher's SRS Scores")
     caregiver_vineland_eval = st.checkbox("Caregiver's Vineland Adaptive Behavior Scales")
     teacher_vineland_eval = st.checkbox("Teacher's Vineland Adaptive Behavior Scales")
     wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
@@ -1061,7 +1061,7 @@ if submit:
                         paragraph.insert_paragraph_before().add_run("Vineland Adaptive Behavior Scale 3rd Edition: Completed by {{Preferred Pronouns 2}} {{Caregiver type}} & teacher", style='CustomStyle')
                     else:
                         paragraph.insert_paragraph_before().add_run("Vineland Adaptive Behavior Scale 3rd Edition: Completed by {{Preferred Pronouns 2}} {{Caregiver type}}", style='CustomStyle')
-                        
+
                 delete_paragraph(paragraph)
 
             if "[[Vineland Scale Information]]" in paragraph.text:
