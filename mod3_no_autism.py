@@ -974,8 +974,9 @@ if submit:
 
         # Add scores 
         for i, paragraph in enumerate(doc.paragraphs):
-            if len(optional) > 0:
-                if "Scores are reported here as standard scores" in paragraph.text:
+            if "Scores are reported here as standard scores" in paragraph.text:
+                if len(optional) > 0:
+                    paragraph.insert_paragraph_before().add_run("Psychoeducational Testing:\n", style='CustomStyle').font.underline = True
                     if 'wppsi' in optional:
                         add_wppsi(paragraph, optional['wppsi'])
                     if 'dppr' in optional:
@@ -990,6 +991,8 @@ if submit:
                         add_reelt(paragraph, optional['reelt'])
                     if 'abas' in optional:
                         add_abas(paragraph, optional['abas'])
+                else:
+                    delete_paragraph(paragraph)
             
             if "[[Behavioral Presentation]]" in paragraph.text:
                 add_behavior_presentation(paragraph, st.session_state.behavior_observation_mod3_no_autism)
