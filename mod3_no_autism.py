@@ -357,10 +357,11 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    comma['{{Classification}}'] = st.multiselect(
+    comma['{{Classification}}'] = st.selectbox(
         "Classification",
         dropdowns['Classification'],
-        placeholder="Select multiple options from the list or enter a new one",
+        index=None,
+        placeholder="Select an option from the list or enter a new one",
         accept_new_options=True
     )
 
@@ -539,7 +540,7 @@ def add_school(paragraph):
     p = paragraph.insert_paragraph_before()
     tab_stops = p.paragraph_format.tab_stops
     # tab_stops.clear()  # Start fresh for this paragraph only
-    tab_stops.add_tab_stop(Inches(2.5))
+    tab_stops.add_tab_stop(Inches(3))
     # Add data
     p.add_run("District", style='CustomStyle').font.underline = True
     p.add_run(f": {data['{{School District}}']}\t", style='CustomStyle')
