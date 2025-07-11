@@ -1050,13 +1050,19 @@ if submit:
                 if scq_result:
                     paragraph.insert_paragraph_before().add_run("Social Communication Questionnaire (SCQ): Completed by {{Preferred Pronouns 2}} {{Caregiver type}}", style='CustomStyle')
 
-                ### add SRS
+                if caregiver_srs_eval:
+                    if teacher_srs_eval:
+                        paragraph.insert_paragraph_before().add_run("Social Responsiveness Scale – 2nd Edition: Completed by {{Preferred Pronouns 2}} {{Caregiver type}} & teacher", style='CustomStyle')
+                    else:
+                        paragraph.insert_paragraph_before().add_run("Social Responsiveness Scale – 2nd Edition: Completed by {{Preferred Pronouns 2}} {{Caregiver type}}", style='CustomStyle')
 
                 if caregiver_vineland_eval:
                     if teacher_vineland_eval:
                         paragraph.insert_paragraph_before().add_run("Vineland Adaptive Behavior Scale 3rd Edition: Completed by {{Preferred Pronouns 2}} {{Caregiver type}} & teacher", style='CustomStyle')
                     else:
                         paragraph.insert_paragraph_before().add_run("Vineland Adaptive Behavior Scale 3rd Edition: Completed by {{Preferred Pronouns 2}} {{Caregiver type}}", style='CustomStyle')
+                        
+                delete_paragraph(paragraph)
 
             if "[[Vineland Scale Information]]" in paragraph.text:
                 if caregiver_vineland_eval:
