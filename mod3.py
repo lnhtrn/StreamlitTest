@@ -634,7 +634,7 @@ def add_score(paragraph, score_data):
         p = paragraph.insert_paragraph_before()
         p.paragraph_format.left_indent = Inches(0.5)
         tab_stops = p.paragraph_format.tab_stops
-        tab_stops.add_tab_stop(Inches(2.5))
+        tab_stops.add_tab_stop(Inches(3.5))
 
         # add each score
         for item_tuple in line:
