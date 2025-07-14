@@ -472,102 +472,18 @@ with st.form('BasicInfo'):
 
     ############################################
     st.header("DSM Criteria")
+
+    # Add DSM questions
+    with open("misc_data/dsm.yaml", "r") as file:
+        dsm_title = yaml.safe_load(file)
     
-    bullet['SocialReciprocity'] = st.multiselect(    
-        "Deficits in social emotional reciprocity",
-        dropdowns['SocialReciprocity'],
-        # [
-        #     "None",
-        #     "Awkward social initiation and response",
-        #     "Difficulties with chit-chat",
-        #     "Difficulty interpreting figurative language",
-        #     "Limited social approach or greetings",
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['NonverbalComm'] = st.multiselect(
-        "Deficits in nonverbal communicative behaviors used for social interaction",
-        dropdowns['NonverbalComm'],
-        # [
-        #     "None",
-        #     "Limited well-directed eye contact",
-        #     "Difficulty reading facial expressions",
-        #     "Absence of joint attention",
-        #     "Lack of well-integrated gestures",
-        #     "Limited range of facial expression",
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['Relationships'] = st.multiselect(
-        "Deficits in developing, maintaining, and understanding relationships",
-        dropdowns['Relationships'],
-        # [
-        #     "None",
-        #     "Limited engagement with same age peers",
-        #     "Difficulties adjusting behavior to social context",
-        #     "Difficulties forming friendships",
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['RepetitiveBehaviors'] = st.multiselect(
-        "Stereotyped or repetitive motor movements, use of objects, or speech",
-        dropdowns['RepetitiveBehaviors'],
-        # [
-        #     "None",
-        #     "Repetitive whole-body movements",
-        #     "Repetitive hand movements",
-        #     "Echolalia of sounds",
-        #     "Echolalia of words",
-        #     "Stereotyped speech",
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['SamenessRoutines'] = st.multiselect(
-        "Insistence on sameness, inflexible adherence to routines or ritualized behavior",
-        dropdowns['SamenessRoutines'],
-        # [
-        #     "None",
-        #     "Difficulties with changes in routine across developmental course",
-        #     "Notable difficulties with transitions",
-        #     "Insistence on following very specific routines",
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['RestrictedInterests'] = st.multiselect(
-        "Highly restricted, fixated interests that are abnormal in intensity or focus",
-        dropdowns['RestrictedInterests'],
-        # [
-        #     "None",
-        #     "Persistent pattern of perseverative interests",
-        #     "Notable interest in topics others may find odd",
-        #     "Very restricted pattern of eating and sleep time behavior",
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    bullet['SensoryReactivity'] = st.multiselect(
-        "Hyper- or hypo-reactivity to sensory aspects of the environment",
-        dropdowns['SensoryReactivity'],
-        # [
-        #     "None",
-        #     "Auditory sensitivities",
-        #     "Tactile defensiveness",
-        #     "Proprioceptive-seeking behavior",
-        # ],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
+    for key, value in dsm_title:
+        bullet[key] = st.multiselect(    
+            value,
+            dropdowns[key],
+            placeholder="Select multiple options from the list or enter a new one",
+            accept_new_options=True
+        )
 
     comma['{{Symptoms present in the early developmental period}}'] = st.multiselect(
         "Symptoms present in the early developmental period",
@@ -589,10 +505,6 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-
-    # data['{{}}'] = st.text_input("")
-    # data['{{}}'] = st.text_input("")
-    # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
