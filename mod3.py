@@ -9,8 +9,8 @@ from docx.enum.style import WD_STYLE_TYPE
 from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
 from docx.shared import Inches, Pt
-from docx.oxml.shared import OxmlElement, qn
 from openai import OpenAI
+# from modules.add_scores import *
 
 ##########################################################
 st.set_page_config(
@@ -622,55 +622,23 @@ def add_srs_yes_teacher(paragraph, score_data):
     observe.add_run("my observation aligned with a {{Evaluator's level of concern}} concern.\n", style='CustomStyle').bold = True
     delete_paragraph(paragraph)
 
-def add_wppsi(paragraph, score_data):
+def add_score(paragraph, score_data):
     paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed.', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tFull Scale IQ: {score_data["WPPSI Full Scale IQ Score"]}', style='CustomStyle').bold = True
-    paragraph.insert_paragraph_before().add_run(f'\tVerbal Comprehension: {score_data["WPPSI Verbal Comprehension Score"]}\t\t\tVisual Spatial: {score_data["WPPSI Visual Spatial Score"]}', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) \u2013 {score_data["Test name"]}', style='CustomStyle').italic = True
     
-def add_dppr(paragraph, score_data):
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Developmental Profile – Fourth Edition – Parent Report', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tCognitive: {score_data["DPPR Cognitive Score"]}\t\t\t\t\tSocial-Emotional: {score_data["DPPR Social-Emotional Score"]}', style='CustomStyle')
-    paragraph.insert_paragraph_before().add_run(f'\tAdaptive: {score_data["DPPR Adaptive Score"]}\t\t\t\t\tPhysical: {score_data["DPPR Physical Score"]}', style='CustomStyle')
+    # Go over each line 
+    for line in score_data["All items"]:
+        # get a new paragraph and indent it 
+        p = paragraph.insert_paragraph_before()
+        p.paragraph_format.left_indent = Inches(0.5)
+        tab_stops = p.paragraph_format.tab_stops
+        tab_stops.add_tab_stop(Inches(2.5))
 
-def add_pls(paragraph, score_data):
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Preschool Language Scale – Fifth Edition', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tTotal Language Score: {score_data["PLS Total Language Score"]}', style='CustomStyle').bold = True
-    paragraph.insert_paragraph_before().add_run(f'\tAuditory Comprehension: {score_data["PLS Auditory Comprehension Score"]} \t\tExpressive Communication: {score_data["PLS Expressive Communication Score"]}', style='CustomStyle')
-
-def add_pdms(paragraph, score_data):
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Peabody Developmental Motor Scales – Second Edition', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tGross Motor: {score_data["PDMS Gross Motor Score"]}\t\t\t\tFine Motor: {score_data["PDMS Fine Motor Score"]}', style='CustomStyle')
-    
-def add_peshv(paragraph, score_data):
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Preschool Evaluation Scale Home Version – Second Edition', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tCognitive: {score_data["PESHV Cognitive Score"]} \t\t\t\t\tSocial Emotional: {score_data["PESHV Social Emotional Score"]}', style='CustomStyle')
-
-def add_reelt(paragraph, score_data):
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Receptive Expressive Emergent Language Test – Fourth Edition', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tTotal Language: {score_data["REELT Total Language Score"]}', style='CustomStyle').bold = True
-    paragraph.insert_paragraph_before().add_run(f'\tAuditory Comprehension: {score_data["REELT Auditory Comprehension Score"]}', style='CustomStyle')
-    paragraph.insert_paragraph_before().add_run(f'\tExpressive Communication: {score_data["REELT Expressive Communication Score"]}', style='CustomStyle')
-    
-def add_abas(paragraph, score_data):
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Adaptive Behavior Assessment System – Third Edition', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tGeneral Adaptive Composite: {score_data["ABAS General Adaptive Composite"]}', style='CustomStyle').bold = True
-    paragraph.insert_paragraph_before().add_run(f'\tConceptual: {score_data["ABAS Conceptual"]}', style='CustomStyle')
-    paragraph.insert_paragraph_before().add_run(f'\tSocial: {score_data["ABAS Social"]}\t\t\tPractical: {score_data["ABAS Practical"]}', style='CustomStyle')
-    
-def add_bullet(paragraph, list_data):
-    paragraph.insert_paragraph_before()
-    for item in list_data:
-        paragraph.insert_paragraph_before().add_run(item, style='ListStyle')
-    delete_paragraph(paragraph)
-
-
+        # add each score
+        for item_tuple in line:
+            item = item_tuple[0]
+            p.add_run(f'{item}: {score_data["All items"][item]}\t', style='CustomStyle').bold = item_tuple[1]
+  
 if submit:
     # Update session state 
     st.session_state.behavior_observation_mod3 = data['behavior_observation']
@@ -737,23 +705,12 @@ if submit:
 
         # Add scores 
         for i, paragraph in enumerate(doc.paragraphs):
-            if len(optional) > 0:
-                if "Scores are reported here as standard scores" in paragraph.text:
-                    if 'wppsi' in optional:
-                        add_wppsi(paragraph, optional['wppsi'])
-                    if 'dppr' in optional:
-                        add_dppr(paragraph, optional["dppr"])
-                    if 'pls' in optional:
-                        add_pls(paragraph, optional["pls"])
-                    if 'pdms' in optional:
-                        add_pdms(paragraph, optional["pdms"])
-                    if 'peshv' in optional:
-                        add_peshv(paragraph, optional['peshv'])
-                    if 'reelt' in optional:
-                        add_reelt(paragraph, optional['reelt'])
-                    if 'abas' in optional:
-                        add_abas(paragraph, optional['abas'])
-            
+            total = 0
+            if "Scores are reported here as standard scores" in paragraph.text:
+                for test in check_scores:
+                    if check_scores[test]:
+                        add_score(paragraph, score_data=optional[test])
+        
             if "[[Behavioral Presentation]]" in paragraph.text:
                 add_behavior_presentation(paragraph, st.session_state.behavior_observation_mod3)
             
