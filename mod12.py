@@ -470,7 +470,6 @@ with st.form('BasicInfo'):
 
     ########################################################
     st.header("DSM Criteria")
-    
     # Add DSM questions
     with open("misc_data/dsm.yaml", "r") as file:
         dsm_title = yaml.safe_load(file)
