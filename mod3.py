@@ -660,22 +660,6 @@ if submit:
 
     replace_word.update(data)
 
-    # # Add optional data 
-    # if not wppsi_score and 'wppsi' in optional:
-    #     del optional['wppsi']
-    # if not dppr_score and 'dppr' in optional:
-    #     del optional['dppr']
-    # if not pls_score and 'pls' in optional:
-    #     del optional['pls']
-    # if not pdms_score and 'pdms' in optional:
-    #     del optional['pdms']
-    # if not peshv_score and 'peshv' in optional:
-    #     del optional['peshv']
-    # if not reelt_score and 'reelt' in optional:
-    #     del optional['reelt']
-    # if not abas_score and 'abas' in optional:
-    #     del optional['abas']
-
     # Display data 
     yaml_string = yaml.dump(replace_word, sort_keys=False)
     yaml_string = yaml_string + '\n' + yaml.dump(optional, sort_keys=False)
@@ -711,7 +695,7 @@ if submit:
             if "Scores are reported here as standard scores" in paragraph.text:
                 for test in check_scores:
                     if check_scores[test]:
-                        add_score(paragraph, score_data=optional[test])
+                        add_score(paragraph, score_data=scores[test])
         
             if "[[Behavioral Presentation]]" in paragraph.text:
                 add_behavior_presentation(paragraph, st.session_state.behavior_observation_mod3)
