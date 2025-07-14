@@ -16,9 +16,6 @@ def get_abbreviation(test_name):
     
     return abbreviation
 
-st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
-st.button('Reload Dropdown Data', on_click=clear_my_cache)
-
 connections = {}
 
 # Scores for sidebar
@@ -64,3 +61,17 @@ for test in score_list:
 # Display data 
 yaml_string = yaml.dump(optional, sort_keys=False)
 yaml_data = st.code(yaml_string, language=None)
+
+with st.sidebar:
+    st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
+    st.link_button("Edit Dropdown Options", st.secrets['mod3_scores'])
+    st.button('Reload Dropdown Data', on_click=clear_my_cache)
+    
+    # Checkbox
+    st.markdown("**Check to include score in the form:** Scores to report:")
+    scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
+    teacher_srs_eval = st.checkbox("Teacher's SRS Scores")
+    teacher_vineland_eval = st.checkbox("Teacher's Vineland Adaptive Behavior Scales")
+    
+    for item in optional:
+        check_scores[item] = st.checkbox(optional[item]["Test name"])
