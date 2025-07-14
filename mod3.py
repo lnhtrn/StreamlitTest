@@ -629,7 +629,7 @@ def add_score(paragraph, score_data):
     paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) \u2013 {score_data["Test name"]}', style='CustomStyle').italic = True
     
     # Go over each line 
-    for line in score_data["All items"]:
+    for line in score_data["Lines"]:
         # get a new paragraph and indent it 
         p = paragraph.insert_paragraph_before()
         p.paragraph_format.left_indent = Inches(0.5)
