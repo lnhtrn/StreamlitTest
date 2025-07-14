@@ -58,13 +58,13 @@ for test in score_list:
     optional[abbr]["Lines"] = all_lines
     optional[abbr]["All items"] = all_items
 
-# Display data 
-yaml_string = yaml.dump(optional, sort_keys=False)
-yaml_data = st.code(yaml_string, language=None)
+# # Display data 
+# yaml_string = yaml.dump(optional, sort_keys=False)
+# yaml_data = st.code(yaml_string, language=None)
 
 with st.sidebar:
     st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
-    st.link_button("Edit Dropdown Options", st.secrets['mod3_scores'])
+    st.link_button("Edit Score Options", st.secrets['mod3_scores'])
     st.button('Reload Dropdown Data', on_click=clear_my_cache)
     
     # Checkbox
@@ -75,3 +75,38 @@ with st.sidebar:
     
     for item in optional:
         check_scores[item] = st.checkbox(optional[item]["Test name"])
+
+
+data = {}
+
+with st.form("BasicInfo"):  
+    #################################################
+    st.header("Patient's data")
+
+    data["{{Patient Age}}"] = st.number_input("Patient's Age", 0, 100)
+    data['{{Patient age unit}}'] = st.radio(
+        "Year/month?",
+        ("year", "month")
+    )
+
+    #################################################
+    # Score section
+    for test in check_scores:
+        if check_scores[item]:
+            st.header(optional[test]["Test name"])
+            st.markdown(f"*Skip this section if there is no {test} Score*")
+
+            optional[test]["Test Date"] = st.date_input(f"{test} Test Date").strftime("%m/%Y")
+            
+            for item in optional[test]["All items"]:
+                optional[test]["All items"][item] = st.text_input(item)    
+
+    
+    submit = st.form_submit_button('Submit')
+
+if submit:
+    # Display data 
+    yaml_string = yaml.dump(data, sort_keys=False)
+    yaml_string = yaml_string + '\n' + yaml.dump(optional, sort_keys=False)
+    yaml_data = st.code(yaml_string, language=None)
+    
