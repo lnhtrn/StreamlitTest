@@ -662,7 +662,7 @@ if submit:
 
     # Display data 
     yaml_string = yaml.dump(replace_word, sort_keys=False)
-    yaml_string = yaml_string + '\n' + yaml.dump(optional, sort_keys=False)
+    yaml_string = yaml_string + '\n' + yaml.dump(scores, sort_keys=False)
     yaml_string = yaml_string + '\n' + yaml.dump(bullet, sort_keys=False)
     yaml_data = st.code(yaml_string, language=None)
     
