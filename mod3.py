@@ -419,6 +419,7 @@ with st.form('BasicInfo'):
     data['{{Classification}}'] = st.selectbox(
         "Classification",
         dropdowns['Classification'],
+        index=None,
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
