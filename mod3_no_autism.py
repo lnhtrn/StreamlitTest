@@ -9,7 +9,6 @@ from docx.enum.style import WD_STYLE_TYPE
 from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
 from docx.shared import Inches, Pt
-from docx.oxml.shared import OxmlElement, qn
 from openai import OpenAI
 from modules.recommendations import *
 
@@ -47,6 +46,15 @@ def transcribe_audio(audio_file, name='temp'):
 ##########################################################
 # Access Google Sheets
 
+def get_abbreviation(test_name):
+    # Split on en dash (\u2013)
+    main_title = test_name.split('\u2013')[0].strip()
+    
+    # Split into words and get uppercase initials
+    abbreviation = ''.join(word[0] for word in main_title.split() if word[0].isupper())
+    
+    return abbreviation
+
 dropdowns = {}
 connections = {}
 
@@ -75,6 +83,47 @@ for col_name in df.columns:
     dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
     dropdowns[col_name].append("None")
 
+
+# Scores for sidebar
+connections['Scores'] = st.connection(f"mod3_scores", type=GSheetsConnection)
+# Read object
+df = connections['Scores'].read(
+    ttl="30m",
+    usecols=list(range(6)),
+    nrows=30,
+) 
+score_list = df.to_dict('records')
+
+# Process data
+scores = {}
+check_scores = {}
+
+for test in score_list:
+    test_name = test["Test name"]
+    abbr = get_abbreviation(test_name)
+    scores[abbr] = {}
+
+    scores[abbr]["Test name"] = test_name
+    all_lines = []
+    all_items = {}
+    print(f"\nTest: {test_name}")
+    
+    for i in range(5):
+        line_key = f"Line {i}"
+        line_value = test.get(line_key)
+        if line_value and str(line_value) != "nan":
+            all_lines.append([])
+            items = [item.strip() for item in line_value.split(",")]
+            for item in items:
+                bold = "(bold)" in item
+                item_name = item.replace("(bold)", "").strip()
+                # write_item(item_name, bold=bold)
+                all_lines[i].append((item_name, bold))
+                all_items[item_name] = 0
+    
+    scores[abbr]["Lines"] = all_lines
+    scores[abbr]["All items"] = all_items
+
 ##################################################
 # Set up side bar
 def clear_my_cache():
@@ -96,14 +145,9 @@ with st.sidebar:
     teacher_srs_eval = st.checkbox("Teacher's SRS Scores")
     caregiver_vineland_eval = st.checkbox("Caregiver's Vineland Adaptive Behavior Scales")
     teacher_vineland_eval = st.checkbox("Teacher's Vineland Adaptive Behavior Scales")
-    wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
-    dppr_score = st.checkbox("Developmental Profile – Fourth Edition - Parent Report (DPPR)")
-    pls_score = st.checkbox("Preschool Language Scale - Fifth Edition (PLS)")
-    pdms_score = st.checkbox("Peabody Developmental Motor Scales - Second Edition")
-    peshv_score = st.checkbox("Preschool Evaluation Scale Home Version - Second Edition")
-    reelt_score = st.checkbox("Receptive Expressive Emergent Language Test - Fourth Edition")
-    abas_score = st.checkbox("Adaptive Behavior Assessment System - Third Edition")
-
+    
+    for item in scores:
+        check_scores[item] = st.checkbox(scores[item]["Test name"])
 
 col1,col2 = st.columns(2)
 col1.title('Module 3 No Autism Report Builder')
@@ -372,80 +416,16 @@ with st.form('BasicInfo'):
     )
 
     ##########################################################
-    if wppsi_score:
-        st.header("Wechsler Preschool & Primary Scales of Intelligence - Fourth Ed. (WPPSI)")
-        st.markdown("*Skip this section if there is no WPPSI Score*")
-        optional["wppsi"] = {}
+    # Score section
+    for test in check_scores:
+        if check_scores[test]:
+            st.header(scores[test]["Test name"])
+            st.markdown(f"*Skip this section if there is no {test} Score*")
 
-        optional["wppsi"]["Test Date"] = st.date_input("WPPSI Test Date").strftime("%m/%Y")
-        optional["wppsi"]['WPPSI Full Scale IQ Score'] = st.text_input("WPPSI Full Scale IQ Score")
-
-        optional["wppsi"]['WPPSI Verbal Comprehension Score'] = st.text_input("WPPSI Verbal Comprehension Score")
-
-        optional["wppsi"]['WPPSI Visual Spatial Score'] = st.text_input("WPPSI Visual Spatial Score")
-    
-    if dppr_score:
-        st.header("Developmental Profile - Fourth Edition - Parent Report (DPPR)")
-        st.markdown("*Skip this section if there is no DPPR Score*")
-        optional["dppr"] = {}
-
-        optional["dppr"]["Test Date"] = st.date_input("DPPR Test Date").strftime("%m/%Y")
-        optional["dppr"]['DPPR Cognitive Score'] = st.text_input("DPPR Cognitive Score")
-        optional["dppr"]['DPPR Social-Emotional Score'] = st.text_input("DPPR Social-Emotional Score")
-        optional["dppr"]['DPPR Adaptive Score'] = st.text_input("DPPR Adaptive Score")
-        optional["dppr"]['DPPR Physical Score'] = st.text_input("DPPR Physical Score")
-    
-    if pls_score:
-        st.header("Preschool Language Scale - Fifth Edition (PLS)")
-        st.markdown("*Skip this section if there is no PLS Score*")
-        optional["pls"] = {}
-        optional["pls"]["Test Date"] = st.date_input("PLS Test Date").strftime("%m/%Y")
-        optional["pls"]['PLS Total Language Score'] = st.text_input("PLS Total Language Score")
-        optional["pls"]['PLS Auditory Comprehension Score'] = st.text_input("PLS Auditory Comprehension Score")
-        optional["pls"]['PLS Expressive Communication Score'] = st.text_input("PLS Expressive Communication Score")
-
-    if pdms_score:
-        st.header("Peabody Developmental Motor Scales - Second Edition (PDMS)")
-        st.markdown("*Skip this section if there is no PDMS Score*")
-        optional["pdms"] = {}
-        optional["pdms"]["Test Date"] = st.date_input("Test Date").strftime("%m/%Y")
-        optional["pdms"]['PDMS Gross Motor Score'] = st.text_input("PDMS Gross Motor Score")
-        optional["pdms"]['PDMS Fine Motor Score'] = st.text_input("PDMS Fine Motor Score")
-
-    if peshv_score:
-        st.header("Preschool Evaluation Scale Home Version - Second Edition (PESHV)")
-        st.markdown("*Skip this section if there is no PESHV Score*")
-        optional["peshv"] = {}
-        optional["peshv"]["Test Date"] = st.date_input("PESHV Test Date").strftime("%m/%Y")
-        optional["peshv"]['PESHV Cognitive Score'] = st.text_input("PESHV Cognitive Score")
-        optional["peshv"]['PESHV Social Emotional Score'] = st.text_input("PESHV Social Emotional Score")
-    
-    if peshv_score:
-        st.header("Preschool Evaluation Scale Home Version – Second Edition (PESHV)")
-        st.markdown("*Skip this section if there is no PESHV Score*")
-        optional[""] = {}
-        optional["peshv"]["Test Date"] = st.date_input("PESHV Test Date").strftime("%m/%Y")
-        optional["peshv"]['Total Language'] = st.text_input("Total Language")
-        optional["peshv"]['PESHV Social Emotional Score'] = st.text_input("PESHV Social Emotional Score")
-
-    if reelt_score:
-        st.header("Receptive Expressive Emergent Language Test - Fourth Edition (REELT)")
-        st.markdown("*Skip this section if there is no REELT Score*")
-        optional["reelt"] = {}
-        optional["reelt"]["Test Date"] = st.date_input("REELT Test Date").strftime("%m/%Y")
-        optional["reelt"]['REELT Total Language Score'] = st.text_input("REELT Total Language Score")
-        optional["reelt"]['REELT Auditory Comprehension Score'] = st.text_input("REELT Auditory Comprehension Score")
-        optional["reelt"]['REELT Expressive Communication Score'] = st.text_input("REELT Expressive Communication Score")
-
-    if abas_score:
-        st.header("Adaptive Behavior Assessment System - Third Edition (ABAS)")
-        st.markdown("*Skip this section if there is no ABAS Score*")
-        optional["abas"] = {}
-        optional["abas"]["Test Date"] = st.date_input("ABAS Test Date").strftime("%m/%Y")
-        optional["abas"]['ABAS General Adaptive Composite'] = st.text_input("ABAS General Adaptive Composite")
-        optional["abas"]['ABAS Conceptual'] = st.text_input("ABAS Conceptual")
-        optional["abas"]['ABAS Social'] = st.text_input("ABAS Social")
-        optional["abas"]['ABAS Practical'] = st.text_input("ABAS Practical")
+            scores[test]["Test Date"] = st.date_input(f"{test} Test Date").strftime("%m/%Y")
+            
+            for item in scores[test]["All items"]:
+                scores[test]["All items"][item] = st.text_input(item)    
 
     ########################################################
     st.header("Behavioral Presentation")
@@ -488,20 +468,6 @@ with st.form('BasicInfo'):
     for key, label in recommendation_options.items():
         check_rec[key] = st.checkbox(label)
 
-    # check_accomodations = st.checkbox("Accommodations")
-    # check_check_in_anxiety = st.checkbox("Check-in Support for Anxiety")
-    # check_hearing_assistive = st.checkbox("Hearing Assistive Technology")
-    # check_additional_reading_suggestions = st.checkbox("Additional Suggestions")
-    # check_home_community = st.checkbox("Home/Community Based Supports")
-    # check_coordinated_care = st.checkbox("Coordinated Care")
-    # check_therapeutic_supports = st.checkbox("Therapeutic Supports")
-    # check_coordinated_healthcare = st.checkbox("Coordinated Healthcare")
-    # check_executive_functioning = st.checkbox("Executive Functioning Accommodations")
-    # check_support = st.checkbox("Support")
-    # check_adult_career = st.checkbox("Adult Career and Continuing Education Services-Vocational Rehabilitation (ACCES-VR)")
-    # check_elopement_plan = st.checkbox("Elopement Plan")
-    # check_occupational_therapy = st.checkbox("Occupational Therapy")
-
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -516,33 +482,35 @@ def delete_paragraph(paragraph):
     p._p = p._element = None
 
 def add_behavior_presentation(paragraph, transcript):
-    # separate transcript
-    small_para = transcript.split('\n\n')
+    if transcript != "":    
+        # separate transcript
+        small_para = transcript.split('\n\n')
 
-    st.write(small_para)
+        st.write(small_para)
 
-    paragraph.insert_paragraph_before().add_run(small_para[0], style='CustomStyle')
-    paragraph.insert_paragraph_before()
+        paragraph.insert_paragraph_before().add_run(small_para[0], style='CustomStyle')
+        paragraph.insert_paragraph_before()
 
-    for sub_para in small_para[1:]:
-        sub_para = sub_para.split(":")
-        p = paragraph.insert_paragraph_before()
-        p.add_run(sub_para[0], style='CustomStyle').italic = True
-        p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
+        for sub_para in small_para[1:]:
+            sub_para = sub_para.split(":")
+            p = paragraph.insert_paragraph_before()
+            p.add_run(sub_para[0], style='CustomStyle').italic = True
+            p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
         
     delete_paragraph(paragraph)
 
 def add_developmental_history(paragraph, transcript):
-    # separate transcript
-    small_para = transcript.split('\n\n')
-    st.write(small_para)
+    if transcript != "":    
+        # separate transcript
+        small_para = transcript.split('\n\n')
+        st.write(small_para)
 
-    for sub_para in small_para:
-        sub_para = sub_para.split(":")
-        p = paragraph.insert_paragraph_before()
-        p.add_run(sub_para[0], style='CustomStyle').italic = True
-        p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
-        
+        for sub_para in small_para:
+            sub_para = sub_para.split(":")
+            p = paragraph.insert_paragraph_before()
+            p.add_run(sub_para[0], style='CustomStyle').italic = True
+            p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
+            
     delete_paragraph(paragraph)
 
 def add_school(paragraph):
@@ -655,49 +623,24 @@ def add_srs_yes_teacher(paragraph, score_data):
     observe.add_run("my observation aligned with a {{Evaluator's level of concern}} concern.\n", style='CustomStyle').bold = True
     delete_paragraph(paragraph)
 
-def add_wppsi(paragraph, score_data):
+
+def add_score(paragraph, score_data):
     paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed.', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tFull Scale IQ: {score_data["WPPSI Full Scale IQ Score"]}', style='CustomStyle').bold = True
-    paragraph.insert_paragraph_before().add_run(f'\tVerbal Comprehension: {score_data["WPPSI Verbal Comprehension Score"]}\t\t\tVisual Spatial: {score_data["WPPSI Visual Spatial Score"]}', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) \u2013 {score_data["Test name"]}', style='CustomStyle').italic = True
     
-def add_dppr(paragraph, score_data):
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Developmental Profile – Fourth Edition – Parent Report', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tCognitive: {score_data["DPPR Cognitive Score"]}\t\t\t\t\tSocial-Emotional: {score_data["DPPR Social-Emotional Score"]}', style='CustomStyle')
-    paragraph.insert_paragraph_before().add_run(f'\tAdaptive: {score_data["DPPR Adaptive Score"]}\t\t\t\t\tPhysical: {score_data["DPPR Physical Score"]}', style='CustomStyle')
+    # Go over each line 
+    for line in score_data["Lines"]:
+        # get a new paragraph and indent it 
+        p = paragraph.insert_paragraph_before()
+        p.paragraph_format.left_indent = Inches(0.5)
+        tab_stops = p.paragraph_format.tab_stops
+        tab_stops.add_tab_stop(Inches(3.5))
 
-def add_pls(paragraph, score_data):
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Preschool Language Scale – Fifth Edition', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tTotal Language Score: {score_data["PLS Total Language Score"]}', style='CustomStyle').bold = True
-    paragraph.insert_paragraph_before().add_run(f'\tAuditory Comprehension: {score_data["PLS Auditory Comprehension Score"]} \t\tExpressive Communication: {score_data["PLS Expressive Communication Score"]}', style='CustomStyle')
-
-def add_pdms(paragraph, score_data):
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Peabody Developmental Motor Scales – Second Edition', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tGross Motor: {score_data["PDMS Gross Motor Score"]}\t\t\t\tFine Motor: {score_data["PDMS Fine Motor Score"]}', style='CustomStyle')
-    
-def add_peshv(paragraph, score_data):
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Preschool Evaluation Scale Home Version – Second Edition', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tCognitive: {score_data["PESHV Cognitive Score"]} \t\t\t\t\tSocial Emotional: {score_data["PESHV Social Emotional Score"]}', style='CustomStyle')
-
-def add_reelt(paragraph, score_data):
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Receptive Expressive Emergent Language Test – Fourth Edition', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tTotal Language: {score_data["REELT Total Language Score"]}', style='CustomStyle').bold = True
-    paragraph.insert_paragraph_before().add_run(f'\tAuditory Comprehension: {score_data["REELT Auditory Comprehension Score"]}', style='CustomStyle')
-    paragraph.insert_paragraph_before().add_run(f'\tExpressive Communication: {score_data["REELT Expressive Communication Score"]}', style='CustomStyle')
-    
-def add_abas(paragraph, score_data):
-    paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) – Adaptive Behavior Assessment System – Third Edition', style='CustomStyle').italic = True
-    paragraph.insert_paragraph_before().add_run(f'\tGeneral Adaptive Composite: {score_data["ABAS General Adaptive Composite"]}', style='CustomStyle').bold = True
-    paragraph.insert_paragraph_before().add_run(f'\tConceptual: {score_data["ABAS Conceptual"]}', style='CustomStyle')
-    paragraph.insert_paragraph_before().add_run(f'\tSocial: {score_data["ABAS Social"]}\t\t\tPractical: {score_data["ABAS Practical"]}', style='CustomStyle')
-
-
+        # add each score
+        for item_tuple in line:
+            item = item_tuple[0]
+            p.add_run(f'{item}: {score_data["All items"][item]}\t', style='CustomStyle').bold = item_tuple[1]
+  
 if submit:
     # Update session state 
     st.session_state.behavior_observation_mod3_no_autism = data['behavior_observation']
@@ -718,25 +661,9 @@ if submit:
 
     replace_word.update(data)
 
-    # Add optional data 
-    if not wppsi_score and 'wppsi' in optional:
-        del optional['wppsi']
-    if not dppr_score and 'dppr' in optional:
-        del optional['dppr']
-    if not pls_score and 'pls' in optional:
-        del optional['pls']
-    if not pdms_score and 'pdms' in optional:
-        del optional['pdms']
-    if not peshv_score and 'peshv' in optional:
-        del optional['peshv']
-    if not reelt_score and 'reelt' in optional:
-        del optional['reelt']
-    if not abas_score and 'abas' in optional:
-        del optional['abas']
-
     # Display data 
     yaml_string = yaml.dump(replace_word, sort_keys=False)
-    yaml_string = yaml_string + '\n' + yaml.dump(optional, sort_keys=False)
+    yaml_string = yaml_string + '\n' + yaml.dump(scores, sort_keys=False)
     yaml_string = yaml_string + '\n' + yaml.dump(bullet, sort_keys=False)
     yaml_data = st.code(yaml_string, language=None)
     
@@ -766,23 +693,15 @@ if submit:
         # Add scores 
         for i, paragraph in enumerate(doc.paragraphs):
             if "Scores are reported here as standard scores" in paragraph.text:
-                if len(optional) > 0:
-                    paragraph.insert_paragraph_before().add_run("Psychoeducational Testing:\n", style='CustomStyle').font.underline = True
-                    if 'wppsi' in optional:
-                        add_wppsi(paragraph, optional['wppsi'])
-                    if 'dppr' in optional:
-                        add_dppr(paragraph, optional["dppr"])
-                    if 'pls' in optional:
-                        add_pls(paragraph, optional["pls"])
-                    if 'pdms' in optional:
-                        add_pdms(paragraph, optional["pdms"])
-                    if 'peshv' in optional:
-                        add_peshv(paragraph, optional['peshv'])
-                    if 'reelt' in optional:
-                        add_reelt(paragraph, optional['reelt'])
-                    if 'abas' in optional:
-                        add_abas(paragraph, optional['abas'])
-                else:
+                total = 0
+                for test in check_scores:
+                    if check_scores[test]:
+                        total += 1 
+                        if total == 1:
+                            paragraph.insert_paragraph_before().add_run("Psychoeducational Testing:\n", style='CustomStyle').font.underline = True
+                        add_score(paragraph, score_data=scores[test])
+
+                if total == 0:
                     delete_paragraph(paragraph)
             
             if "[[Behavioral Presentation]]" in paragraph.text:
@@ -797,32 +716,7 @@ if submit:
                         func = globals().get(f"add_{rec}")
                         if callable(func):
                             func(paragraph)
-                # if check_accomodations:
-                #     add_accomodations(paragraph)
-                # if check_check_in_anxiety:
-                #     add_check_in_anxiety(paragraph)
-                # if check_hearing_assistive:
-                #     add_hearing_assistive(paragraph)
-                # if check_additional_reading_suggestions:
-                #     add_additional_reading_suggestions(paragraph)
-                # if check_home_community:
-                #     add_home_community(paragraph)
-                # if check_coordinated_care:
-                #     add_coordinated_care(paragraph)
-                # if check_therapeutic_supports:
-                #     add_therapeutic_supports(paragraph)
-                # if check_coordinated_healthcare:
-                #     add_coordinated_healthcare(paragraph)
-                # if check_executive_functioning:
-                #     add_executive_functioning(paragraph)
-                # if check_support:
-                #     add_support(paragraph)
-                # if check_adult_career:
-                #     add_adult_career(paragraph)
-                # if check_elopement_plan:
-                #     add_elopement_plan(paragraph)
-                # if check_occupational_therapy:
-                #     add_occupational_therapy(paragraph)
+                
                 delete_paragraph(paragraph)
 
             if "[[SCQ Report Information]]" in paragraph.text:

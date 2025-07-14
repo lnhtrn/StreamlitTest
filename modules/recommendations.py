@@ -288,10 +288,28 @@ def add_evidence_therapy(paragraph):
 
     paragraph.insert_paragraph_before()
 
+###############################################################
+# Recommendation Mod 3
+def add_driver_seat(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('In the Driver’s Seat. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('I encourage {{Patient First Name}} and {{Preferred Pronouns 2}} family to review this resource as it relates to self-direction processes and service utilization: ', style='CustomStyle')
+    add_hyperlink(p, 'https://inthedriversseat.org/')
+    paragraph.insert_paragraph_before()
+
+def add_services_support(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Services & Supports. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('I think there is value in making sure that {{Preferred Pronouns 2}} services and related supports use approaches that target social engagement and peer relationships, as well as flexibility. I think a social skills approach within the context of group speech therapy makes sense. I would strongly encourage thinking of {{Patient First Name}}’s educational and social emotional needs from the perspective of {{Preferred Pronouns 2}} being on the autism spectrum.', style='CustomStyle')
+    paragraph.insert_paragraph_before()
 
 
-
-# Recommedation Mod 3 No 
+###############################################################
+# Recommendation Mod 3 No 
 
 def add_accomodations(paragraph):
     p = paragraph.insert_paragraph_before()

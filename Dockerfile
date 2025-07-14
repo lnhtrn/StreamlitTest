@@ -3,6 +3,7 @@ EXPOSE 8080
 
 WORKDIR /app
 COPY . ./
+COPY .streamlit/secrets.toml /app/.streamlit/secrets.toml
 
 RUN pip install --no-cache-dir -r requirements.txt
 

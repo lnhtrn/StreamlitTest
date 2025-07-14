@@ -11,6 +11,16 @@ mod_12:
   develop_disability_office: "Developmental Disabilities Regional Office (DDRO)"
   evidence_therapy: "Evidence-Based Therapies"
 
+mod_3:
+  levine_clinic: "Levine Autism Clinic"
+  parent_parent: "Parent to Parent"
+  caregiver_support: "Caregiver Support"
+  100_days: "Autism Speaks 100 Days 100 Kit"
+  develop_disability_office: "Developmental Disabilities Regional Office (DDRO)"
+  edu_placement: "Educational Placement"
+  driver_seat: "In the Driver’s Seat"
+  services_support: "Services & Supports"
+
 mod_3_no_autism:
   accomodations: "Accommodations"
   check_in_anxiety: "Check-in Support for Anxiety"

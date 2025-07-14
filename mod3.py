@@ -10,6 +10,7 @@ from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
 from docx.shared import Inches, Pt
 from openai import OpenAI
+from modules.recommendations import *
 # from modules.add_scores import *
 
 ##########################################################
@@ -160,6 +161,10 @@ bullet = {}
 lines = {}
 comma = {}
 
+# set up recommendation system
+check_rec = {}
+with open("misc_data/rec_per_module.yaml", "r") as file:
+    recommendation_options = yaml.safe_load(file)['mod_3']
 
 ####################################################
 st.header("Appointment Summary")
@@ -483,6 +488,12 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
+    ##########################################################
+    st.header("Recommendations")
+
+    for key, label in recommendation_options.items():
+        check_rec[key] = st.checkbox(label)
+
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -703,6 +714,15 @@ if submit:
             if "[[Developmental History]]" in paragraph.text:
                 add_developmental_history(paragraph, st.session_state.development_history_mod3)
 
+            if "[[Recommendations]]" in paragraph.text:
+                for rec, checked in check_rec.items():
+                    if checked:
+                        func = globals().get(f"add_{rec}")
+                        if callable(func):
+                            func(paragraph)
+                
+                delete_paragraph(paragraph)
+                
             if "[[SCQ Report Information]]" in paragraph.text:
                 # Add SCQ
                 if scq_result:
