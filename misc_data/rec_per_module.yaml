@@ -20,6 +20,8 @@ mod_3:
   edu_placement: "Educational Placement"
   driver_seat: "In the Driver’s Seat"
   services_support: "Services & Supports"
+  encouraging_flexibility: "Encouraging Flexibility"
+  social_skills: "Social Skills"
 
 mod_3_no_autism:
   accomodations: "Accommodations"

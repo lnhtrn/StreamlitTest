@@ -307,6 +307,38 @@ def add_services_support(paragraph):
     p.add_run('I think there is value in making sure that {{Preferred Pronouns 2}} services and related supports use approaches that target social engagement and peer relationships, as well as flexibility. I think a social skills approach within the context of group speech therapy makes sense. I would strongly encourage thinking of {{Patient First Name}}’s educational and social emotional needs from the perspective of {{Preferred Pronouns 2}} being on the autism spectrum.', style='CustomStyle')
     paragraph.insert_paragraph_before()
 
+def add_encouraging_flexibility(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Encouraging Flexibility. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('Based on {{Preferred Pronouns 2}}  presentation and pattern of perseveration, I think that there could be value in considering specific supports to teach flexibility.\n', style='CustomStyle')
+    
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    p.paragraph_format.left_indent = Inches(0.5)
+    p.add_run('Unstuck and On Target - ', style='CustomStyle')
+    add_hyperlink(p, 'https://www.unstuckandontarget.com/')
+    p = paragraph.insert_paragraph_before()
+
+def add_social_skills(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Social Skills. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('I think that providing support with navigating social situations could provide a positive benefit to {{Patient First Name}}’s overall health and education care plan.\n', style='CustomStyle')
+    
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    p.paragraph_format.left_indent = Inches(0.5)
+    p.add_run('Children’s Friendship Program - ', style='CustomStyle')
+    p = paragraph.insert_paragraph_before(style='Normal')
+    p.paragraph_format.left_indent = Inches(0.5)
+    add_hyperlink(p, 'https://www.semel.ucla.edu/socialskills/research/childrens-friendship-program')
+
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    p.paragraph_format.left_indent = Inches(0.5)
+    p.add_run('Social Thinking - ', style='CustomStyle')
+    add_hyperlink(p, 'https://www.socialthinking.com/')
+    p = paragraph.insert_paragraph_before()
 
 ###############################################################
 # Recommendation Mod 3 No 
