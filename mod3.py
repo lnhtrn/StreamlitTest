@@ -46,8 +46,16 @@ def transcribe_audio(audio_file, name='temp'):
 ##########################################################
 # Access Google Sheets
 
+def get_abbreviation(test_name):
+    # Split on en dash (\u2013)
+    main_title = test_name.split('\u2013')[0].strip()
+    
+    # Split into words and get uppercase initials
+    abbreviation = ''.join(word[0] for word in main_title.split() if word[0].isupper())
+    
+    return abbreviation
+
 dropdowns = {}
-scores = {}
 connections = {}
 
 # Create a connection object.
@@ -75,6 +83,7 @@ for col_name in df.columns:
     dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
     dropdowns[col_name].append("None")
 
+
 # Scores for sidebar
 connections['Scores'] = st.connection(f"mod3_scores", type=GSheetsConnection)
 # Read object
@@ -83,7 +92,37 @@ df = connections['Scores'].read(
     usecols=list(range(6)),
     nrows=30,
 ) 
-scores = df.to_dict('records')
+score_list = df.to_dict('records')
+
+# Process data
+scores = {}
+check_scores = {}
+
+for test in score_list:
+    test_name = test["Test name"]
+    abbr = get_abbreviation(test_name)
+    scores[abbr] = {}
+
+    scores[abbr]["Test name"] = test_name
+    all_lines = []
+    all_items = {}
+    print(f"\nTest: {test_name}")
+    
+    for i in range(5):
+        line_key = f"Line {i}"
+        line_value = test.get(line_key)
+        if line_value and str(line_value) != "nan":
+            all_lines.append([])
+            items = [item.strip() for item in line_value.split(",")]
+            for item in items:
+                bold = "(bold)" in item
+                item_name = item.replace("(bold)", "").strip()
+                # write_item(item_name, bold=bold)
+                all_lines[i].append((item_name, bold))
+                all_items[item_name] = 0
+    
+    scores[abbr]["Lines"] = all_lines
+    scores[abbr]["All items"] = all_items
 
 ##################################################
 # Set up side bar
@@ -93,25 +132,17 @@ def clear_my_cache():
 with st.sidebar:
     st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
     st.link_button("Edit Dropdown Options", st.secrets['mod3_spreadsheet'])
-    st.button('Reload Dropdown Data', on_click=clear_my_cache)
+    st.link_button("Edit Score Options", st.secrets['mod3_scores'])
+    st.button('Reload Spreadsheet Data', on_click=clear_my_cache)
 
-    # Display data 
-    # yaml_dropdown = yaml.dump(dropdowns, sort_keys=False)
-    # st.code(yaml_dropdown, language=None)
-    
     ####################################################
     st.markdown("**Check to include score in the form:** Scores to report:")
     scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
     teacher_srs_eval = st.checkbox("Teacher's SRS Scores")
     teacher_vineland_eval = st.checkbox("Teacher's Vineland Adaptive Behavior Scales")
-    wppsi_score = st.checkbox("Wechsler Preschool & Primary Scales of Intelligence – Fourth Ed. (WPPSI) Score")
-    dppr_score = st.checkbox("Developmental Profile – Fourth Edition - Parent Report (DPPR)")
-    pls_score = st.checkbox("Preschool Language Scale - Fifth Edition (PLS)")
-    pdms_score = st.checkbox("Peabody Developmental Motor Scales - Second Edition")
-    peshv_score = st.checkbox("Preschool Evaluation Scale Home Version - Second Edition")
-    reelt_score = st.checkbox("Receptive Expressive Emergent Language Test - Fourth Edition")
-    abas_score = st.checkbox("Adaptive Behavior Assessment System - Third Edition")
-
+    
+    for item in scores:
+        check_scores[item] = st.checkbox(scores[item]["Test name"])
 
 col1,col2 = st.columns(2)
 col1.title('Module 3 Report Builder')
@@ -388,80 +419,16 @@ with st.form('BasicInfo'):
     )
 
     ##########################################################
-    if wppsi_score:
-        st.header("Wechsler Preschool & Primary Scales of Intelligence - Fourth Ed. (WPPSI)")
-        st.markdown("*Skip this section if there is no WPPSI Score*")
-        optional["wppsi"] = {}
+    # Score section
+    for test in check_scores:
+        if check_scores[test]:
+            st.header(scores[test]["Test name"])
+            st.markdown(f"*Skip this section if there is no {test} Score*")
 
-        optional["wppsi"]["Test Date"] = st.date_input("WPPSI Test Date").strftime("%m/%Y")
-        optional["wppsi"]['WPPSI Full Scale IQ Score'] = st.text_input("WPPSI Full Scale IQ Score")
-
-        optional["wppsi"]['WPPSI Verbal Comprehension Score'] = st.text_input("WPPSI Verbal Comprehension Score")
-
-        optional["wppsi"]['WPPSI Visual Spatial Score'] = st.text_input("WPPSI Visual Spatial Score")
-    
-    if dppr_score:
-        st.header("Developmental Profile - Fourth Edition - Parent Report (DPPR)")
-        st.markdown("*Skip this section if there is no DPPR Score*")
-        optional["dppr"] = {}
-
-        optional["dppr"]["Test Date"] = st.date_input("DPPR Test Date").strftime("%m/%Y")
-        optional["dppr"]['DPPR Cognitive Score'] = st.text_input("DPPR Cognitive Score")
-        optional["dppr"]['DPPR Social-Emotional Score'] = st.text_input("DPPR Social-Emotional Score")
-        optional["dppr"]['DPPR Adaptive Score'] = st.text_input("DPPR Adaptive Score")
-        optional["dppr"]['DPPR Physical Score'] = st.text_input("DPPR Physical Score")
-    
-    if pls_score:
-        st.header("Preschool Language Scale - Fifth Edition (PLS)")
-        st.markdown("*Skip this section if there is no PLS Score*")
-        optional["pls"] = {}
-        optional["pls"]["Test Date"] = st.date_input("PLS Test Date").strftime("%m/%Y")
-        optional["pls"]['PLS Total Language Score'] = st.text_input("PLS Total Language Score")
-        optional["pls"]['PLS Auditory Comprehension Score'] = st.text_input("PLS Auditory Comprehension Score")
-        optional["pls"]['PLS Expressive Communication Score'] = st.text_input("PLS Expressive Communication Score")
-
-    if pdms_score:
-        st.header("Peabody Developmental Motor Scales - Second Edition (PDMS)")
-        st.markdown("*Skip this section if there is no PDMS Score*")
-        optional["pdms"] = {}
-        optional["pdms"]["Test Date"] = st.date_input("Test Date").strftime("%m/%Y")
-        optional["pdms"]['PDMS Gross Motor Score'] = st.text_input("PDMS Gross Motor Score")
-        optional["pdms"]['PDMS Fine Motor Score'] = st.text_input("PDMS Fine Motor Score")
-
-    if peshv_score:
-        st.header("Preschool Evaluation Scale Home Version - Second Edition (PESHV)")
-        st.markdown("*Skip this section if there is no PESHV Score*")
-        optional["peshv"] = {}
-        optional["peshv"]["Test Date"] = st.date_input("PESHV Test Date").strftime("%m/%Y")
-        optional["peshv"]['PESHV Cognitive Score'] = st.text_input("PESHV Cognitive Score")
-        optional["peshv"]['PESHV Social Emotional Score'] = st.text_input("PESHV Social Emotional Score")
-    
-    if peshv_score:
-        st.header("Preschool Evaluation Scale Home Version – Second Edition (PESHV)")
-        st.markdown("*Skip this section if there is no PESHV Score*")
-        optional[""] = {}
-        optional["peshv"]["Test Date"] = st.date_input("PESHV Test Date").strftime("%m/%Y")
-        optional["peshv"]['Total Language'] = st.text_input("Total Language")
-        optional["peshv"]['PESHV Social Emotional Score'] = st.text_input("PESHV Social Emotional Score")
-
-    if reelt_score:
-        st.header("Receptive Expressive Emergent Language Test - Fourth Edition (REELT)")
-        st.markdown("*Skip this section if there is no REELT Score*")
-        optional["reelt"] = {}
-        optional["reelt"]["Test Date"] = st.date_input("REELT Test Date").strftime("%m/%Y")
-        optional["reelt"]['REELT Total Language Score'] = st.text_input("REELT Total Language Score")
-        optional["reelt"]['REELT Auditory Comprehension Score'] = st.text_input("REELT Auditory Comprehension Score")
-        optional["reelt"]['REELT Expressive Communication Score'] = st.text_input("REELT Expressive Communication Score")
-
-    if abas_score:
-        st.header("Adaptive Behavior Assessment System - Third Edition (ABAS)")
-        st.markdown("*Skip this section if there is no ABAS Score*")
-        optional["abas"] = {}
-        optional["abas"]["Test Date"] = st.date_input("ABAS Test Date").strftime("%m/%Y")
-        optional["abas"]['ABAS General Adaptive Composite'] = st.text_input("ABAS General Adaptive Composite")
-        optional["abas"]['ABAS Conceptual'] = st.text_input("ABAS Conceptual")
-        optional["abas"]['ABAS Social'] = st.text_input("ABAS Social")
-        optional["abas"]['ABAS Practical'] = st.text_input("ABAS Practical")
+            scores[test]["Test Date"] = st.date_input(f"{test} Test Date").strftime("%m/%Y")
+            
+            for item in scores[test]["All items"]:
+                scores[test]["All items"][item] = st.text_input(item)    
 
     ########################################################
     st.header("Behavioral Presentation")
@@ -469,7 +436,7 @@ with st.form('BasicInfo'):
         "Behavioral Observation: Edit the response before submitting the form", 
         # behavior_observation,
         st.session_state.behavior_observation_mod3,
-        height=400,
+        height=350,
     )
 
     ########################################################
@@ -478,7 +445,7 @@ with st.form('BasicInfo'):
         "Developmental History: Edit the response before submitting the form", 
         # development_history,
         st.session_state.development_history_mod3,
-        height=400,
+        height=350,
     )
 
     ############################################

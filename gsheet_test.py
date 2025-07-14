@@ -29,15 +29,15 @@ df = connections['Scores'].read(
 score_list = df.to_dict('records')
 
 # Process data
-optional = {}
+scores = {}
 check_scores = {}
 
 for test in score_list:
     test_name = test["Test name"]
     abbr = get_abbreviation(test_name)
-    optional[abbr] = {}
+    scores[abbr] = {}
 
-    optional[abbr]["Test name"] = test_name
+    scores[abbr]["Test name"] = test_name
     all_lines = []
     all_items = {}
     print(f"\nTest: {test_name}")
@@ -55,11 +55,11 @@ for test in score_list:
                 all_lines[i].append((item_name, bold))
                 all_items[item_name] = 0
     
-    optional[abbr]["Lines"] = all_lines
-    optional[abbr]["All items"] = all_items
+    scores[abbr]["Lines"] = all_lines
+    scores[abbr]["All items"] = all_items
 
 # # Display data 
-# yaml_string = yaml.dump(optional, sort_keys=False)
+# yaml_string = yaml.dump(scores, sort_keys=False)
 # yaml_data = st.code(yaml_string, language=None)
 
 with st.sidebar:
@@ -73,8 +73,8 @@ with st.sidebar:
     teacher_srs_eval = st.checkbox("Teacher's SRS Scores")
     teacher_vineland_eval = st.checkbox("Teacher's Vineland Adaptive Behavior Scales")
     
-    for item in optional:
-        check_scores[item] = st.checkbox(optional[item]["Test name"])
+    for item in scores:
+        check_scores[item] = st.checkbox(scores[item]["Test name"])
 
 
 data = {}
@@ -93,13 +93,13 @@ with st.form("BasicInfo"):
     # Score section
     for test in check_scores:
         if check_scores[test]:
-            st.header(optional[test]["Test name"])
+            st.header(scores[test]["Test name"])
             st.markdown(f"*Skip this section if there is no {test} Score*")
 
-            optional[test]["Test Date"] = st.date_input(f"{test} Test Date").strftime("%m/%Y")
+            scores[test]["Test Date"] = st.date_input(f"{test} Test Date").strftime("%m/%Y")
             
-            for item in optional[test]["All items"]:
-                optional[test]["All items"][item] = st.text_input(item)    
+            for item in scores[test]["All items"]:
+                scores[test]["All items"][item] = st.text_input(item)    
 
     
     submit = st.form_submit_button('Submit')
@@ -107,6 +107,6 @@ with st.form("BasicInfo"):
 if submit:
     # Display data 
     yaml_string = yaml.dump(data, sort_keys=False)
-    yaml_string = yaml_string + '\n' + yaml.dump(optional, sort_keys=False)
+    yaml_string = yaml_string + '\n' + yaml.dump(scores, sort_keys=False)
     yaml_data = st.code(yaml_string, language=None)
     
