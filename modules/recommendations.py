@@ -193,7 +193,7 @@ def add_edu_placement(paragraph):
     r.bold = True
     r.italic = True
     p.add_run('The matter of which setting {{Patient First Name}} is educated in feels of paramount concern given {{Preferred Pronouns 2}} current skills and areas of need. I encourage {{Preferred Pronouns 2}} {{Caregiver type}} and school team to engage in ongoing conversations about placement options available for next year. I recommend that discussions about educational placement and programming be held within the CPSE meeting process.', style='CustomStyle')
-    p = paragraph.insert_paragraph_before(style='Normal')
+    p = paragraph.insert_paragraph_before()
 
 def add_effective_treatments(paragraph):
     p = paragraph.insert_paragraph_before()
@@ -226,7 +226,7 @@ def add_effective_treatments(paragraph):
     p.paragraph_format.left_indent = Inches(0.5)
     p.add_run('Consultation with a professional with expertise in autism-related interventions.', style='CustomStyle')
 
-    paragraph.insert_paragraph_before(style=norm_style)
+    paragraph.insert_paragraph_before()
 
 def add_elopement_plan(paragraph):
     p = paragraph.insert_paragraph_before()
@@ -339,7 +339,7 @@ def add_additional_reading_suggestions(paragraph):
     p.add_run('Hearing assistive technology to rule-out potential auditory or attention concerns\n', style='CustomStyle')
 
     p = paragraph.insert_paragraph_before()
-    p.add_run("In so far as {{Patient First Name}}'s difficulties could be attributed to, in part, to auditory processing or filtering concerns, I think there’s value in trialing the use of a hearing assistive tech.", style='CustomStyle').italic = True
+    p.add_run("In so far as {{Patient First Name}}'s difficulties could be attributed to, in part, to auditory processing or filtering concerns, I think there’s value in trialing the use of a hearing assistive tech.\n", style='CustomStyle').italic = True
     
 def add_home_community(paragraph):
     p = paragraph.insert_paragraph_before()
@@ -354,6 +354,7 @@ def add_home_community(paragraph):
     p = paragraph.insert_paragraph_before(style='Normal')
     p.paragraph_format.left_indent = Inches(0.5)
     add_hyperlink(p, 'https://www.urmc.rochester.edu/childrens-hospital/behavioral-health-wellness/outpatient')
+    p = paragraph.insert_paragraph_before()
 
 def add_coordinated_care(paragraph):
     p = paragraph.insert_paragraph_before()
@@ -409,7 +410,10 @@ def add_executive_functioning(paragraph):
     p = paragraph.insert_paragraph_before(style='Bullet New')
     p.paragraph_format.left_indent = Inches(0.5)
     p.add_run("Unstuck & On Target - ", style='CustomStyle')
+    p = paragraph.insert_paragraph_before()
+    p.paragraph_format.left_indent = Inches(0.5)
     add_hyperlink(p, 'https://www.rochesterregional.org/services/adult-mental-health/pros')
+    p = paragraph.insert_paragraph_before()
 
 def add_support(paragraph):
     p = paragraph.insert_paragraph_before()
@@ -436,6 +440,7 @@ def add_occupational_therapy(paragraph):
     
     p = paragraph.insert_paragraph_before(style='Bullet New')
     add_hyperlink(p, 'https://www.urmc.rochester.edu/locations/pediatric-neurology')
+    p = paragraph.insert_paragraph_before()
 
 def add_pediatric_neurology(paragraph):
     p = paragraph.insert_paragraph_before()
@@ -444,3 +449,4 @@ def add_pediatric_neurology(paragraph):
     r.italic = True
     p.add_run("I observed {{Patient First Name}} to move {{Preferred Pronouns 2}} face and eyes in a repetitive manner that appeared involuntary; I noted repetitive vocalization of sounds and potential throat-clearing. Based on this, I recommend that {{Patient First Name}}'s parents consult with URMC Pediatric Neurology to determine if these behaviors reflect specific tics or Tourette's syndrome. More information can be found here can be found by calling 585-275-2808 or going to \n", style='CustomStyle')
     add_hyperlink(p, 'https://www.urmc.rochester.edu/locations/pediatric-neurology')
+    p = paragraph.insert_paragraph_before()
