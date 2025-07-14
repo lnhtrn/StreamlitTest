@@ -92,7 +92,7 @@ with st.form("BasicInfo"):
     #################################################
     # Score section
     for test in check_scores:
-        if check_scores[item]:
+        if check_scores[test]:
             st.header(optional[test]["Test name"])
             st.markdown(f"*Skip this section if there is no {test} Score*")
 
