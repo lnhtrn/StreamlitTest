@@ -78,7 +78,7 @@ for col_name in df.columns:
 # Scores for sidebar
 connections['Scores'] = st.connection(f"mod3_scores", type=GSheetsConnection)
 # Read object
-df = connections['All'].read(
+df = connections['Scores'].read(
     ttl="30m",
     usecols=list(range(6)),
     nrows=30,
