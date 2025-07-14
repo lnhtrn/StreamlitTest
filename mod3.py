@@ -47,6 +47,7 @@ def transcribe_audio(audio_file, name='temp'):
 # Access Google Sheets
 
 dropdowns = {}
+scores = {}
 connections = {}
 
 # Create a connection object.
@@ -73,6 +74,16 @@ for col_name in df.columns:
     dropdowns[col_name] = df[col_name].tolist()
     dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
     dropdowns[col_name].append("None")
+
+# Scores for sidebar
+connections['Scores'] = st.connection(f"mod3_scores", type=GSheetsConnection)
+# Read object
+df = connections['All'].read(
+    ttl="30m",
+    usecols=list(range(6)),
+    nrows=30,
+) 
+scores = df.to_dict('records')
 
 ##################################################
 # Set up side bar
