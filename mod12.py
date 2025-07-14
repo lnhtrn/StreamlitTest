@@ -475,7 +475,7 @@ with st.form('BasicInfo'):
     with open("misc_data/dsm.yaml", "r") as file:
         dsm_title = yaml.safe_load(file)
     
-    for key, value in dsm_title:
+    for key, value in dsm_title.items():
         bullet[key] = st.multiselect(    
             value,
             dropdowns[key],
