@@ -48,7 +48,7 @@ for test in score_list:
     for i in range(5):
         line_key = f"Line {i}"
         line_value = test.get(line_key)
-        if line_value and line_value != ".nan":
+        if line_value and str(line_value) != "nan":
             all_lines.append([])
             items = [item.strip() for item in line_value.split(",")]
             for item in items:
