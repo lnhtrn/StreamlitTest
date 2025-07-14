@@ -14,6 +14,12 @@ df = connections['Scores'].read(
 ) 
 scores = df.to_dict('records')
 
+# Set up side bar
+def clear_my_cache():
+    st.cache_data.clear()
+
+st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
+st.button('Reload Dropdown Data', on_click=clear_my_cache)
 
 # Display data 
 yaml_string = yaml.dump(scores, sort_keys=False)
