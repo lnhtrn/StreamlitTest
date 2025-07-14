@@ -553,7 +553,7 @@ def add_school(paragraph):
     p.add_run(f": {data['{{Education Setting}}']}\t", style='CustomStyle')
     p.add_run("Grade", style='CustomStyle').font.underline = True
     p.add_run(f": {data['{{Grade}}']} (", style='CustomStyle')
-    p.add_run({data['School Year']}, style='CustomStyle').italic = True
+    p.add_run(f"{data['School Year']} school year", style='CustomStyle').italic = True
     p.add_run(")", style='CustomStyle')
     delete_paragraph(paragraph)
 
