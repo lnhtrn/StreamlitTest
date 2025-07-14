@@ -118,6 +118,7 @@ bullet = {}
 lines = {}
 comma = {}
 
+
 ####################################################
 st.header("Appointment Summary")
 
