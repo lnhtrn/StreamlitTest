@@ -416,7 +416,7 @@ with st.form('BasicInfo'):
         accept_new_options=True
     )
 
-    comma['{{Classification}}'] = st.selectbox(
+    data['{{Classification}}'] = st.selectbox(
         "Classification",
         dropdowns['Classification'],
         placeholder="Select multiple options from the list or enter a new one",
@@ -722,7 +722,7 @@ if submit:
                             func(paragraph)
                 
                 delete_paragraph(paragraph)
-                
+
             if "[[SCQ Report Information]]" in paragraph.text:
                 # Add SCQ
                 if scq_result:
