@@ -686,7 +686,7 @@ if submit:
     
 
     #### Edit document 
-    doc = Document('templates/template_mod_3.docx')
+    doc = Document('templates/template_mod_4.docx')
     if doc:
         # Get file name
         today_date = format_date_with_ordinal(datetime.date.today())
