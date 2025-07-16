@@ -15,7 +15,7 @@ from modules.recommendations import *
 
 ##########################################################
 st.set_page_config(
-    page_title="Module 3",
+    page_title="Module 4",
     page_icon="📝",
     layout="centered",
     initial_sidebar_state="expanded",
@@ -146,7 +146,7 @@ with st.sidebar:
         check_scores[item] = st.checkbox(scores[item]["Test name"])
 
 col1,col2 = st.columns(2)
-col1.title('Module 3 Report Builder')
+col1.title('Module 4 Report Builder')
 
 def format_date_with_ordinal(date_obj):
     day = date_obj.day
@@ -366,9 +366,15 @@ with st.form('BasicInfo'):
     
     data['{{Developmental History}}'] = st.text_input(
         "Developmental History")
+    
+    data['{{Educational History}}'] = st.text_input(
+        "Educational History")
 
-    data['{{Medical Diagnoses}}'] = st.text_input(
-        "Medical Diagnoses")
+    data['{{Diagnostic History}}'] = st.text_input(
+        "Diagnostic History")
+    
+    data['{{Medical History}}'] = st.text_input(
+        "Relevant Medical History")
 
     lines['{{Medications}}'] = st.multiselect(
         "Medications",
