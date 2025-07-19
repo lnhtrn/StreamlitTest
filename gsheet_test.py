@@ -22,8 +22,13 @@ wais_data = {}
 #########################################################
 with st.form("BasicInfo"):  
     st.header("Patient's data")
+    
+    data['{{Patient First Name}}'] = st.text_input('Patient First Name')
+
+    data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
 
     data["{{Patient Age}}"] = st.number_input("Patient's Age", 0, 100)
+
     data['{{Patient age unit}}'] = st.radio(
         "Year/month?",
         ("year", "month")
