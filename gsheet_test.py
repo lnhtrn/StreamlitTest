@@ -196,9 +196,9 @@ if submit:
         replace_word[f"[[{info} CI]]"] = wais_score[info]['Confidence Interval']
         replace_percent[f"[[{info} Percent]]"] = wais_score[info]['Percentile']
     
-    for info in wais_data['subtest']:
-        for subtest in wais_data['subtest'][info]:
-            replace_word[subtest] = wais_data['subtest'][info][subtest]
+    for info in wais_score['subtest']:
+        for subtest in wais_score['subtest'][info]:
+            replace_word[subtest] = wais_score['subtest'][info][subtest]
 
     # Display data 
     yaml_string = yaml.dump(data, sort_keys=False)
