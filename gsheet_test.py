@@ -190,15 +190,15 @@ if submit:
 
     info_list = ['IQ', 'Verbal Comp', 'Visual Spatial']
 
-    for info in wais_data['overall']:
+    for info in wais_score:
         # Info meaning type of score, i.e. "Full Scale IQ", "Verbal Comprehension Index, etc"
         replace_word[f"[[{info} Standard]]"] = wais_score[info]['Standard Score']
         replace_word[f"[[{info} CI]]"] = wais_score[info]['Confidence Interval']
         replace_percent[f"[[{info} Percent]]"] = wais_score[info]['Percentile']
     
-    for info in wais_score['subtest']:
-        for subtest in wais_score['subtest'][info]:
-            replace_word[subtest] = wais_score['subtest'][info][subtest]
+    for info in wais_subtest_score:
+        for subtest in wais_subtest_score[info]:
+            replace_word[subtest] = wais_subtest_score[info][subtest]
 
     # Display data 
     yaml_string = yaml.dump(data, sort_keys=False)
