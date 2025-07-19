@@ -198,7 +198,7 @@ if submit:
     
     for info in wais_subtest_score:
         for subtest in wais_subtest_score[info]:
-            replace_word[subtest] = wais_subtest_score[info][subtest]
+            replace_word[f"[[{subtest}]]"] = wais_subtest_score[info][subtest]
 
     # Display data 
     yaml_string = yaml.dump(data, sort_keys=False)
