@@ -113,7 +113,7 @@ def delete_paragraph(paragraph):
     p._p = p._element = None
 
 def get_ordinal(number):
-    suffix = 'th' if 11 <= number <= 13 else {"1": 'st', "2": 'nd', "3": 'rd'}.get(number[-1], 'th')
+    suffix = 'th' if 11 <= int(number) <= 13 else {"1": 'st', "2": 'nd', "3": 'rd'}.get(number[-1], 'th')
     return suffix
 
 def replace_with_superscript(para, old_text, number_part):
