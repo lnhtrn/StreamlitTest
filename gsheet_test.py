@@ -167,22 +167,42 @@ def replace_ordinal_with_superscript(para, full_text):
 
 if submit:
     wais_analysis = ""
-    if wais_data["subtest"] and wais_data['overall']:
-        response = client.responses.create(
-            prompt={
-                "id": st.secrets["wais_analysis_id"],
-                "variables": {
-                    "first_name": data['{{Patient First Name}}'],
-                    "pronouns": preferred,
-                    "wais_subtest": wais_data['subtest'],
-                    "wais_overall": wais_data['overall'],
-                }
-            }
-        )
-        wais_analysis = response.output_text
+    # if wais_data["subtest"] and wais_data['overall']:
+    #     response = client.responses.create(
+    #         prompt={
+    #             "id": st.secrets["wais_analysis_id"],
+    #             "variables": {
+    #                 "first_name": data['{{Patient First Name}}'],
+    #                 "pronouns": preferred,
+    #                 "wais_subtest": wais_data['subtest'],
+    #                 "wais_overall": wais_data['overall'],
+    #             }
+    #         }
+    #     )
+    #     wais_analysis = response.output_text
+
+    # Edit Table Score
+    replace_word = {}
+    replace_percent = {}
+        
+    wais_subtest_score = yaml.safe_load(wais_data['subtest'])
+    wais_score = yaml.safe_load(wais_data['overall'])
+
+    info_list = ['IQ', 'Verbal Comp', 'Visual Spatial']
+
+    for info in wais_data['overall']:
+        # Info meaning type of score, i.e. "Full Scale IQ", "Verbal Comprehension Index, etc"
+        replace_word[f"[[{info} Standard]]"] = wais_score[info]['Standard Score']
+        replace_word[f"[[{info} CI]]"] = wais_score[info]['Confidence Interval']
+        replace_percent[f"[[{info} Percent]]"] = wais_score[info]['Percentile']
+    
+    for info in wais_data['subtest']:
+        for subtest in wais_data['subtest'][info]:
+            replace_word[subtest] = wais_data['subtest'][info][subtest]
 
     # Display data 
     yaml_string = yaml.dump(data, sort_keys=False)
+    yaml_string += "\nOverall:\n" + yaml.dump(replace_word) + yaml.dump(replace_percent)
     yaml_string += "\n\n" + wais_analysis
     yaml_data = st.code(yaml_string, language=None)
 
@@ -198,22 +218,6 @@ if submit:
         custom_style = doc.styles.add_style('CustomStyle', WD_STYLE_TYPE.CHARACTER)
         custom_style.font.size = Pt(12)
         custom_style.font.name = 'Georgia'
-
-        # Edit Table Score
-        
-        wais_subtest_score = yaml.safe_load(wais_data['subtest'])
-        wais_score = yaml.safe_load(wais_data['overall'])
-
-        info_list = ['IQ', 'Verbal Comp', 'Visual Spatial']
-
-        replace_word = {}
-        replace_percent = {}
-
-        for info in wais_score:
-            # Info meaning type of score, i.e. "Full Scale IQ", "Verbal Comprehension Index, etc"
-            replace_word[f"[[{info} Standard]]"] = wais_score[info]['Standard Score']
-            replace_word[f"[[{info} CI]]"] = wais_score[info]['Confidence Interval']
-            replace_percent[f"[[{info} Percent]]"] = wais_score[info]['Percentile']
 
         # Replace words even in a table 
         for word in replace_word:
