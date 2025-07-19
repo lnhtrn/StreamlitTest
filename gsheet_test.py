@@ -113,7 +113,7 @@ def delete_paragraph(paragraph):
     p._p = p._element = None
 
 def get_ordinal(number):
-    suffix = 'th' if 11 <= number <= 13 else {1: 'st', 2: 'nd', 3: 'rd'}.get(number % 10, 'th')
+    suffix = 'th' if 11 <= number <= 13 else {"1": 'st', "2": 'nd', "3": 'rd'}.get(number[-1], 'th')
     return suffix
 
 def replace_with_superscript(para, old_text, number_part):
@@ -192,13 +192,13 @@ if submit:
 
     for info in wais_score:
         # Info meaning type of score, i.e. "Full Scale IQ", "Verbal Comprehension Index, etc"
-        replace_word[f"[[{info} Standard]]"] = wais_score[info]['Standard Score']
-        replace_word[f"[[{info} CI]]"] = wais_score[info]['Confidence Interval']
-        replace_percent[f"[[{info} Percent]]"] = wais_score[info]['Percentile']
+        replace_word[f"[[{info} Standard]]"] = str(wais_score[info]['Standard Score'])
+        replace_word[f"[[{info} CI]]"] = str(wais_score[info]['Confidence Interval'])
+        replace_percent[f"[[{info} Percent]]"] = str(wais_score[info]['Percentile'])
     
     for info in wais_subtest_score:
         for subtest in wais_subtest_score[info]:
-            replace_word[f"[[{subtest}]]"] = wais_subtest_score[info][subtest]
+            replace_word[f"[[{subtest}]]"] = str(wais_subtest_score[info][subtest])
 
     # Display data 
     yaml_string = yaml.dump(data, sort_keys=False)
