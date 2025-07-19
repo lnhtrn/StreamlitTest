@@ -183,6 +183,7 @@ if submit:
 
     # Display data 
     yaml_string = yaml.dump(data, sort_keys=False)
+    yaml_string += "\n\n" + wais_analysis
     yaml_data = st.code(yaml_string, language=None)
 
     # Edit document 

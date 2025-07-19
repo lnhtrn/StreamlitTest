@@ -9,6 +9,7 @@ from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE, WD_STYLE
 from docx.enum.text import WD_BREAK
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from openai import OpenAI
 
 
 def delete_paragraph(paragraph):
@@ -89,56 +90,56 @@ if doc:
 # 100,93-107,50 
 # """
 
-#     wais_subtest_score = """Verbal Comprehension Index:
-#   Similarities: 13
-#   Vocabulary: 11
+    wais_subtest_score = """Verbal Comprehension Index:
+  Similarities: 13
+  Vocabulary: 11
 
-# Working Memory Index:
-#   Digit Sequencing: 7
-#   Running Digits: 8
+Working Memory Index:
+  Digit Sequencing: 7
+  Running Digits: 8
 
-# Visual Spatial Index:
-#   Block Design: 9
-#   Visual Puzzles: 11
+Visual Spatial Index:
+  Block Design: 9
+  Visual Puzzles: 11
 
-# Processing Speed Index:
-#   Symbol Search: 9
-#   Coding: 10
+Processing Speed Index:
+  Symbol Search: 9
+  Coding: 10
 
-# Fluid Reasoning Index:
-#   Matrix Reasoning: 12
-#   Figure Weights: 8
-# """
-#     wais_score = """Full Scale IQ:
-#   Standard Score: 99
-#   Confidence Interval: 94-104
-#   Percentile: 47
+Fluid Reasoning Index:
+  Matrix Reasoning: 12
+  Figure Weights: 8
+"""
+    wais_score = """Full Scale IQ:
+  Standard Score: 99
+  Confidence Interval: 94-104
+  Percentile: 47
 
-# Verbal Comprehension Index:
-#   Standard Score: 111
-#   Confidence Interval: 103-117
-#   Percentile: 77
+Verbal Comprehension Index:
+  Standard Score: 111
+  Confidence Interval: 103-117
+  Percentile: 77
 
-# Visual Spatial Index:
-#   Standard Score: 100
-#   Confidence Interval: 93-107
-#   Percentile: 50
+Visual Spatial Index:
+  Standard Score: 100
+  Confidence Interval: 93-107
+  Percentile: 50
 
-# Fluid Reasoning Index:
-#   Standard Score: 100
-#   Confidence Interval: 93-107
-#   Percentile: 50
+Fluid Reasoning Index:
+  Standard Score: 100
+  Confidence Interval: 93-107
+  Percentile: 50
 
-# Working Memory Index:
-#   Standard Score: 85
-#   Confidence Interval: 79-93
-#   Percentile: 16
+Working Memory Index:
+  Standard Score: 85
+  Confidence Interval: 79-93
+  Percentile: 16
 
-# Processing Speed Index:
-#   Standard Score: 97
-#   Confidence Interval: 89-106
-#   Percentile: 42
-# """
+Processing Speed Index:
+  Standard Score: 97
+  Confidence Interval: 89-106
+  Percentile: 42
+"""
 
 #     wais_subtest_score = yaml.safe_load(wais_subtest_score)
 #     print(wais_subtest_score)
@@ -176,12 +177,21 @@ if doc:
     #                         p.add_run(suffix, style='CustomStyle').font.superscript = True
     #                         delete_paragraph(paragraph)
 
-    wais_analysis = """\tDeanna’s Full-Scale IQ on the WAIS-5 was 99, which is at the 47th percentile. This score indicates that Deanna’s overall cognitive functioning is within the Average Range, with a 95 percent chance of falling between 94 and 104.
-
-\n\n\tThe Verbal Comprehension Index (VCI) measures language development, vocabulary, and other verbal skills. Deanna received a score of 111, which places her in the 77th percentile compared to her same age peers. Her score on this index fell within the Above Average Range. She had similar scores on the two subtests (Similarities and Vocabulary) within this index measuring her ability to use verbal and crystallized abilities, word knowledge, and abstract and conceptual reasoning. This index reflects a relative strength within her cognitive profile.
-
-\n\n\tThe Visual Spatial Index (VSI) measures visual processing and perceptual reasoning skills. Deanna received a score of 100, which places her in the 50th percentile. Her score on this index fell within the Average Range. The subtests within this domain (Block Design and Visual Puzzles) indicate her ability to analyze and synthesize abstract visual stimuli, reflecting average visual-spatial reasoning and perceptual skills."""
-
+    wais_analysis = ""
+    response = client.responses.create(
+        prompt={
+            "id": "nnn",
+            "variables": {
+                "first_name": "Alice",
+                "pronouns": "She/her",
+                "wais_subtest": wais_subtest_score,
+                "wais_overall": wais_score,
+            }
+        }
+    )
+    wais_analysis = response.output_text
+    print(wais_analysis)
+    
     # Test paragraph 
     for paragraph in doc.paragraphs:
         if "[[WAIS-Analysis]]" in paragraph.text:
