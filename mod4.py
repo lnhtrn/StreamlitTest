@@ -674,6 +674,7 @@ if submit:
         "{{Preferred Pronouns 1 CAP}}": pronoun[preferred]['pronoun1cap'],
         "{{Preferred Pronouns 2}}": pronoun[preferred]['pronoun2'],
         "{{Preferred Pronouns 2 CAP}}": pronoun[preferred]['pronoun2cap'],
+        "{{Gender}}": pronoun[preferred]['gender'],
     }
 
     replace_word.update(data)
@@ -708,7 +709,7 @@ if submit:
         list_style.paragraph_format.line_spacing = 1
 
         # Add scores 
-        for i, paragraph in enumerate(doc.paragraphs):
+        for paragraph in doc.paragraphs:
             if "Scores are reported here as standard scores" in paragraph.text:
                 total = 0
                 for test in check_scores:

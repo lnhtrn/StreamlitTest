@@ -668,6 +668,7 @@ if submit:
         "{{Preferred Pronouns 1 CAP}}": pronoun[preferred]['pronoun1cap'],
         "{{Preferred Pronouns 2}}": pronoun[preferred]['pronoun2'],
         "{{Preferred Pronouns 2 CAP}}": pronoun[preferred]['pronoun2cap'],
+        "{{Gender}}": pronoun[preferred]['gender'],
     }
 
     replace_word.update(data)
