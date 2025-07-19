@@ -9,6 +9,7 @@ from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE, WD_STYLE
 from docx.enum.text import WD_BREAK
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from openai import OpenAI
 
 
 #########################################################
