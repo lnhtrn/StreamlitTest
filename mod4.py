@@ -6,6 +6,7 @@ import io
 import docxedit
 import datetime
 from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
 from docx.shared import Inches, Pt
@@ -899,6 +900,26 @@ if submit:
         list_style = doc.styles['Bullet New']
         list_style.paragraph_format.line_spacing = 1
 
+        if wais_check:
+            # Replace words even in a table 
+            for word in replace_word:
+                docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
+
+            # Replace percent in table 
+            for table in doc.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for paragraph in cell.paragraphs:
+                            # Loop through all percentage needed to be replaced in the table
+                            for key in replace_percent:
+                                if key in paragraph.text:
+                                    p = paragraph.insert_paragraph_before()
+                                    p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                                    p.add_run(replace_percent[key], style='CustomStyle')
+                                    suffix = get_ordinal(replace_percent[key])
+                                    p.add_run(suffix, style='CustomStyle').font.superscript = True
+                                    delete_paragraph(paragraph)
+
         # Add scores 
         for paragraph in doc.paragraphs:
             if "Scores are reported here as standard scores" in paragraph.text:
@@ -937,6 +958,9 @@ if submit:
                             func(paragraph)
                 
                 delete_paragraph(paragraph)
+
+            if "[[WAIS-Analysis]]" in paragraph.text:
+                replace_ordinal_with_superscript(paragraph, wais_analysis)
 
             if "[[SCQ Report Information]]" in paragraph.text:
                 # Add SCQ
