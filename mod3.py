@@ -11,7 +11,6 @@ from docxtpl import DocxTemplate
 from docx.shared import Inches, Pt
 from openai import OpenAI
 from modules.recommendations import *
-# from modules.add_scores import *
 
 ##########################################################
 st.set_page_config(
@@ -61,6 +60,7 @@ connections = {}
 
 # Create a connection object.
 connections['All'] = st.connection(f"mod3_all", type=GSheetsConnection)
+
 # Read object
 df = connections['All'].read(
     ttl="30m",
@@ -83,7 +83,6 @@ for col_name in df.columns:
     dropdowns[col_name] = df[col_name].tolist()
     dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
     dropdowns[col_name].append("None")
-
 
 # Scores for sidebar
 connections['Scores'] = st.connection(f"mod3_scores", type=GSheetsConnection)
@@ -155,7 +154,6 @@ def format_date_with_ordinal(date_obj):
 
 # Set up dictionary to store data 
 data = {}
-optional = {}
 teacher_score = {}
 bullet = {}
 lines = {}
@@ -500,11 +498,6 @@ with st.form('BasicInfo'):
     # data['{{}}'] = st.text_input("")
 
     submit = st.form_submit_button('Submit')
-
-def delete_paragraph(paragraph):
-    p = paragraph._element
-    p.getparent().remove(p)
-    p._p = p._element = None
 
 def add_behavior_presentation(paragraph, transcript):
     if transcript != "":    

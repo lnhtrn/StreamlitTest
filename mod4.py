@@ -140,7 +140,11 @@ with st.sidebar:
     st.markdown("**Check to include score in the form:** Scores to report:")
     scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
     teacher_srs_eval = st.checkbox("Teacher's SRS Scores")
+    informant_vineland_eval = st.checkbox("Informant's Report - Vineland Adaptive Behavior Scales")
+    caregiver_vineland_eval = st.checkbox("Caregiver's Vineland Adaptive Behavior Scales")
     teacher_vineland_eval = st.checkbox("Teacher's Vineland Adaptive Behavior Scales")
+    wais_check = st.checkbox("Wechsler Adult Intelligence Scale – Fifth Edition (WAIS-5)")
+    pai_check = st.checkbox("Personality Assessment Inventory (PAI)")
     
     for item in scores:
         check_scores[item] = st.checkbox(scores[item]["Test name"])
@@ -340,26 +344,92 @@ with st.form('BasicInfo'):
         )
     
     ##########################################################
-    st.header("Vineland Adaptive Behavior Scales - Caregiver's Scores")
+    if caregiver_vineland_eval:
+        st.header("Vineland Adaptive Behavior Scales - Caregiver's Scores")
 
-    data["{{Vineland Score Caregiver}}"] = st.text_input("Vineland Score Caregiver")
-    
-    data["{{Communication Score Caregiver}}"] = st.text_input("Communication Score Caregiver")
-    
-    data["{{Daily Living Skills Score Caregiver}}"] = st.text_input("Daily Living Skills Score Caregiver")
-    
-    data["{{Socialization Score Caregiver}}"] = st.text_input("Socialization Score Caregiver")
+        data["{{Vineland Score Caregiver}}"] = st.text_input("Vineland Score Caregiver")
+        
+        data["{{Communication Score Caregiver}}"] = st.text_input("Communication Score Caregiver")
+        
+        data["{{Daily Living Skills Score Caregiver}}"] = st.text_input("Daily Living Skills Score Caregiver")
+        
+        data["{{Socialization Score Caregiver}}"] = st.text_input("Socialization Score Caregiver")
 
-    if teacher_vineland_eval:
-        st.header("Vineland Adaptive Behavior Scales - Teacher's Scores")
+        if teacher_vineland_eval:
+            st.header("Vineland Adaptive Behavior Scales - Teacher's Scores")
 
-        data["{{Vineland Score Teacher}}"] = st.text_input("Vineland Score Teacher")
-        
-        data["{{Communication Score Teacher}}"] = st.text_input("Communication Score Teacher")
-        
-        data["{{Daily Living Skills Score Teacher}}"] = st.text_input("Daily Living Skills Score Teacher")
-        
-        data["{{Socialization Score Teacher}}"] = st.text_input("Socialization Score Teacher")
+            data["{{Vineland Score Teacher}}"] = st.text_input("Vineland Score Teacher")
+            
+            data["{{Communication Score Teacher}}"] = st.text_input("Communication Score Teacher")
+            
+            data["{{Daily Living Skills Score Teacher}}"] = st.text_input("Daily Living Skills Score Teacher")
+            
+            data["{{Socialization Score Teacher}}"] = st.text_input("Socialization Score Teacher")
+
+    ################################################# 
+    if wais_check:
+        st.header("WAIS-5 Score Report")
+
+        wais_data = {}
+        wais_data['overall'] = st.text_area(
+            "WAIS-5 Overall Score - Input percentile without any suffix. For example: Percentile: 42", 
+            """Full Scale IQ:
+  Standard Score: 
+  Confidence Interval: 
+  Percentile: 
+
+Verbal Comprehension Index:
+  Standard Score: 
+  Confidence Interval: 
+  Percentile: 
+
+Visual Spatial Index:
+  Standard Score: 
+  Confidence Interval: 
+  Percentile:
+
+Fluid Reasoning Index:
+  Standard Score: 
+  Confidence Interval:
+  Percentile: 
+
+Working Memory Index:
+  Standard Score: 
+  Confidence Interval: 
+  Percentile: 
+
+Processing Speed Index:
+  Standard Score: 
+  Confidence Interval: 
+  Percentile: 
+""",
+            height=450,
+        )
+
+        wais_data['subtest'] = st.text_area(
+            "WAIS-5 Subtest Score", 
+            """Verbal Comprehension Index:
+  Similarities: 
+  Vocabulary: 
+
+Working Memory Index:
+  Digit Sequencing: 
+  Running Digits: 
+
+Visual Spatial Index:
+  Block Design: 
+  Visual Puzzles: 
+
+Processing Speed Index:
+  Symbol Search: 
+  Coding: 
+
+Fluid Reasoning Index:
+  Matrix Reasoning: 
+  Figure Weights: 
+""",
+        height=450,
+    )
 
     ######################################################
     st.header("Medical/Developmental History")
@@ -577,6 +647,13 @@ def add_scq_form(paragraph):
     delete_paragraph(paragraph)
 
 def add_vineland_no_teacher(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run("Vineland Adaptive Behavior Scales – 3rd Ed. (VABS-3) – Parent's Report", style='CustomStyle')
+    r.font.underline = True
+    r.italic = True
+
+    paragraph.insert_paragraph_before().add_run('The VABS-3 yields information about an individual’s adaptive functioning, which is the ability to independently perform daily activities for personal and social sufficiency. The Adaptive Behavior Composite measures overall adaptive functioning, while separate scores provide more details about communication, daily living skills, and socialization. \n\nStandard scores on the VABS-3 have a mean of 100 and a standard deviation of 15.  Scores between 85 and 115 are within the average range for this test, scores between 70 and 84 are considered moderately low, and scores below 70 are considered very low.\n\n', style='CustomStyle')
+    
     paragraph.insert_paragraph_before().add_run('\tAdaptive Behavior Composite: {{Vineland Score Caregiver}} ({{Caregiver type}})', style='CustomStyle').bold = True
     paragraph.insert_paragraph_before().add_run('\t\tCommunication: {{Communication Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
     paragraph.insert_paragraph_before().add_run('\t\tDaily Living Skills: {{Daily Living Skills Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
@@ -584,6 +661,13 @@ def add_vineland_no_teacher(paragraph):
     delete_paragraph(paragraph)
 
 def add_vineland_yes_teacher(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run("Vineland Adaptive Behavior Scales – 3rd Ed. (VABS-3) – Parent's Report & Teacher Report", style='CustomStyle')
+    r.font.underline = True
+    r.italic = True
+
+    paragraph.insert_paragraph_before().add_run('The VABS-3 yields information about an individual’s adaptive functioning, which is the ability to independently perform daily activities for personal and social sufficiency. The Adaptive Behavior Composite measures overall adaptive functioning, while separate scores provide more details about communication, daily living skills, and socialization. \n\nStandard scores on the VABS-3 have a mean of 100 and a standard deviation of 15.  Scores between 85 and 115 are within the average range for this test, scores between 70 and 84 are considered moderately low, and scores below 70 are considered very low.\n\n', style='CustomStyle')
+    
     paragraph.insert_paragraph_before().add_run('\tAdaptive Behavior Composite: {{Vineland Score Caregiver}} ({{Caregiver type}}), {{Vineland Score Teacher}} (teacher)', style='CustomStyle').bold = True
     paragraph.insert_paragraph_before().add_run('\t\tCommunication: {{Communication Score Caregiver}} ({{Caregiver type}}), {{Communication Score Teacher}} (teacher)', style='CustomStyle')
     paragraph.insert_paragraph_before().add_run('\t\tDaily Living Skills: {{Daily Living Skills Score Caregiver}} ({{Caregiver type}}), {{Daily Living Skills Score Teacher}} (teacher)', style='CustomStyle')
@@ -659,6 +743,59 @@ def add_score(paragraph, score_data):
             item = item_tuple[0]
             p.add_run(f'{item}: {score_data["All items"][item]}\t', style='CustomStyle').bold = item_tuple[1]
   
+
+def get_ordinal(number):
+    suffix = 'th' if 11 <= int(number) <= 13 else {"1": 'st', "2": 'nd', "3": 'rd'}.get(number[-1], 'th')
+    return suffix
+
+def replace_with_superscript(para, old_text, number_part):
+    superscript_part = get_ordinal(number_part)
+    if old_text in para.text:
+        # Save everything before, match, and after
+        before, match, after = para.text.partition(old_text)
+        
+        # Clear existing runs
+        para.clear()
+        
+        # Add before text
+        para.add_run(before, style='CustomStyle')
+        
+        # Add number part
+        para.add_run(number_part, style='CustomStyle')
+        
+        # Add superscript part
+        sup_run = para.add_run(superscript_part, style='CustomStyle')
+        sup_run.font.superscript = True
+        
+        # Add after text
+        para.add_run(after, style='CustomStyle')
+
+
+def replace_ordinal_with_superscript(para, full_text):
+    # Regex to find ordinal numbers like 1st, 2nd, 77th, 103rd, etc.
+    pattern = re.compile(r'(\d+)(st|nd|rd|th)')
+    paragraph = para.insert_paragraph_before()  # Remove all existing runs
+
+    last_index = 0
+    for match in pattern.finditer(full_text):
+        # Add text before the match
+        paragraph.add_run(full_text[last_index:match.start()], style='CustomStyle')
+
+        # Add number part (e.g., "77")
+        paragraph.add_run(match.group(1), style='CustomStyle')
+
+        # Add superscript suffix (e.g., "th")
+        sup_run = paragraph.add_run(match.group(2), style='CustomStyle')
+        sup_run.font.superscript = True
+
+        last_index = match.end()
+
+    # Add remaining text after last match
+    paragraph.add_run(full_text[last_index:], style='CustomStyle')
+    delete_paragraph(para)
+
+
+
 if submit:
     # Update session state 
     st.session_state.behavior_observation_mod3 = data['behavior_observation']
@@ -678,6 +815,42 @@ if submit:
     }
 
     replace_word.update(data)
+
+    # Get WAIS 
+    if wais_check:
+        wais_analysis = ""
+        if wais_data["subtest"] and wais_data['overall']:
+            response = client.responses.create(
+                prompt={
+                    "id": st.secrets["wais_analysis_id"],
+                    "variables": {
+                        "first_name": data['{{Patient First Name}}'],
+                        "pronouns": preferred,
+                        "wais_subtest": wais_data['subtest'],
+                        "wais_overall": wais_data['overall'],
+                    }
+                }
+            )
+            wais_analysis = response.output_text
+
+        # Get Table data
+        replace_percent = {}
+        
+        wais_subtest_score = yaml.safe_load(wais_data['subtest'])
+        wais_score = yaml.safe_load(wais_data['overall'])
+
+        info_list = ['IQ', 'Verbal Comp', 'Visual Spatial']
+
+        for info in wais_score:
+            # Info meaning type of score, i.e. "Full Scale IQ", "Verbal Comprehension Index, etc"
+            replace_word[f"[[{info} Standard]]"] = str(wais_score[info]['Standard Score'])
+            replace_word[f"[[{info} CI]]"] = str(wais_score[info]['Confidence Interval'])
+            replace_percent[f"[[{info} Percent]]"] = str(wais_score[info]['Percentile'])
+        
+        for info in wais_subtest_score:
+            for subtest in wais_subtest_score[info]:
+                replace_word[f"[[{subtest}]]"] = str(wais_subtest_score[info][subtest])
+
 
     # Display data 
     yaml_string = yaml.dump(replace_word, sort_keys=False)
@@ -754,20 +927,6 @@ if submit:
             if "Social Responsiveness Scale" in paragraph.text:
                 if teacher_srs_eval:
                     paragraph.add_run(" & teacher", style='CustomStyle')
-
-            if "Vineland Adaptive Behavior Scale 3" in paragraph.text:
-                if teacher_vineland_eval:
-                    paragraph.add_run(" & teacher", style='CustomStyle')
-
-            if "Vineland Adaptive Behavior Scales" in paragraph.text:
-                if teacher_vineland_eval:
-                    r = paragraph.add_run(" & Teacher Report", style='CustomStyle')
-                    r.italic = True
-                    r.font.underline = True
-                else:
-                    r = paragraph.add_run(" Report", style='CustomStyle')
-                    r.italic = True
-                    r.font.underline = True
             
             if "Developmental History & Review of Records" in paragraph.text:
                 if teacher_srs_eval:
