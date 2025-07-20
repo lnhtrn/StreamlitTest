@@ -889,7 +889,7 @@ if submit:
                     if check_scores[test]:
                         total += 1 
                         if total == 1:
-                            paragraph.insert_paragraph_before().add_run("Psychoeducational Testing:\n", style='CustomStyle').font.underline = True
+                            paragraph.insert_paragraph_before().add_run("\nPsychoeducational Testing:", style='CustomStyle').font.underline = True
                         add_score(paragraph, score_data=scores[test])
 
                 if total == 0:
