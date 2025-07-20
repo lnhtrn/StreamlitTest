@@ -497,32 +497,34 @@ with st.form('BasicInfo'):
 
 
 def add_behavior_presentation(paragraph, transcript):
-    # separate transcript
-    small_para = transcript.split('\n\n')
+    if transcript != "":    
+        # separate transcript
+        small_para = transcript.split('\n\n')
 
-    st.write(small_para)
+        st.write(small_para)
 
-    paragraph.insert_paragraph_before().add_run(small_para[0], style='CustomStyle')
-    paragraph.insert_paragraph_before()
+        paragraph.insert_paragraph_before().add_run(small_para[0], style='CustomStyle')
+        paragraph.insert_paragraph_before()
 
-    for sub_para in small_para[1:]:
-        sub_para = sub_para.split(":")
-        p = paragraph.insert_paragraph_before()
-        p.add_run(sub_para[0], style='CustomStyle').italic = True
-        p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
-        
+        for sub_para in small_para[1:]:
+            sub_para = sub_para.split(":")
+            p = paragraph.insert_paragraph_before()
+            p.add_run(sub_para[0], style='CustomStyle').italic = True
+            p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
+            
     delete_paragraph(paragraph)
 
 def add_developmental_history(paragraph, transcript):
-    # separate transcript
-    small_para = transcript.split('\n\n')
-    st.write(small_para)
+    if transcript != "":    
+        # separate transcript
+        small_para = transcript.split('\n\n')
+        st.write(small_para)
 
-    for sub_para in small_para:
-        sub_para = sub_para.split(":")
-        p = paragraph.insert_paragraph_before()
-        p.add_run(sub_para[0], style='CustomStyle').italic = True
-        p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
+        for sub_para in small_para:
+            sub_para = sub_para.split(":")
+            p = paragraph.insert_paragraph_before()
+            p.add_run(sub_para[0], style='CustomStyle').italic = True
+            p.add_run(f":{sub_para[1]}\n", style='CustomStyle')
         
     delete_paragraph(paragraph)
 
