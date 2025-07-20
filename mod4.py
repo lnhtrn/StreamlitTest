@@ -395,7 +395,7 @@ Processing Speed Index:
   Confidence Interval: 
   Percentile: 
 """,
-            height=450,
+            height=800,
         )
 
         wais_data['subtest'] = st.text_area(
@@ -420,7 +420,7 @@ Fluid Reasoning Index:
   Matrix Reasoning: 
   Figure Weights: 
 """,
-        height=450,
+        height=500,
     )
 
     ######################################################
@@ -918,7 +918,7 @@ if submit:
                     replace_ordinal_with_superscript(paragraph, "Vineland Adaptive Behavior Assessment Scale – 3rd Ed: Completed by {{Preferred Pronouns 2}}  {{Caregiver type}}")
                 if pai_check:
                     replace_ordinal_with_superscript(paragraph, "Personality Assessment Inventory (PAI): Completed by self")
-                delete_paragraph()
+                delete_paragraph(paragraph)
         
             if "[[Behavioral Presentation]]" in paragraph.text:
                 add_behavior_presentation(paragraph, st.session_state.behavior_observation_mod3)
