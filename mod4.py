@@ -1,6 +1,7 @@
 import streamlit as st
 from docx import Document
 import docx
+import re
 import yaml
 import io
 import docxedit
@@ -371,27 +372,27 @@ with st.form('BasicInfo'):
   Confidence Interval: 
   Percentile: 
 
-Verbal Comprehension Index:
+Verbal Comprehension:
   Standard Score: 
   Confidence Interval: 
   Percentile: 
 
-Visual Spatial Index:
+Visual Spatial:
   Standard Score: 
   Confidence Interval: 
   Percentile:
 
-Fluid Reasoning Index:
+Fluid Reasoning:
   Standard Score: 
   Confidence Interval:
   Percentile: 
 
-Working Memory Index:
+Working Memory:
   Standard Score: 
   Confidence Interval: 
   Percentile: 
 
-Processing Speed Index:
+Processing Speed:
   Standard Score: 
   Confidence Interval: 
   Percentile: 
@@ -401,23 +402,23 @@ Processing Speed Index:
 
         wais_data['subtest'] = st.text_area(
             "WAIS-5 Subtest Score", 
-            """Verbal Comprehension Index:
+            """Verbal Comprehension:
   Similarities: 
   Vocabulary: 
 
-Working Memory Index:
+Working Memory:
   Digit Sequencing: 
   Running Digits: 
 
-Visual Spatial Index:
+Visual Spatial:
   Block Design: 
   Visual Puzzles: 
 
-Processing Speed Index:
+Processing Speed:
   Symbol Search: 
   Coding: 
 
-Fluid Reasoning Index:
+Fluid Reasoning:
   Matrix Reasoning: 
   Figure Weights: 
 """,
@@ -866,11 +867,12 @@ if submit:
             for subtest in wais_subtest_score[info]:
                 replace_word[f"[[{subtest}]]"] = str(wais_subtest_score[info][subtest])
 
-
     # Display data 
     yaml_string = yaml.dump(replace_word, sort_keys=False)
     yaml_string = yaml_string + '\n' + yaml.dump(scores, sort_keys=False)
     yaml_string = yaml_string + '\n' + yaml.dump(bullet, sort_keys=False)
+    if wais_check:
+        yaml_string += "\n" + wais_analysis
     yaml_data = st.code(yaml_string, language=None)
     
 
