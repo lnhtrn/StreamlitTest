@@ -178,19 +178,6 @@ Processing Speed Index:
     #                         delete_paragraph(paragraph)
 
     wais_analysis = ""
-    response = client.responses.create(
-        prompt={
-            "id": "nnn",
-            "variables": {
-                "first_name": "Alice",
-                "pronouns": "She/her",
-                "wais_subtest": wais_subtest_score,
-                "wais_overall": wais_score,
-            }
-        }
-    )
-    wais_analysis = response.output_text
-    print(wais_analysis)
     
     # Test paragraph 
     for paragraph in doc.paragraphs:

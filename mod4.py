@@ -289,14 +289,6 @@ with st.form('BasicInfo'):
     lines["{{Result of the evaluation}}"] = st.multiselect(
         "Result of the evaluation",
         dropdowns['Result of the evaluation'],
-        # [
-        #     "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
-        #     "F88.0 - Global Developmental Delay (per behavioral presentation)",
-        #     "F80.2 - Mixed Receptive-Expressive Language Disorder",
-        #     "F90.2 - Attention Deficit Hyperactivity Disorder - Combined-Type",
-        #     "F50.82 Avoidant/Restrictive Food Intake Disorder",
-        #     "None"
-        # ],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
@@ -530,6 +522,15 @@ Fluid Reasoning Index:
         height=350,
     )
 
+    ########################################################
+    st.header("Diagnostic Formulation")
+    diagnostic_formulation = st.selectbox(
+        "Diagnostic Formulation",
+        ["Cognitive Deficit", "Adaptive Functioning", "Both (Cognitive and Adaptive Functioning)"],
+        index=None,
+        placeholder="Select options from the list",
+    )
+
     ############################################
     st.header("DSM Criteria")
 
@@ -726,6 +727,20 @@ def add_srs_yes_teacher(paragraph, score_data):
     observe.add_run("my observation aligned with a {{Evaluator's level of concern}} concern.\n", style='CustomStyle').bold = True
     delete_paragraph(paragraph)
 
+def add_diagnostic_formulation(paragraph, formulation):
+    if formulation == "Cognitive Deficit":
+        p = paragraph.insert_paragraph_before()
+        p.add_run('{{Patient First Name}} has the greatest difficulty with skills and behaviors that fall within the domain of cognitive functioning. {{Patient First Name}}’s score on the Full-Scale IQ and Wechsler Adult Intelligence Scale, Fifth Edition is greater than 2.0 standard deviations below the normed average. I believe that {{Patient First Name}}’s handicap with cognitive functioning is best explained by the presence of {{Preferred Pronouns 2}} meeting the criteria for autism spectrum disorder.', style='CustomStyle')
+
+    elif formulation == "Adaptive Functioning":
+        p = paragraph.insert_paragraph_before()
+        p.add_run('{{Patient First Name}} has the greatest difficulty with skills and behaviors that fall within the domain of adaptive functioning. {{Patient First Name}}’s score on the Adaptive Behavior Compositive of the Vineland Adaptive Behavior Scales, Third Edition is greater than 2.0 standard deviations below the normed average. I believe that {{Patient First Name}}’s handicap with adaptive functioning is best explained by the presence of {{Preferred Pronouns 2}} meeting the criteria for autism spectrum disorder.', style='CustomStyle')
+
+    else:
+        p = paragraph.insert_paragraph_before()
+        p.add_run('{{Patient First Name}} has the greatest difficulty with skills and behaviors that fall within the domain of cognitive and adaptive functioning. {{Patient First Name}}’s score on the Full-Scale IQ and Wechsler Adult Intelligence Scale, Fifth Edition and Adaptive Behavior Compositive of the Vineland Adaptive Behavior Scales, Third Edition is greater than 2.0 standard deviations below the normed average. I believe that {{Patient First Name}}’s handicap with cognitive and adaptive functioning is best explained by the presence of {{Preferred Pronouns 2}} meeting the criteria for autism spectrum disorder.', style='CustomStyle')
+    delete_paragraph()
+
 def add_score(paragraph, score_data):
     paragraph.insert_paragraph_before()
     paragraph.insert_paragraph_before().add_run(f'\t({score_data["Test Date"]}) \u2013 {score_data["Test name"]}', style='CustomStyle').italic = True
@@ -792,8 +807,7 @@ def replace_ordinal_with_superscript(para, full_text):
 
     # Add remaining text after last match
     paragraph.add_run(full_text[last_index:], style='CustomStyle')
-    delete_paragraph(para)
-
+    return paragraph
 
 
 if submit:
@@ -860,7 +874,11 @@ if submit:
     
 
     #### Edit document 
-    doc = Document('templates/template_mod_4.docx')
+    if wais_check:
+        doc = Document('templates/template_mod_4.docx')
+    else:
+        doc = Document('templates/template_mod_4_no_wais.docx')
+    
     if doc:
         # Get file name
         today_date = format_date_with_ordinal(datetime.date.today())
@@ -894,12 +912,22 @@ if submit:
 
                 if total == 0:
                     delete_paragraph(paragraph)
+
+            if "[[Assessment Procedures]]" in paragraph.text:
+                if informant_vineland_eval:
+                    replace_ordinal_with_superscript(paragraph, "Vineland Adaptive Behavior Assessment Scale – 3rd Ed: Completed by {{Preferred Pronouns 2}}  {{Caregiver type}}")
+                if pai_check:
+                    replace_ordinal_with_superscript(paragraph, "Personality Assessment Inventory (PAI): Completed by self")
+                delete_paragraph()
         
             if "[[Behavioral Presentation]]" in paragraph.text:
                 add_behavior_presentation(paragraph, st.session_state.behavior_observation_mod3)
             
             if "[[Developmental History]]" in paragraph.text:
                 add_developmental_history(paragraph, st.session_state.development_history_mod3)
+
+            if "[[Diagnostic Formulation]]" in paragraph.text:
+                add_diagnostic_formulation(paragraph, diagnostic_formulation)
 
             if "[[Recommendations]]" in paragraph.text:
                 for rec, checked in check_rec.items():
