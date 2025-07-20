@@ -167,19 +167,19 @@ def replace_ordinal_with_superscript(para, full_text):
 
 if submit:
     wais_analysis = ""
-    # if wais_data["subtest"] and wais_data['overall']:
-    #     response = client.responses.create(
-    #         prompt={
-    #             "id": st.secrets["wais_analysis_id"],
-    #             "variables": {
-    #                 "first_name": data['{{Patient First Name}}'],
-    #                 "pronouns": preferred,
-    #                 "wais_subtest": wais_data['subtest'],
-    #                 "wais_overall": wais_data['overall'],
-    #             }
-    #         }
-    #     )
-    #     wais_analysis = response.output_text
+    if wais_data["subtest"] and wais_data['overall']:
+        response = client.responses.create(
+            prompt={
+                "id": st.secrets["wais_analysis_id"],
+                "variables": {
+                    "first_name": data['{{Patient First Name}}'],
+                    "pronouns": preferred,
+                    "wais_subtest": wais_data['subtest'],
+                    "wais_overall": wais_data['overall'],
+                }
+            }
+        )
+        wais_analysis = response.output_text
 
     # Edit Table Score
     replace_word = {}
