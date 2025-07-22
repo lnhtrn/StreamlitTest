@@ -734,7 +734,8 @@ if submit:
                     else:
                         add_srs_no_teacher(paragraph)
                 # if nothing 
-                delete_paragraph(paragraph)
+                else:
+                    delete_paragraph(paragraph)
             
             if "Social Responsiveness Scale" in paragraph.text:
                 if teacher_srs_eval:

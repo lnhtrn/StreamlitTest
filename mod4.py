@@ -741,7 +741,7 @@ def add_diagnostic_formulation(paragraph, formulation):
     else:
         p = paragraph.insert_paragraph_before()
         p.add_run('{{Patient First Name}} has the greatest difficulty with skills and behaviors that fall within the domain of cognitive and adaptive functioning. {{Patient First Name}}’s score on the Full-Scale IQ and Wechsler Adult Intelligence Scale, Fifth Edition and Adaptive Behavior Compositive of the Vineland Adaptive Behavior Scales, Third Edition is greater than 2.0 standard deviations below the normed average. I believe that {{Patient First Name}}’s handicap with cognitive and adaptive functioning is best explained by the presence of {{Preferred Pronouns 2}} meeting the criteria for autism spectrum disorder.', style='CustomStyle')
-    delete_paragraph()
+    delete_paragraph(paragraph)
 
 def add_score(paragraph, score_data):
     paragraph.insert_paragraph_before()
