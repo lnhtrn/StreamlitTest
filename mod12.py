@@ -157,7 +157,6 @@ def format_date_with_ordinal(date_obj):
 
 # Set up dictionary to store data 
 data = {}
-optional = {}
 teacher_score = {}
 bullet = {}
 lines = {}
@@ -306,14 +305,6 @@ with st.form('BasicInfo'):
     lines["{{Result of the evaluation}}"] = st.multiselect(
         "Result of the evaluation",
         dropdowns["Result of the evaluation"],
-        # [
-        #     "F84.0 - Autism Spectrum Disorder (per the above referenced evaluation)",
-        #     "F88.0 - Global Developmental Delay (per behavioral presentation)",
-        #     "F80.2 - Mixed Receptive-Expressive Language Disorder",
-        #     "F90.2 - Attention Deficit Hyperactivity Disorder - Combined-Type",
-        #     "F50.82 Avoidant/Restrictive Food Intake Disorder",
-        #     "None"
-        # ],
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
@@ -635,10 +626,10 @@ if submit:
     replace_word.update(data)
 
     # Display data 
-    yaml_string = yaml.dump(replace_word, sort_keys=False)
-    yaml_string = yaml_string + '\n' + yaml.dump(optional, sort_keys=False)
-    yaml_string = yaml_string + '\n' + yaml.dump(bullet, sort_keys=False)
-    yaml_data = st.code(yaml_string, language=None)
+    # yaml_string = yaml.dump(replace_word, sort_keys=False)
+    # yaml_string = yaml_string + '\n' + yaml.dump(scores, sort_keys=False)
+    # yaml_string = yaml_string + '\n' + yaml.dump(bullet, sort_keys=False)
+    # yaml_data = st.code(yaml_string, language=None)
     
 
     #### Edit document 

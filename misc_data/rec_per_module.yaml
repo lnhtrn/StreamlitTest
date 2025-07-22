@@ -11,6 +11,14 @@ mod_12:
   develop_disability_office: "Developmental Disabilities Regional Office (DDRO)"
   evidence_therapy: "Evidence-Based Therapies"
 
+mod_12_no_autism:
+  edu_placement: "Educational Placement"
+  developmental_pediatrics: "Developmental Pediatrics Appointment"
+  feeding_treatment: "Feeding Treatment & Support"
+  parent_parent: "Parent to Parent"
+  elopement_plan: "Elopement Plan"
+  develop_disability_office: "Developmental Disabilities Regional Office (DDRO)"
+
 mod_3:
   levine_clinic: "Levine Autism Clinic"
   parent_parent: "Parent to Parent"
@@ -25,7 +33,7 @@ mod_3:
 
 mod_3_no_autism:
   accomodations: "Accommodations"
-  check_in_anxiety: "Check-in Support for Anxiety"
+  in_anxiety: "Check-in Support for Anxiety"
   hearing_assistive: "Hearing Assistive Technology"
   additional_reading_suggestions: "Additional Suggestions"
   home_community: "Home/Community Based Supports"
