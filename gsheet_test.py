@@ -113,7 +113,7 @@ Fluid Reasoning Index:
     st.header("Test Table Score")
 
     # Load data
-    df = pd.read_csv("misc_data/vineland_informant.csv", index_col=0)
+    df = pd.read_csv("misc_data/vineland_informant.csv")
 
     # JavaScript code to apply bold styling if "bold" column is True
     row_style_jscode = JsCode("""
