@@ -143,7 +143,7 @@ Fluid Reasoning Index:
     # with st_normal():
     AgGrid(
         df,
-        gridOptions=gridOptions,
+        # gridOptions=gridOptions,
         editable=True,
         height=800,
         theme="balham",
