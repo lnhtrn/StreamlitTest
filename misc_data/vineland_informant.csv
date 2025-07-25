@@ -1,14 +1,18 @@
-field,data
-Adaptive Behavior Composite,
-Communication,
-Receptive,
-Expressive,
-Written,
-Daily Living Skills,
-Personal,
-Domestic/Numeric,
-Community,
-Socialization,
-Interpersonal Relationships,
-Play & Leisure,
-Coping Skills,
+field,data,bold
+Adaptive Behavior Composite,,true
+Adaptive Behavior Composite Percentile,,false
+Communication,,true
+Communication Percentile,,false
+Receptive,,false
+Expressive,,false
+Written,,false
+Daily Living Skills,,true
+Daily Living Skills Percentile,,false
+Personal,,false
+Domestic/Numeric,,false
+Community,,false
+Socialization,,true
+Socialization Percentile,,false
+Interpersonal Relationships,,false
+Play & Leisure,,false
+Coping Skills,,false

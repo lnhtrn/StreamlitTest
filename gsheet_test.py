@@ -11,10 +11,7 @@ from docx.enum.text import WD_BREAK
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from openai import OpenAI
 import pandas as pd
-from st_aggrid import AgGrid
-from st_aggrid.shared import (
-    StAggridTheme,
-)
+from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 
 #########################################################
 # Load OpenAI client 
@@ -22,6 +19,11 @@ client = OpenAI(api_key=st.secrets["openai_key"])
 
 data = {}
 wais_data = {}
+
+#########################################################
+def st_normal():
+    _, col, _ = st.columns([1, 2, 1])
+    return col
 
 #########################################################
 with st.form("BasicInfo"):  
@@ -110,23 +112,46 @@ Fluid Reasoning Index:
     # First table
     st.header("Test Table Score")
 
+    # Load data
+    df = pd.read_csv("misc_data/vineland_informant.csv")
+
+    # JavaScript code to apply bold styling if "bold" column is True
+    row_style_jscode = JsCode("""
+    function(params) {
+        if (params.data.bold === true) {
+            return {
+                'font-weight': 'bold'
+            }
+        }
+        return {};
+    }
+    """)
+
+    # Build Grid Options
+    gb = GridOptionsBuilder.from_dataframe(df)
+    gb.configure_grid_options(getRowStyle=row_style_jscode)
+    gridOptions = gb.build()
+
+    # Optional: custom CSS
     custom_css = {
         ".ag-root.ag-unselectable.ag-layout-normal": {
-            "font-size": "18px !important",  # Adjust as needed
+            "font-size": "18px !important",
         }
     }
 
-    df = pd.read_csv("misc_data/vineland_informant.csv")
+    # Display grid
+    with st_normal():
+        AgGrid(
+            df,
+            gridOptions=gridOptions,
+            editable=True,
+            height=600,
+            theme="balham",
+            custom_css=custom_css,
+            allow_unsafe_jscode=True
+        )
 
-    grid_return = AgGrid(
-        df, 
-        editable=True, 
-        height=500,
-        width=100,
-        theme="balham",
-        custom_css=custom_css, allow_unsafe_jscode=True
-    )
-
+    #############################################
     submit = st.form_submit_button('Submit')
 
 ###########################################################
