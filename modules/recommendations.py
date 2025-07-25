@@ -2,7 +2,7 @@ import docx
 from docx.shared import Inches, Pt
 from docx.oxml.shared import OxmlElement, qn
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-
+import re
 
 ###############################################################
 # Universal
