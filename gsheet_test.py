@@ -113,7 +113,7 @@ Fluid Reasoning Index:
     #############################################
     # First table
     st.header("Editable Table")
-    grid_return = AgGrid(df, editable=True)
+    grid_return = AgGrid(df, editable=True, height=150)
 
     submit = st.form_submit_button('Submit')
 
@@ -183,7 +183,7 @@ if submit:
     st.subheader("Updated Data")
     st.dataframe(grid_return['data'])
 
-    
+
     wais_analysis = ""
     # if wais_data["subtest"] and wais_data['overall']:
     #     response = client.responses.create(
