@@ -121,8 +121,8 @@ Fluid Reasoning Index:
     grid_return = AgGrid(
         df, 
         editable=True, 
-        height=1000,
-        width=200,
+        height=500,
+        width=100,
         theme="balham",
         custom_css=custom_css, allow_unsafe_jscode=True
     )
