@@ -11,9 +11,10 @@ def delete_paragraph(paragraph):
     p.getparent().remove(p)
     p._p = p._element = None
 
-
 def get_ordinal(number):
     if len(str(number)) == 0:
+        return ""
+    if number == "None":
         return ""
     suffix = 'th' if 11 <= int(number) <= 13 else {"1": 'st', "2": 'nd', "3": 'rd'}.get(str(number)[-1], 'th')
     return suffix
