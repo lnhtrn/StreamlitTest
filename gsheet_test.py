@@ -130,6 +130,7 @@ Fluid Reasoning Index:
     # Build Grid Options
     gb = GridOptionsBuilder.from_dataframe(df)
     gb.configure_grid_options(getRowStyle=row_style_jscode)
+    gb.configure_column("data", editable=True)
     gb.configure_grid_options(editable=True)
     gridOptions = gb.build()
 
