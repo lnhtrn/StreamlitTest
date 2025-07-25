@@ -129,13 +129,14 @@ Fluid Reasoning Index:
 
     custom_css = {
         ".ag-root.ag-unselectable.ag-layout-normal": {
-            "font-size": "14px !important",  # Adjust as needed
+            "font-size": "18px !important",  # Adjust as needed
         }
     }
     grid_return = AgGrid(
         df, 
         editable=True, 
         height=150,
+        theme="balham",
         custom_css=custom_css, allow_unsafe_jscode=True
     )
 
