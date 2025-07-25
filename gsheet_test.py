@@ -12,6 +12,9 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from openai import OpenAI
 import pandas as pd
 from st_aggrid import AgGrid
+from st_aggrid.shared import (
+    StAggridTheme,
+)
 
 # Sample data
 df = pd.DataFrame({
@@ -113,6 +116,16 @@ Fluid Reasoning Index:
     #############################################
     # First table
     st.header("Editable Table")
+
+    custom_theme = (  
+        StAggridTheme(base="balham") 
+        .withParams({
+            "fontSize": 16,
+            "rowBorder": False,
+            "backgroundColor": "#FFFFFF"
+        })  
+        .withParts(['iconSetAlpine'])  
+    )
     grid_return = AgGrid(df, editable=True, height=150)
 
     submit = st.form_submit_button('Submit')
