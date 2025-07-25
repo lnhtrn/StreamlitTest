@@ -16,13 +16,6 @@ from st_aggrid.shared import (
     StAggridTheme,
 )
 
-# Sample data
-df = pd.DataFrame({
-    'Name': ['Alice', 'Bob', 'Charlie'],
-    'Age': [25, 30, 35],
-    'City': ['New York', 'San Francisco', 'London']
-})
-
 #########################################################
 # Load OpenAI client 
 client = OpenAI(api_key=st.secrets["openai_key"])
@@ -115,27 +108,21 @@ Fluid Reasoning Index:
 
     #############################################
     # First table
-    st.header("Editable Table")
-
-    # custom_theme = (  
-    #     StAggridTheme(base="balham") 
-    #     .withParams({
-    #         "fontSize": 16,
-    #         "rowBorder": False,
-    #         "backgroundColor": "#FFFFFF"
-    #     })  
-    #     .withParts(['iconSetAlpine'])  
-    # )
+    st.header("Test Table Score")
 
     custom_css = {
         ".ag-root.ag-unselectable.ag-layout-normal": {
             "font-size": "18px !important",  # Adjust as needed
         }
     }
+
+    df = pd.read_csv("misc_data/vineland_informant.csv")
+
     grid_return = AgGrid(
         df, 
         editable=True, 
-        height=150,
+        height=1000,
+        width=200,
         theme="balham",
         custom_css=custom_css, allow_unsafe_jscode=True
     )
