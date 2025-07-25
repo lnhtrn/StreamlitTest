@@ -366,7 +366,7 @@ with st.form('BasicInfo'):
         st.header("Informant's Report - Vineland Adaptive Behavior Scales") 
         vineland_score = {}
 
-        c1, c2, c3 = st.columns(2)
+        c1, c2, c3 = st.columns(3)
         with c1:
             vineland_score["[[Adaptive Behavior Composite]]"] = st.text_input("Adaptive Behavior Composite")
             vineland_score["[[Communication]]"] = st.text_input("Communication")
