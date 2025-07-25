@@ -135,21 +135,21 @@ Fluid Reasoning Index:
     # Optional: custom CSS
     custom_css = {
         ".ag-root.ag-unselectable.ag-layout-normal": {
-            "font-size": "18px !important",
+            "font-size": "20px !important",
         }
     }
 
     # Display grid
-    with st_normal():
-        AgGrid(
-            df,
-            gridOptions=gridOptions,
-            editable=True,
-            height=600,
-            theme="balham",
-            custom_css=custom_css,
-            allow_unsafe_jscode=True
-        )
+    # with st_normal():
+    AgGrid(
+        df,
+        gridOptions=gridOptions,
+        editable=True,
+        height=600,
+        theme="balham",
+        custom_css=custom_css,
+        allow_unsafe_jscode=True
+    )
 
     #############################################
     submit = st.form_submit_button('Submit')
