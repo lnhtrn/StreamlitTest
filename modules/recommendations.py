@@ -1,6 +1,7 @@
 import docx
 from docx.shared import Inches, Pt
 from docx.oxml.shared import OxmlElement, qn
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 
 ###############################################################
@@ -9,6 +10,66 @@ def delete_paragraph(paragraph):
     p = paragraph._element
     p.getparent().remove(p)
     p._p = p._element = None
+
+
+def get_ordinal(number):
+    if len(str(number)) == 0:
+        return ""
+    suffix = 'th' if 11 <= int(number) <= 13 else {"1": 'st', "2": 'nd', "3": 'rd'}.get(str(number)[-1], 'th')
+    return suffix
+
+def write_ordinal(paragraph, number):
+    p = paragraph.insert_paragraph_before()
+    p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.add_run(number, style='CustomStyle')
+    suffix = get_ordinal(number)
+    p.add_run(suffix, style='CustomStyle').font.superscript = True
+    delete_paragraph(paragraph)
+
+def replace_with_superscript(para, old_text, number_part):
+    superscript_part = get_ordinal(number_part)
+    if old_text in para.text:
+        # Save everything before, match, and after
+        before, match, after = para.text.partition(old_text)
+        
+        # Clear existing runs
+        para.clear()
+        
+        # Add before text
+        para.add_run(before, style='CustomStyle')
+        
+        # Add number part
+        para.add_run(number_part, style='CustomStyle')
+        
+        # Add superscript part
+        sup_run = para.add_run(superscript_part, style='CustomStyle')
+        sup_run.font.superscript = True
+        
+        # Add after text
+        para.add_run(after, style='CustomStyle')
+
+def replace_ordinal_with_superscript(para, full_text):
+    # Regex to find ordinal numbers like 1st, 2nd, 77th, 103rd, etc.
+    pattern = re.compile(r'(\d+)(st|nd|rd|th)')
+    paragraph = para.insert_paragraph_before()  # Remove all existing runs
+
+    last_index = 0
+    for match in pattern.finditer(full_text):
+        # Add text before the match
+        paragraph.add_run(full_text[last_index:match.start()], style='CustomStyle')
+
+        # Add number part (e.g., "77")
+        paragraph.add_run(match.group(1), style='CustomStyle')
+
+        # Add superscript suffix (e.g., "th")
+        sup_run = paragraph.add_run(match.group(2), style='CustomStyle')
+        sup_run.font.superscript = True
+
+        last_index = match.end()
+
+    # Add remaining text after last match
+    paragraph.add_run(full_text[last_index:], style='CustomStyle')
+
 
 def add_hyperlink(paragraph, url, size=24):
     """

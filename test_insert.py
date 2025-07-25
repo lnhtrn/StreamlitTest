@@ -18,7 +18,7 @@ def delete_paragraph(paragraph):
     p._p = p._element = None
 
 def get_ordinal(number):
-    suffix = 'th' if 11 <= int(number) <= 13 else {"1": 'st', "2": 'nd', "3": 'rd'}.get(number[-1], 'th')
+    suffix = 'th' if 11 <= int(number) <= 13 else {"1": 'st', "2": 'nd', "3": 'rd'}.get(str(number)[-1], 'th')
     return suffix
 
 def replace_with_superscript(para, old_text, number_part):
@@ -43,7 +43,6 @@ def replace_with_superscript(para, old_text, number_part):
         # Add after text
         para.add_run(after, style='CustomStyle')
 
-
 def replace_ordinal_with_superscript(para, full_text):
     # Regex to find ordinal numbers like 1st, 2nd, 77th, 103rd, etc.
     pattern = re.compile(r'(\d+)(st|nd|rd|th)')
@@ -65,7 +64,6 @@ def replace_ordinal_with_superscript(para, full_text):
 
     # Add remaining text after last match
     paragraph.add_run(full_text[last_index:], style='CustomStyle')
-    delete_paragraph(para)
 
 vineland_score = {
     # columns = 2

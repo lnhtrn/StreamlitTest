@@ -12,6 +12,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from openai import OpenAI
 import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
+from modules.recommendations import *
 
 #########################################################
 # Load OpenAI client 
@@ -110,7 +111,7 @@ Fluid Reasoning Index:
 
     #############################################
     # First table
-    st.header("Test Table Score")
+    st.header("Informant's Report - Vineland Adaptive Behavior Scales")
 
     # Load data
     df = pd.read_csv("misc_data/vineland_informant.csv")
@@ -154,64 +155,6 @@ Fluid Reasoning Index:
     #############################################
     submit = st.form_submit_button('Submit')
 
-###########################################################
-
-
-def delete_paragraph(paragraph):
-    p = paragraph._element
-    p.getparent().remove(p)
-    p._p = p._element = None
-
-def get_ordinal(number):
-    suffix = 'th' if 11 <= int(number) <= 13 else {"1": 'st', "2": 'nd', "3": 'rd'}.get(number[-1], 'th')
-    return suffix
-
-def replace_with_superscript(para, old_text, number_part):
-    superscript_part = get_ordinal(number_part)
-    if old_text in para.text:
-        # Save everything before, match, and after
-        before, match, after = para.text.partition(old_text)
-        
-        # Clear existing runs
-        para.clear()
-        
-        # Add before text
-        para.add_run(before, style='CustomStyle')
-        
-        # Add number part
-        para.add_run(number_part, style='CustomStyle')
-        
-        # Add superscript part
-        sup_run = para.add_run(superscript_part, style='CustomStyle')
-        sup_run.font.superscript = True
-        
-        # Add after text
-        para.add_run(after, style='CustomStyle')
-
-
-def replace_ordinal_with_superscript(para, full_text):
-    # Regex to find ordinal numbers like 1st, 2nd, 77th, 103rd, etc.
-    pattern = re.compile(r'(\d+)(st|nd|rd|th)')
-    paragraph = para.insert_paragraph_before()  # Remove all existing runs
-
-    last_index = 0
-    for match in pattern.finditer(full_text):
-        # Add text before the match
-        paragraph.add_run(full_text[last_index:match.start()], style='CustomStyle')
-
-        # Add number part (e.g., "77")
-        paragraph.add_run(match.group(1), style='CustomStyle')
-
-        # Add superscript suffix (e.g., "th")
-        sup_run = paragraph.add_run(match.group(2), style='CustomStyle')
-        sup_run.font.superscript = True
-
-        last_index = match.end()
-
-    # Add remaining text after last match
-    paragraph.add_run(full_text[last_index:], style='CustomStyle')
-    delete_paragraph(para)
-
 
 ###########################################################
 
@@ -220,7 +163,7 @@ if submit:
     st.subheader("Updated Data")
     st.dataframe(grid_return['data'])
 
-
+    # WAIS Score
     wais_analysis = ""
     # if wais_data["subtest"] and wais_data['overall']:
     #     response = client.responses.create(
@@ -239,6 +182,8 @@ if submit:
     # Edit Table Score
     replace_word = {}
     replace_percent = {}
+
+    # WAIS Score 
         
     wais_subtest_score = yaml.safe_load(wais_data['subtest'])
     wais_score = yaml.safe_load(wais_data['overall'])
@@ -254,6 +199,22 @@ if submit:
     for info in wais_subtest_score:
         for subtest in wais_subtest_score[info]:
             replace_word[f"[[{subtest}]]"] = str(wais_subtest_score[info][subtest])
+
+
+    # Vineland Informant Score
+    vineland_info_dict = {
+        "[[{}]]".format(row["col1"]): row["col2"] 
+        for _, row in grid_return['data'].iterrows()
+    }
+
+    vineland_perc_dict = {
+        "[[{}]]".format(row["col1"]): row["col2"] 
+        for _, row in grid_return['data'].iterrows()
+        if "Percentile" in row["col1"]
+    }
+
+    replace_percent.update(vineland_perc_dict)
+    replace_word.update(vineland_info_dict)
 
     # Display data 
     yaml_string = yaml.dump(data, sort_keys=False)
@@ -274,10 +235,6 @@ if submit:
         custom_style.font.size = Pt(12)
         custom_style.font.name = 'Georgia'
 
-        # Replace words even in a table 
-        for word in replace_word:
-            docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
-
         # Replace percent in table 
         for table in doc.tables:
             for row in table.rows:
@@ -286,12 +243,11 @@ if submit:
                         # Loop through all percentage needed to be replaced in the table
                         for key in replace_percent:
                             if key in paragraph.text:
-                                p = paragraph.insert_paragraph_before()
-                                p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                                p.add_run(replace_percent[key], style='CustomStyle')
-                                suffix = get_ordinal(replace_percent[key])
-                                p.add_run(suffix, style='CustomStyle').font.superscript = True
-                                delete_paragraph(paragraph)
+                                write_ordinal(paragraph, replace_percent[key])
+
+        # Replace words even in a table 
+        for word in replace_word:
+            docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
 
         # Now do the analysis replacement
         for paragraph in doc.paragraphs:
