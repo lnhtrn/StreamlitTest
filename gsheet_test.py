@@ -115,22 +115,22 @@ Fluid Reasoning Index:
     # Load data
     df = pd.read_csv("misc_data/vineland_informant.csv")
 
-    # JavaScript code to apply bold styling if "bold" column is True
-    row_style_jscode = JsCode("""
-    function(params) {
-        if (params.data.bold === true) {
-            return {
-                'font-weight': 'bold'
-            }
-        }
-        return {};
-    }
-    """)
+    # # JavaScript code to apply bold styling if "bold" column is True
+    # row_style_jscode = JsCode("""
+    # function(params) {
+    #     if (params.data.bold === true) {
+    #         return {
+    #             'font-weight': 'bold'
+    #         }
+    #     }
+    #     return {};
+    # }
+    # """)
 
-    # Build Grid Options
-    gb = GridOptionsBuilder.from_dataframe(df)
-    gb.configure_grid_options(getRowStyle=row_style_jscode)
-    gridOptions = gb.build()
+    # # Build Grid Options
+    # gb = GridOptionsBuilder.from_dataframe(df)
+    # gb.configure_grid_options(getRowStyle=row_style_jscode)
+    # gridOptions = gb.build()
 
     # Optional: custom CSS
     custom_css = {
@@ -145,7 +145,7 @@ Fluid Reasoning Index:
         df,
         gridOptions=gridOptions,
         editable=True,
-        height=600,
+        height=800,
         theme="balham",
         custom_css=custom_css,
         allow_unsafe_jscode=True
