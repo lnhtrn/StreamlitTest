@@ -142,7 +142,7 @@ Fluid Reasoning Index:
 
     # Display grid
     # with st_normal():
-    AgGrid(
+    grid_return = AgGrid(
         df,
         gridOptions=gridOptions,
         editable=True,
