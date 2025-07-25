@@ -9,8 +9,8 @@ from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE, WD_STYLE
 from docx.enum.text import WD_BREAK
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from openai import OpenAI
 
+VINELAND = True
 
 def delete_paragraph(paragraph):
     p = paragraph._element
@@ -67,6 +67,33 @@ def replace_ordinal_with_superscript(para, full_text):
     paragraph.add_run(full_text[last_index:], style='CustomStyle')
     delete_paragraph(para)
 
+vineland_score = {
+    # columns = 2
+    "[[Adaptive Behavior Composite]]": "35",
+    "[[Adaptive Behavior Composite Percentile]]": 1,
+    # columns = 2
+    "[[Communication]]": "34",
+    "[[Communication Percentile]]": 1,
+    # columns = 3
+    "[[Receptive]]": "2:8",
+    "[[Expressive]]": "3:7",
+    "[[Written]]": "22:0+",
+    # columns = 2
+    "[[Daily Living Skills]]": "49*",
+    "[[Daily Living Skills Percentile]]": 1,
+    # columns = 3
+    "[[Personal]]": "7:10",
+    "[[Domestic/Numeric]]": "13:9",
+    "[[Community]]": "17:6",
+    # columns = 2
+    "[[Socialization]]": "20",
+    "[[Socialization Percentile]]": 1,
+    # columns = 3
+    "[[Interpersonal Relationships]]": "1:2",
+    "[[Play & Leisure]]": "2:3",
+    "[[Coping Skills]]": "4:6",
+}
+
 doc = Document('templates/template_mod_4.docx')
 if doc:
     ### create document style
@@ -79,112 +106,59 @@ if doc:
     custom_style.font.size = Pt(12)
     custom_style.font.name = 'Georgia'
 
-    # Edit document
-    # for word in replace_word:
-    #     docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
-    # docxedit.replace_string(doc, old_string='[[Patient First Name]]', new_string='Linh')
-    # docxedit.replace_string(doc, old_string='[[Patient Last Name]]', new_string='Tran')
+    # If we have Vineland Score
+    if VINELAND:
+        for word in vineland_score:
+            docxedit.replace_string(doc, old_string=word, new_string=vineland_score[word])
 
-#     wais_score = """99,94-104,47
-# 111,103-117,77 
-# 100,93-107,50 
-# """
+        for paragraph in doc.paragraphs:
+            if "[[Vineland Analysis]]" in paragraph.text:
+                # Add page break
+                paragraph.insert_paragraph_before().add_run().add_break(WD_BREAK.PAGE)
 
-    wais_subtest_score = """Verbal Comprehension Index:
-  Similarities: 13
-  Vocabulary: 11
+                p = paragraph.insert_paragraph_before()
+                r = p.add_run("Interpretation of VABS-3 Results – Informant Report", style='CustomStyle')
+                r.bold = True
+                r.italic = True
 
-Working Memory Index:
-  Digit Sequencing: 7
-  Running Digits: 8
-
-Visual Spatial Index:
-  Block Design: 9
-  Visual Puzzles: 11
-
-Processing Speed Index:
-  Symbol Search: 9
-  Coding: 10
-
-Fluid Reasoning Index:
-  Matrix Reasoning: 12
-  Figure Weights: 8
-"""
-    wais_score = """Full Scale IQ:
-  Standard Score: 99
-  Confidence Interval: 94-104
-  Percentile: 47
-
-Verbal Comprehension Index:
-  Standard Score: 111
-  Confidence Interval: 103-117
-  Percentile: 77
-
-Visual Spatial Index:
-  Standard Score: 100
-  Confidence Interval: 93-107
-  Percentile: 50
-
-Fluid Reasoning Index:
-  Standard Score: 100
-  Confidence Interval: 93-107
-  Percentile: 50
-
-Working Memory Index:
-  Standard Score: 85
-  Confidence Interval: 79-93
-  Percentile: 16
-
-Processing Speed Index:
-  Standard Score: 97
-  Confidence Interval: 89-106
-  Percentile: 42
-"""
-
-#     wais_subtest_score = yaml.safe_load(wais_subtest_score)
-#     print(wais_subtest_score)
-
-#     wais_score = yaml.safe_load(wais_score)
-#     print(wais_score)
+                paragraph.insert_paragraph_before().add_run("\nInterpretation of VABS-3 Results – Informant Report", style='CustomStyle')
 
 
-    # info_list = ['IQ', 'Verbal Comp', 'Visual Spatial']
+    # If no Vineland Score
+    else:
+        allTables = doc.tables
 
-    # replace_word = {}
-    # replace_percent = {}
+        for activeTable in allTables:
+            if activeTable.cell(0,0).paragraphs[0].text == 'Adaptive Behavior Composite':
+                activeTable._element.getparent().remove(activeTable._element)
 
-    # for line, info in zip(wais_score.split("\n"), info_list):
-    #     line_items = line.split(",")
-    #     replace_word[f"[[{info} Standard]]"] = line_items[0].strip()
-    #     replace_word[f"[[{info} CI]]"] = line_items[1].strip()
-    #     replace_percent[f"[[{info} Percent]]"] = line_items[2].strip()
+        # Test paragraph 
+        for i, paragraph in enumerate(doc.paragraphs):
+            # Vineland Informant Report 
+            if "[[Vineland_Start]]" in paragraph.text:
+                vineland_start = i 
 
-    # # Edit document
-    # for word in replace_word:
-    #     docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
+        if vineland_start:
+            print(vineland_start)
+            for index in range(vineland_start, vineland_start+4, 1):
+                try:
+                    delete_paragraph(doc.paragraphs[index])
+                except:
+                    print("Out of range at index", i)
+        else:
+            print("Cannot find Vineland Start")
 
-    # # Replace percent 
-    # for table in doc.tables:
-    #     for row in table.rows:
-    #         for cell in row.cells:
-    #             for paragraph in cell.paragraphs:
-    #                 for key in replace_percent:
-    #                     if key in paragraph.text:
-    #                         p = paragraph.insert_paragraph_before()
-    #                         p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    #                         p.add_run(replace_percent[key], style='CustomStyle')
-    #                         suffix = get_ordinal(replace_percent[key])
-    #                         p.add_run(suffix, style='CustomStyle').font.superscript = True
-    #                         delete_paragraph(paragraph)
+        
+        for i, paragraph in enumerate(doc.paragraphs):
+            if "The VABS-3 yields information about an individual’s adaptive functioning" in paragraph.text:
+                delete_paragraph(paragraph)
+            if "[[Vineland Analysis]]" in paragraph.text:
+                delete_paragraph(paragraph)
 
-    wais_analysis = ""
-    
-    # Test paragraph 
-    for paragraph in doc.paragraphs:
-        if "[[WAIS-Analysis]]" in paragraph.text:
-            replace_ordinal_with_superscript(paragraph, wais_analysis)
+        # if "[[WAIS-Analysis]]" in paragraph.text:
+        #     replace_ordinal_with_superscript(paragraph, wais_analysis)
 
         # if "[[Test Percentile]]" in paragraph.text:
         #     replace_with_superscript(paragraph, "[[Test Percentile]]", "50")
 
-doc.save("Test_percent_mod4.docx")
+doc.save("other_misc/test_delete_table.docx")

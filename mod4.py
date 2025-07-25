@@ -360,6 +360,28 @@ with st.form('BasicInfo'):
             
             data["{{Socialization Score Teacher}}"] = st.text_input("Socialization Score Teacher")
 
+
+    #################################################
+    if informant_vineland_eval:
+        st.header("Informant's Report - Vineland Adaptive Behavior Scales") 
+        vineland_score = {}
+
+        c1, c2, c3 = st.columns(2)
+        with c1:
+            vineland_score["[[Adaptive Behavior Composite]]"] = st.text_input("Adaptive Behavior Composite")
+            vineland_score["[[Communication]]"] = st.text_input("Communication")
+            vineland_score["[[Receptive]]"] = st.text_input("Receptive")
+            
+        with c2:
+            vineland_score["[[Adaptive Behavior Composite Percentile]]"] = st.number_input("Adaptive Behavior Composite Percentile")
+            vineland_score["[[Communication]]"] = st.number_input("Communication Percentile")
+            vineland_score["[[Expressive]]"] = st.text_input("Expressive")
+
+        with c3:
+            st.write("")
+            st.write("")
+            vineland_score["[[Written]]"] = st.text_input("Written")   
+
     ################################################# 
     if wais_check:
         st.header("WAIS-5 Score Report")
