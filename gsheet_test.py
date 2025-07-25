@@ -14,6 +14,7 @@ import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 from modules.recommendations import *
 
+
 #########################################################
 # Load OpenAI client 
 client = OpenAI(api_key=st.secrets["openai_key"])
