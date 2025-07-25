@@ -10,7 +10,15 @@ from docx.enum.style import WD_STYLE_TYPE, WD_STYLE
 from docx.enum.text import WD_BREAK
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from openai import OpenAI
+import pandas as pd
+from st_aggrid import AgGrid
 
+# Sample data
+df = pd.DataFrame({
+    'Name': ['Alice', 'Bob', 'Charlie'],
+    'Age': [25, 30, 35],
+    'City': ['New York', 'San Francisco', 'London']
+})
 
 #########################################################
 # Load OpenAI client 
@@ -102,6 +110,11 @@ Fluid Reasoning Index:
         height=350,
     )
 
+    #############################################
+    # First table
+    st.header("Editable Table")
+    grid_return = AgGrid(df, editable=True)
+
     submit = st.form_submit_button('Submit')
 
 ###########################################################
@@ -166,20 +179,25 @@ def replace_ordinal_with_superscript(para, full_text):
 ###########################################################
 
 if submit:
+    # Display the newly edited dataframe
+    st.subheader("Updated Data")
+    st.dataframe(grid_return['data'])
+
+    
     wais_analysis = ""
-    if wais_data["subtest"] and wais_data['overall']:
-        response = client.responses.create(
-            prompt={
-                "id": st.secrets["wais_analysis_id"],
-                "variables": {
-                    "first_name": data['{{Patient First Name}}'],
-                    "pronouns": preferred,
-                    "wais_subtest": wais_data['subtest'],
-                    "wais_overall": wais_data['overall'],
-                }
-            }
-        )
-        wais_analysis = response.output_text
+    # if wais_data["subtest"] and wais_data['overall']:
+    #     response = client.responses.create(
+    #         prompt={
+    #             "id": st.secrets["wais_analysis_id"],
+    #             "variables": {
+    #                 "first_name": data['{{Patient First Name}}'],
+    #                 "pronouns": preferred,
+    #                 "wais_subtest": wais_data['subtest'],
+    #                 "wais_overall": wais_data['overall'],
+    #             }
+    #         }
+    #     )
+    #     wais_analysis = response.output_text
 
     # Edit Table Score
     replace_word = {}
