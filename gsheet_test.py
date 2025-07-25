@@ -147,7 +147,7 @@ Fluid Reasoning Index:
         editable=True,
         height=800,
         theme="balham",
-        custom_css=custom_css,
+        # custom_css=custom_css,
         allow_unsafe_jscode=True
     )
 
