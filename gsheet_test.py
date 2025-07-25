@@ -202,14 +202,14 @@ if submit:
 
     # Vineland Informant Score
     vineland_info_dict = {
-        "[[{}]]".format(row["col1"]): row["col2"] 
+        "[[{}]]".format(row["field"]): row["data"] 
         for _, row in grid_return['data'].iterrows()
     }
 
     vineland_perc_dict = {
-        "[[{}]]".format(row["col1"]): row["col2"] 
+        "[[{}]]".format(row["field"]): row["data"] 
         for _, row in grid_return['data'].iterrows()
-        if "Percentile" in row["col1"]
+        if "Percentile" in row["field"]
     }
 
     replace_percent.update(vineland_perc_dict)
