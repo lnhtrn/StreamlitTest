@@ -117,16 +117,27 @@ Fluid Reasoning Index:
     # First table
     st.header("Editable Table")
 
-    custom_theme = (  
-        StAggridTheme(base="balham") 
-        .withParams({
-            "fontSize": 16,
-            "rowBorder": False,
-            "backgroundColor": "#FFFFFF"
-        })  
-        .withParts(['iconSetAlpine'])  
+    # custom_theme = (  
+    #     StAggridTheme(base="balham") 
+    #     .withParams({
+    #         "fontSize": 16,
+    #         "rowBorder": False,
+    #         "backgroundColor": "#FFFFFF"
+    #     })  
+    #     .withParts(['iconSetAlpine'])  
+    # )
+
+    custom_css = {
+        ".ag-root.ag-unselectable.ag-layout-normal": {
+            "font-size": "14px !important",  # Adjust as needed
+        }
+    }
+    grid_return = AgGrid(
+        df, 
+        editable=True, 
+        height=150,
+        custom_css=custom_css, allow_unsafe_jscode=True
     )
-    grid_return = AgGrid(df, editable=True, height=150)
 
     submit = st.form_submit_button('Submit')
 
