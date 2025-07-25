@@ -115,22 +115,23 @@ Fluid Reasoning Index:
     # Load data
     df = pd.read_csv("misc_data/vineland_informant.csv")
 
-    # # JavaScript code to apply bold styling if "bold" column is True
-    # row_style_jscode = JsCode("""
-    # function(params) {
-    #     if (params.data.bold === true) {
-    #         return {
-    #             'font-weight': 'bold'
-    #         }
-    #     }
-    #     return {};
-    # }
-    # """)
+    # JavaScript code to apply bold styling if "bold" column is True
+    row_style_jscode = JsCode("""
+    function(params) {
+        if (params.data.bold === true) {
+            return {
+                'font-weight': 'bold'
+            }
+        }
+        return {};
+    }
+    """)
 
-    # # Build Grid Options
-    # gb = GridOptionsBuilder.from_dataframe(df)
-    # gb.configure_grid_options(getRowStyle=row_style_jscode)
-    # gridOptions = gb.build()
+    # Build Grid Options
+    gb = GridOptionsBuilder.from_dataframe(df)
+    gb.configure_grid_options(getRowStyle=row_style_jscode)
+    gb.configure_grid_options(editable=True)
+    gridOptions = gb.build()
 
     # Optional: custom CSS
     custom_css = {
@@ -143,7 +144,7 @@ Fluid Reasoning Index:
     # with st_normal():
     AgGrid(
         df,
-        # gridOptions=gridOptions,
+        gridOptions=gridOptions,
         editable=True,
         height=800,
         theme="balham",
