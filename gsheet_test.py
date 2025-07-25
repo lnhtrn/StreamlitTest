@@ -113,14 +113,19 @@ Fluid Reasoning Index:
     st.header("Test Table Score")
 
     # Load data
-    df = pd.read_csv("misc_data/vineland_informant.csv", index="field")
+    df = pd.read_csv("misc_data/vineland_informant.csv", index_col=0)
 
     # JavaScript code to apply bold styling if "bold" column is True
     row_style_jscode = JsCode("""
     function(params) {
         if (params.data.bold === true) {
             return {
-                'font-weight': 'bold'
+                'font-weight': 'bold',
+                'font-size': 16,
+            }
+        } else {
+            return {
+                'font-size': 16,
             }
         }
         return {};
@@ -133,13 +138,6 @@ Fluid Reasoning Index:
     gb.configure_column("data", editable=True)
     gb.configure_grid_options(editable=True)
     gridOptions = gb.build()
-
-    # Optional: custom CSS
-    custom_css = {
-        ".ag-root.ag-unselectable.ag-layout-normal": {
-            "font-size": "20px !important",
-        }
-    }
 
     # Display grid
     # with st_normal():
