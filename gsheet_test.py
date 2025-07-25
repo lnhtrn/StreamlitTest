@@ -14,7 +14,6 @@ import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 from modules.recommendations import *
 
-
 #########################################################
 # Load OpenAI client 
 client = OpenAI(api_key=st.secrets["openai_key"])
@@ -138,7 +137,6 @@ Fluid Reasoning Index:
     gb = GridOptionsBuilder.from_dataframe(df)
     gb.configure_grid_options(getRowStyle=row_style_jscode)
     gb.configure_column("data", editable=True)
-    gb.configure_grid_options(editable=True)
     gridOptions = gb.build()
 
     # Display grid
