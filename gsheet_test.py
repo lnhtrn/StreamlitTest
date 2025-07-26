@@ -253,6 +253,20 @@ if submit:
             if "[[WAIS-Analysis]]" in paragraph.text:
                 replace_ordinal_with_superscript(paragraph, wais_analysis)
 
+
+        for paragraph in doc.paragraphs:
+            if "[[Vineland Analysis]]" in paragraph.text:
+                # Add page break
+                paragraph.insert_paragraph_before().add_run().add_break(WD_BREAK.PAGE)
+
+                p = paragraph.insert_paragraph_before()
+                r = p.add_run("Interpretation of VABS-3 Results – Informant Report", style='CustomStyle')
+                r.bold = True
+                r.italic = True
+
+                paragraph.insert_paragraph_before().add_run("\nInterpretation of VABS-3 Results – Informant Report", style='CustomStyle')
+
+                
         # Get file name
         filename = f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} test Mod 4 WAIS Score.docx"
 
