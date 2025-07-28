@@ -363,25 +363,25 @@ with st.form('BasicInfo'):
 
 
     #################################################
-    if informant_vineland_eval:
-        st.header("Informant's Report - Vineland Adaptive Behavior Scales") 
-        vineland_score = {}
+    # if informant_vineland_eval:
+    #     st.header("Informant's Report - Vineland Adaptive Behavior Scales") 
+    #     vineland_score = {}
 
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            vineland_score["[[Adaptive Behavior Composite]]"] = st.text_input("Adaptive Behavior Composite")
-            vineland_score["[[Communication]]"] = st.text_input("Communication")
-            vineland_score["[[Receptive]]"] = st.text_input("Receptive")
+    #     c1, c2, c3 = st.columns(3)
+    #     with c1:
+    #         vineland_score["[[Adaptive Behavior Composite]]"] = st.text_input("Adaptive Behavior Composite")
+    #         vineland_score["[[Communication]]"] = st.text_input("Communication")
+    #         vineland_score["[[Receptive]]"] = st.text_input("Receptive")
             
-        with c2:
-            vineland_score["[[Adaptive Behavior Composite Percentile]]"] = st.number_input("Adaptive Behavior Composite Percentile")
-            vineland_score["[[Communication]]"] = st.number_input("Communication Percentile")
-            vineland_score["[[Expressive]]"] = st.text_input("Expressive")
+    #     with c2:
+    #         vineland_score["[[Adaptive Behavior Composite Percentile]]"] = st.number_input("Adaptive Behavior Composite Percentile")
+    #         vineland_score["[[Communication]]"] = st.number_input("Communication Percentile")
+    #         vineland_score["[[Expressive]]"] = st.text_input("Expressive")
 
-        with c3:
-            st.write("")
-            st.write("")
-            vineland_score["[[Written]]"] = st.text_input("Written")   
+    #     with c3:
+    #         st.write("")
+    #         st.write("")
+    #         vineland_score["[[Written]]"] = st.text_input("Written")   
 
     ################################################# 
     if wais_check:
@@ -450,46 +450,46 @@ Fluid Reasoning:
         
     #############################################
     # First table
-    st.header("Informant's Report - Vineland Adaptive Behavior Scales")
+    if informant_vineland_eval:
+        st.header("Informant's Report - Vineland Adaptive Behavior Scales")
 
-    # Load data
-    df = pd.read_csv("misc_data/vineland_informant.csv")
+        # Load data
+        df = pd.read_csv("misc_data/vineland_informant.csv")
 
-    # JavaScript code to apply bold styling if "bold" column is True
-    row_style_jscode = JsCode("""
-    function(params) {
-        if (params.data.bold === true) {
-            return {
-                'font-weight': 'bold',
-                'font-size': 16,
+        # JavaScript code to apply bold styling if "bold" column is True
+        row_style_jscode = JsCode("""
+        function(params) {
+            if (params.data.bold === true) {
+                return {
+                    'font-weight': 'bold',
+                    'font-size': 16,
+                }
+            } else {
+                return {
+                    'font-size': 16,
+                }
             }
-        } else {
-            return {
-                'font-size': 16,
-            }
+            return {};
         }
-        return {};
-    }
-    """)
+        """)
 
-    # Build Grid Options
-    gb = GridOptionsBuilder.from_dataframe(df)
-    gb.configure_grid_options(getRowStyle=row_style_jscode)
-    gb.configure_column("data", editable=True)
-    gridOptions = gb.build()
+        # Build Grid Options
+        gb = GridOptionsBuilder.from_dataframe(df)
+        gb.configure_grid_options(getRowStyle=row_style_jscode)
+        gb.configure_column("data", editable=True)
+        gridOptions = gb.build()
 
-    # Display grid
-    # with st_normal():
-    grid_return = AgGrid(
-        df,
-        gridOptions=gridOptions,
-        editable=True,
-        height=800,
-        theme="balham",
-        # custom_css=custom_css,
-        allow_unsafe_jscode=True
-    )
-
+        # Display grid
+        # with st_normal():
+        grid_return = AgGrid(
+            df,
+            gridOptions=gridOptions,
+            editable=True,
+            height=800,
+            theme="balham",
+            # custom_css=custom_css,
+            allow_unsafe_jscode=True
+        )
 
     ######################################################
     st.header("Medical/Developmental History")
