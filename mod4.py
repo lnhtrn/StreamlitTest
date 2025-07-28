@@ -825,57 +825,6 @@ def add_score(paragraph, score_data):
         for item_tuple in line:
             item = item_tuple[0]
             p.add_run(f'{item}: {score_data["All items"][item]}\t', style='CustomStyle').bold = item_tuple[1]
-  
-
-def get_ordinal(number):
-    suffix = 'th' if 11 <= int(number) <= 13 else {"1": 'st', "2": 'nd', "3": 'rd'}.get(number[-1], 'th')
-    return suffix
-
-def replace_with_superscript(para, old_text, number_part):
-    superscript_part = get_ordinal(number_part)
-    if old_text in para.text:
-        # Save everything before, match, and after
-        before, match, after = para.text.partition(old_text)
-        
-        # Clear existing runs
-        para.clear()
-        
-        # Add before text
-        para.add_run(before, style='CustomStyle')
-        
-        # Add number part
-        para.add_run(number_part, style='CustomStyle')
-        
-        # Add superscript part
-        sup_run = para.add_run(superscript_part, style='CustomStyle')
-        sup_run.font.superscript = True
-        
-        # Add after text
-        para.add_run(after, style='CustomStyle')
-
-
-def replace_ordinal_with_superscript(para, full_text):
-    # Regex to find ordinal numbers like 1st, 2nd, 77th, 103rd, etc.
-    pattern = re.compile(r'(\d+)(st|nd|rd|th)')
-    paragraph = para.insert_paragraph_before()  # Remove all existing runs
-
-    last_index = 0
-    for match in pattern.finditer(full_text):
-        # Add text before the match
-        paragraph.add_run(full_text[last_index:match.start()], style='CustomStyle')
-
-        # Add number part (e.g., "77")
-        paragraph.add_run(match.group(1), style='CustomStyle')
-
-        # Add superscript suffix (e.g., "th")
-        sup_run = paragraph.add_run(match.group(2), style='CustomStyle')
-        sup_run.font.superscript = True
-
-        last_index = match.end()
-
-    # Add remaining text after last match
-    paragraph.add_run(full_text[last_index:], style='CustomStyle')
-    return paragraph
 
 
 if submit:
@@ -1101,6 +1050,7 @@ if submit:
             # Vineland Informant Report 
             if "[[Vineland_Start]]" in paragraph.text:
                 vineland_start = i 
+                break
 
         if vineland_start:
             print(vineland_start)
