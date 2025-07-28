@@ -7,6 +7,7 @@ import io
 import docxedit
 import datetime
 from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.text import WD_BREAK
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
