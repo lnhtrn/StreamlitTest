@@ -124,8 +124,8 @@ if doc:
 
     # If no Vineland Score
     else:
+        # Remove tables 
         allTables = doc.tables
-
         for activeTable in allTables:
             if activeTable.cell(0,0).paragraphs[0].text == 'Adaptive Behavior Composite':
                 activeTable._element.getparent().remove(activeTable._element)
@@ -151,7 +151,7 @@ if doc:
             if "The VABS-3 yields information about an individual’s adaptive functioning" in paragraph.text:
                 delete_paragraph(paragraph)
             if "[[Vineland Analysis]]" in paragraph.text:
-                delete_paragraph(paragraph)
+                delete_paragraph(paragraph) 
 
         # if "[[WAIS-Analysis]]" in paragraph.text:
         #     replace_ordinal_with_superscript(paragraph, wais_analysis)
