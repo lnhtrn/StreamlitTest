@@ -911,11 +911,12 @@ if submit:
     
 
     #### Edit document 
-    if wais_check:
-        doc = Document('templates/template_mod_4.docx')
-    else:
-        doc = Document('templates/template_mod_4_no_wais.docx')
+    # if wais_check:
+    #     doc = Document('templates/template_mod_4.docx')
+    # else:
+    #     doc = Document('templates/template_mod_4_no_wais.docx')
     
+    doc = Document('templates/template_mod_4.docx')
     if doc:
         # Get file name
         today_date = format_date_with_ordinal(datetime.date.today())
@@ -935,6 +936,38 @@ if submit:
 
         list_style = doc.styles['Bullet New']
         list_style.paragraph_format.line_spacing = 1
+
+        if not informant_vineland_eval:
+            # if we don't have vineland score
+            # Remove tables 
+            allTables = doc.tables
+            for activeTable in allTables:
+                if activeTable.cell(0,0).paragraphs[0].text == 'Adaptive Behavior Composite':
+                    activeTable._element.getparent().remove(activeTable._element)
+
+            # Test paragraph 
+            for i, paragraph in enumerate(doc.paragraphs):
+                # Vineland Informant Report 
+                if "[[Vineland_Start]]" in paragraph.text:
+                    vineland_start = i 
+                    break
+
+            if vineland_start:
+                print(vineland_start)
+                for index in range(vineland_start, vineland_start+4, 1):
+                    try:
+                        delete_paragraph(doc.paragraphs[index])
+                    except:
+                        print("Out of range at index", i)
+            else:
+                print("Cannot find Vineland Start")
+
+            
+            for i, paragraph in enumerate(doc.paragraphs):
+                if "The VABS-3 yields information about an individual’s adaptive functioning" in paragraph.text:
+                    delete_paragraph(paragraph)
+                if "[[Vineland Analysis]]" in paragraph.text:
+                    delete_paragraph(paragraph)
 
         if wais_check or informant_vineland_eval:
             # Replace percent in table 
@@ -1039,37 +1072,6 @@ if submit:
 
                     paragraph.insert_paragraph_before().add_run("\nInterpretation of VABS-3 Results – Informant Report", style='CustomStyle')
 
-        # if we don't have vineland score
-        # Remove tables 
-        allTables = doc.tables
-        for activeTable in allTables:
-            if activeTable.cell(0,0).paragraphs[0].text == 'Adaptive Behavior Composite':
-                activeTable._element.getparent().remove(activeTable._element)
-
-        # Test paragraph 
-        for i, paragraph in enumerate(doc.paragraphs):
-            # Vineland Informant Report 
-            if "[[Vineland_Start]]" in paragraph.text:
-                vineland_start = i 
-                break
-
-        if vineland_start:
-            print(vineland_start)
-            for index in range(vineland_start, vineland_start+4, 1):
-                try:
-                    delete_paragraph(doc.paragraphs[index])
-                except:
-                    print("Out of range at index", i)
-        else:
-            print("Cannot find Vineland Start")
-
-        
-        for i, paragraph in enumerate(doc.paragraphs):
-            if "The VABS-3 yields information about an individual’s adaptive functioning" in paragraph.text:
-                delete_paragraph(paragraph)
-            if "[[Vineland Analysis]]" in paragraph.text:
-                delete_paragraph(paragraph)
-        
         # Edit document
         for word in replace_word:
             docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
