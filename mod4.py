@@ -1025,7 +1025,8 @@ if submit:
                 delete_paragraph(paragraph)
 
             if "[[WAIS-Analysis]]" in paragraph.text:
-                replace_ordinal_with_superscript(paragraph, wais_analysis)
+                if wais_check:
+                    replace_ordinal_with_superscript(paragraph, wais_analysis)
 
             if "[[SCQ Report Information]]" in paragraph.text:
                 # Add SCQ
