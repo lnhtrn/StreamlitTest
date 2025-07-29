@@ -884,6 +884,7 @@ if submit:
         # st.code(vineland_info_dict, language=None)
 
         vineland_score = yaml.dump(vineland_info_dict, sort_keys=False)
+        st.code(vineland_score)
         response = client.responses.create(
             prompt={
                 "id": st.secrets["vineland_analysis_id"],
