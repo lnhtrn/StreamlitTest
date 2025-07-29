@@ -883,13 +883,14 @@ if submit:
 
         # st.code(vineland_info_dict, language=None)
 
+        vineland_score = yaml.dump(vineland_info_dict, sort_keys=False)
         response = client.responses.create(
             prompt={
                 "id": st.secrets["vineland_analysis_id"],
                 "variables": {
                 "first_name": data['{{Patient First Name}}'],
                 "pronouns": preferred,
-                "score": vineland_info_dict,
+                "score": vineland_score,
                 "caregiver": data['{{Caregiver type}}']
                 }
             }
