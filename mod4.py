@@ -908,12 +908,11 @@ if submit:
     
 
     #### Edit document 
-    # if wais_check:
-    #     doc = Document('templates/template_mod_4.docx')
-    # else:
-    #     doc = Document('templates/template_mod_4_no_wais.docx')
-    
-    doc = Document('templates/template_mod_4.docx')
+    if wais_check:
+        doc = Document('templates/template_mod_4.docx')
+    else:
+        doc = Document('templates/template_mod_4_no_wais.docx')
+        
     if doc:
         # Get file name
         today_date = format_date_with_ordinal(datetime.date.today())
@@ -1090,16 +1089,7 @@ if submit:
                     paragraph.insert_paragraph_before()
 
                     replace_ordinal_with_superscript(paragraph, vineland_analysis)
-
-                # # if not, delete this paragraph 
-                # else:
-                #     delete_paragraph(paragraph)
-
-
-
-
-                    
-                    
+                    delete_paragraph(paragraph)
 
         # Edit document
         for word in replace_word:
