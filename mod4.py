@@ -881,6 +881,8 @@ if submit:
         replace_percent.update(vineland_perc_dict)
         replace_word.update(vineland_info_dict)
 
+        st.code(grid_return['data'].to_csv(index=False), language=None)
+
     # Display data 
     # yaml_string = yaml.dump(replace_word, sort_keys=False)
     # yaml_string = yaml_string + '\n' + yaml.dump(scores, sort_keys=False)
