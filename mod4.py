@@ -881,7 +881,20 @@ if submit:
         replace_percent.update(vineland_perc_dict)
         replace_word.update(vineland_info_dict)
 
-        st.code(vineland_info_dict, language=None)
+        # st.code(vineland_info_dict, language=None)
+
+        response = client.responses.create(
+            prompt={
+                "id": st.secrets["vineland_analysis_id"],
+                "variables": {
+                "first_name": data['{{Patient First Name}}'],
+                "pronouns": preferred,
+                "score": vineland_info_dict,
+                "caregiver": data['{{Caregiver type}}']
+                }
+            }
+        )
+        vineland_analysis = response.output_text
 
     # Display data 
     # yaml_string = yaml.dump(replace_word, sort_keys=False)
@@ -1073,6 +1086,8 @@ if submit:
                     p.add_run(" percentile)", style='CustomStyle')
 
                     paragraph.insert_paragraph_before()
+
+                    replace_ordinal_with_superscript(paragraph, vineland_analysis)
 
                 # # if not, delete this paragraph 
                 # else:
