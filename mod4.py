@@ -525,9 +525,9 @@ Fluid Reasoning:
         gb = GridOptionsBuilder.from_dataframe(df)
         gb.configure_grid_options(getRowStyle=row_style_jscode)
         gb.configure_column("data", editable=True)
-        gb.configure_column("field", width=300) 
+        # gb.configure_column("field", width=300) 
         gridOptions = gb.build()
-        st.write(gridOptions["columnDefs"])
+        gridOptions["columnDefs"][0]["width"] = 200
 
         # Display grid
         # with st_normal():
