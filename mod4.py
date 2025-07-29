@@ -66,25 +66,25 @@ connections = {}
 # Create a connection object.
 connections['All'] = st.connection(f"mod3_all", type=GSheetsConnection)
 # Read object
-df = connections['All'].read(
+df_vineland = connections['All'].read(
     ttl="30m",
     usecols=list(range(6)),
     nrows=30,
 ) 
-for col_name in df.columns:
-    dropdowns[col_name] = df[col_name].tolist()
+for col_name in df_vineland.columns:
+    dropdowns[col_name] = df_vineland[col_name].tolist()
     dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
 
 # DSM dropdowns
 connections['DSM'] = st.connection(f"dsm", type=GSheetsConnection)
 # Read object
-df = connections['DSM'].read(
+df_vineland = connections['DSM'].read(
     ttl="30m",
     usecols=list(range(7)),
     nrows=15,
 ) 
-for col_name in df.columns:
-    dropdowns[col_name] = df[col_name].tolist()
+for col_name in df_vineland.columns:
+    dropdowns[col_name] = df_vineland[col_name].tolist()
     dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
     dropdowns[col_name].append("None")
 
@@ -92,12 +92,12 @@ for col_name in df.columns:
 # Scores for sidebar
 connections['Scores'] = st.connection(f"mod3_scores", type=GSheetsConnection)
 # Read object
-df = connections['Scores'].read(
+df_vineland = connections['Scores'].read(
     ttl="30m",
     usecols=list(range(6)),
     nrows=30,
 ) 
-score_list = df.to_dict('records')
+score_list = df_vineland.to_dict('records')
 
 # Process data
 scores = {}
@@ -436,65 +436,117 @@ with st.form('BasicInfo'):
         st.header("WAIS-5 Score Report")
 
         wais_data = {}
-        wais_data['overall'] = st.text_area(
-            "WAIS-5 Overall Score - Input percentile without any suffix. For example: Percentile: 42", 
-            """Full Scale IQ:
-  Standard Score: 
-  Confidence Interval: 
-  Percentile: 
 
-Verbal Comprehension:
-  Standard Score: 
-  Confidence Interval: 
-  Percentile: 
+        # Load data
+        df_wais_overall = pd.read_csv("misc_data/wais_overall.csv")
+        df_wais_subtest = pd.read_csv("misc_data/wais_subtest.csv")
 
-Visual Spatial:
-  Standard Score: 
-  Confidence Interval: 
-  Percentile:
+        # JavaScript code to apply bold styling if "bold" column is True
+        row_style_jscode = JsCode("""
+        function(params) 
+            return {
+                'font-size': 16,
+            }
+            return {};
+        }
+        """)
 
-Fluid Reasoning:
-  Standard Score: 
-  Confidence Interval:
-  Percentile: 
+        # Build Grid Options
+        gb_overall = GridOptionsBuilder.from_dataframe(df_wais_overall)
+        gb_overall.configure_grid_options(getRowStyle=row_style_jscode)
+        gb_overall.configure_column("Standard Score", editable=True)
+        gb_overall.configure_column("Confidence Interval", editable=True)
+        gb_overall.configure_column("Percentile", editable=True)
+        gridOptions_overall = gb_overall.build()
 
-Working Memory:
-  Standard Score: 
-  Confidence Interval: 
-  Percentile: 
-
-Processing Speed:
-  Standard Score: 
-  Confidence Interval: 
-  Percentile: 
-""",
+        # Display grid
+        # with st_normal():
+        grid_return_overall = AgGrid(
+            df_wais_overall,
+            gridOptions=gridOptions_overall,
+            editable=True,
             height=800,
+            theme="balham",
+            allow_unsafe_jscode=True
         )
 
-        wais_data['subtest'] = st.text_area(
-            "WAIS-5 Subtest Score", 
-            """Verbal Comprehension:
-  Similarities: 
-  Vocabulary: 
+        # Build Grid Options
+        gb_subtest = GridOptionsBuilder.from_dataframe(df_wais_subtest)
+        gb_subtest.configure_grid_options(getRowStyle=row_style_jscode)
+        gb_subtest.configure_column("Scaled Score", editable=True)
+        gridOptions_subtest = gb_subtest.build()
 
-Working Memory:
-  Digit Sequencing: 
-  Running Digits: 
+        # Display grid
+        # with st_normal():
+        grid_return_subtest = AgGrid(
+            df_wais_subtest,
+            gridOptions=gridOptions_subtest,
+            editable=True,
+            height=800,
+            theme="balham",
+            allow_unsafe_jscode=True
+        )
 
-Visual Spatial:
-  Block Design: 
-  Visual Puzzles: 
 
-Processing Speed:
-  Symbol Search: 
-  Coding: 
+#         wais_data['overall'] = st.text_area(
+#             "WAIS-5 Overall Score - Input percentile without any suffix. For example: Percentile: 42", 
+#             """Full Scale IQ:
+#   Standard Score: 
+#   Confidence Interval: 
+#   Percentile: 
 
-Fluid Reasoning:
-  Matrix Reasoning: 
-  Figure Weights: 
-""",
-        height=500,
-    )
+# Verbal Comprehension:
+#   Standard Score: 
+#   Confidence Interval: 
+#   Percentile: 
+
+# Visual Spatial:
+#   Standard Score: 
+#   Confidence Interval: 
+#   Percentile:
+
+# Fluid Reasoning:
+#   Standard Score: 
+#   Confidence Interval:
+#   Percentile: 
+
+# Working Memory:
+#   Standard Score: 
+#   Confidence Interval: 
+#   Percentile: 
+
+# Processing Speed:
+#   Standard Score: 
+#   Confidence Interval: 
+#   Percentile: 
+# """,
+#             height=800,
+#         )
+
+#         wais_data['subtest'] = st.text_area(
+#             "WAIS-5 Subtest Score", 
+#             """Verbal Comprehension:
+#   Similarities: 
+#   Vocabulary: 
+
+# Working Memory:
+#   Digit Sequencing: 
+#   Running Digits: 
+
+# Visual Spatial:
+#   Block Design: 
+#   Visual Puzzles: 
+
+# Processing Speed:
+#   Symbol Search: 
+#   Coding: 
+
+# Fluid Reasoning:
+#   Matrix Reasoning: 
+#   Figure Weights: 
+# """,
+#         height=500,
+#     )
         
     #############################################
     # First table
@@ -502,10 +554,10 @@ Fluid Reasoning:
         st.header("Informant's Report - Vineland Adaptive Behavior Scales")
 
         # Load data
-        df = pd.read_csv("misc_data/vineland_informant.csv")
+        df_vineland = pd.read_csv("misc_data/vineland_informant.csv")
 
         # JavaScript code to apply bold styling if "bold" column is True
-        row_style_jscode = JsCode("""
+        row_style_jscode_vineland = JsCode("""
         function(params) {
             if (params.data.bold === true) {
                 return {
@@ -522,18 +574,16 @@ Fluid Reasoning:
         """)
 
         # Build Grid Options
-        gb = GridOptionsBuilder.from_dataframe(df)
-        gb.configure_grid_options(getRowStyle=row_style_jscode)
-        gb.configure_column("data", editable=True)
-        # gb.configure_column("field", width=300) 
-        gridOptions = gb.build()
-        gridOptions["columnDefs"][0]["width"] = 400
+        gb_vineland = GridOptionsBuilder.from_dataframe(df_vineland)
+        gb_vineland.configure_grid_options(getRowStyle=row_style_jscode_vineland)
+        gb_vineland.configure_column("data", editable=True)
+        gridOptions_vineland = gb_vineland.build()
 
         # Display grid
         # with st_normal():
         grid_return = AgGrid(
-            df,
-            gridOptions=gridOptions,
+            df_vineland,
+            gridOptions=gridOptions_vineland,
             editable=True,
             height=800,
             theme="balham",
@@ -832,6 +882,27 @@ if submit:
 
     # Get WAIS 
     if wais_check:
+        wais_overall_dict = {
+            "[[{} Standard]]".format(row["Index"]): row["Standard Score"] 
+            for _, row in grid_return_overall['data'].iterrows()
+        }
+        wais_overall_dict = {
+            "[[{} CI]]".format(row["Index"]): row["Confidence Interval"] 
+            for _, row in grid_return_overall['data'].iterrows()
+        }
+        wais_overall_percentile = {
+            "[[{} Percentile]]".format(row["Index"]): row["Percentile"] 
+            for _, row in grid_return_overall['data'].iterrows()
+        }
+        
+        wais_subtest_dict = {
+            "[[{}]]".format(row["Subtest"]): row["Scaled Score"] 
+            for _, row in grid_return_subtest['data'].iterrows()
+        }
+
+        wais_data["overall"] = grid_return_overall['data'].set_index("Index", drop=True).to_dict("index")
+        wais_data["subtest"] = grid_return_subtest['data'].to_dict("records")
+
         wais_analysis = ""
         if wais_data["subtest"] and wais_data['overall']:
             response = client.responses.create(
@@ -848,21 +919,9 @@ if submit:
             wais_analysis = response.output_text
 
         # Get Table data
-        wais_subtest_score = yaml.safe_load(wais_data['subtest'])
-        wais_score = yaml.safe_load(wais_data['overall'])
-
-        info_list = ['IQ', 'Verbal Comp', 'Visual Spatial']
-
-        for info in wais_score:
-            # Info meaning type of score, i.e. "Full Scale IQ", "Verbal Comprehension Index, etc"
-            replace_word[f"[[{info} Standard]]"] = str(wais_score[info]['Standard Score'])
-            replace_word[f"[[{info} CI]]"] = str(wais_score[info]['Confidence Interval'])
-            replace_percent[f"[[{info} Percent]]"] = str(wais_score[info]['Percentile'])
-        
-        for info in wais_subtest_score:
-            for subtest in wais_subtest_score[info]:
-                replace_word[f"[[{subtest}]]"] = str(wais_subtest_score[info][subtest])
-
+        replace_word.update(wais_overall_dict)
+        replace_word.update(wais_subtest_dict)
+        replace_percent.update(wais_overall_percentile)
 
     # Get Vineland Informant
     if informant_vineland_eval:
@@ -885,18 +944,22 @@ if submit:
 
         vineland_score = yaml.dump(vineland_info_dict, sort_keys=False)
         st.code(vineland_score)
-        response = client.responses.create(
-            prompt={
-                "id": st.secrets["vineland_analysis_id"],
-                "variables": {
-                "first_name": data['{{Patient First Name}}'],
-                "pronouns": preferred,
-                "score": vineland_score,
-                "caregiver": data['{{Caregiver type}}']
+        vineland_analysis = ""
+        try:
+            response = client.responses.create(
+                prompt={
+                    "id": st.secrets["vineland_analysis_id"],
+                    "variables": {
+                    "first_name": data['{{Patient First Name}}'],
+                    "pronouns": preferred,
+                    "score": vineland_score,
+                    "caregiver": data['{{Caregiver type}}']
+                    }
                 }
-            }
-        )
-        vineland_analysis = response.output_text
+            )
+            vineland_analysis = response.output_text
+        except:
+            print("Cannot analyze Vineland Score")
 
     # Display data 
     # yaml_string = yaml.dump(replace_word, sort_keys=False)
