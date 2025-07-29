@@ -912,7 +912,7 @@ if submit:
         doc = Document('templates/template_mod_4.docx')
     else:
         doc = Document('templates/template_mod_4_no_wais.docx')
-        
+
     if doc:
         # Get file name
         today_date = format_date_with_ordinal(datetime.date.today())
@@ -1055,6 +1055,10 @@ if submit:
                     add_vineland_yes_teacher(paragraph)
                 else:
                     add_vineland_no_teacher(paragraph)
+
+            if "[[Vineland_Start]]" in paragraph.text:
+                if informant_vineland_eval:
+                    delete_paragraph(paragraph)
 
             if "[[Vineland Analysis]]" in paragraph.text:
                 if informant_vineland_eval:
