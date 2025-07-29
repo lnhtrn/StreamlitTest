@@ -478,6 +478,7 @@ Fluid Reasoning:
         gb = GridOptionsBuilder.from_dataframe(df)
         gb.configure_grid_options(getRowStyle=row_style_jscode)
         gb.configure_column("data", editable=True)
+        gb.configure_column("field", width=100) 
         gridOptions = gb.build()
 
         # Display grid
@@ -962,7 +963,6 @@ if submit:
             else:
                 print("Cannot find Vineland Start")
 
-            
             for i, paragraph in enumerate(doc.paragraphs):
                 if "The VABS-3 yields information about an individual’s adaptive functioning" in paragraph.text:
                     delete_paragraph(paragraph)
@@ -1071,7 +1071,37 @@ if submit:
                     r.bold = True
                     r.italic = True
 
-                    paragraph.insert_paragraph_before().add_run("\nInterpretation of VABS-3 Results – Informant Report", style='CustomStyle')
+                    p = paragraph.insert_paragraph_before()
+                    p.add_run(f"\nAdaptive Behavior Composite: {replace_word['[[Adaptive Behavior Composite]]']} (", style='CustomStyle')
+                    write_ordinal_in_paragraph(p, replace_word['[[Adaptive Behavior Composite Percentile]]'])
+                    p.add_run(" percentile)", style='CustomStyle')
+
+                    p = paragraph.insert_paragraph_before()
+                    p.add_run(f"\n\tCommunication: {replace_word['[[Communication]]']} (", style='CustomStyle')
+                    write_ordinal_in_paragraph(p, replace_word['[[Communication Percentile]]'])
+                    p.add_run(" percentile)", style='CustomStyle')
+
+                    p = paragraph.insert_paragraph_before()
+                    p.add_run(f"\tDaily Living Skills: {replace_word['[[Daily Living Skills]]']} (", style='CustomStyle')
+                    write_ordinal_in_paragraph(p, replace_word['[[Daily Living Skills Percentile]]'])
+                    p.add_run(" percentile)", style='CustomStyle')
+
+                    p = paragraph.insert_paragraph_before()
+                    p.add_run(f"\tSocialization: {replace_word['[[Socialization]]']} (", style='CustomStyle')
+                    write_ordinal_in_paragraph(p, replace_word['[[Socialization Percentile]]'])
+                    p.add_run(" percentile)", style='CustomStyle')
+
+                    paragraph.insert_paragraph_before()
+
+                # # if not, delete this paragraph 
+                # else:
+                #     delete_paragraph(paragraph)
+
+
+
+
+                    
+                    
 
         # Edit document
         for word in replace_word:

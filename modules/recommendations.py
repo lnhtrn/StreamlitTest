@@ -27,6 +27,11 @@ def write_ordinal(paragraph, number):
     p.add_run(suffix, style='CustomStyle').font.superscript = True
     delete_paragraph(paragraph)
 
+def write_ordinal_in_paragraph(paragraph, number):
+    paragraph.add_run(number, style='CustomStyle')
+    suffix = get_ordinal(number)
+    paragraph.add_run(suffix, style='CustomStyle').font.superscript = True
+
 def replace_with_superscript(para, old_text, number_part):
     superscript_part = get_ordinal(number_part)
     if old_text in para.text:
