@@ -362,27 +362,74 @@ with st.form('BasicInfo'):
             
             data["{{Socialization Score Teacher}}"] = st.text_input("Socialization Score Teacher")
 
+    ######################################################
+    st.header("Medical/Developmental History")
+    
+    data['{{Developmental History}}'] = st.text_input(
+        "Developmental History")
+    
+    data['{{Educational History}}'] = st.text_input(
+        "Educational History")
 
-    #################################################
-    # if informant_vineland_eval:
-    #     st.header("Informant's Report - Vineland Adaptive Behavior Scales") 
-    #     vineland_score = {}
+    data['{{Diagnostic History}}'] = st.text_input(
+        "Diagnostic History")
+    
+    data['{{Medical History}}'] = st.text_input(
+        "Relevant Medical History")
 
-    #     c1, c2, c3 = st.columns(3)
-    #     with c1:
-    #         vineland_score["[[Adaptive Behavior Composite]]"] = st.text_input("Adaptive Behavior Composite")
-    #         vineland_score["[[Communication]]"] = st.text_input("Communication")
-    #         vineland_score["[[Receptive]]"] = st.text_input("Receptive")
-            
-    #     with c2:
-    #         vineland_score["[[Adaptive Behavior Composite Percentile]]"] = st.number_input("Adaptive Behavior Composite Percentile")
-    #         vineland_score["[[Communication]]"] = st.number_input("Communication Percentile")
-    #         vineland_score["[[Expressive]]"] = st.text_input("Expressive")
+    lines['{{Medications}}'] = st.multiselect(
+        "Medications",
+        ['None noted or reported.'],
+        placeholder="Can input multiple options",
+        accept_new_options=True
+    )
 
-    #     with c3:
-    #         st.write("")
-    #         st.write("")
-    #         vineland_score["[[Written]]"] = st.text_input("Written")   
+    ###############################################
+    st.header("Educational Background")
+
+    data['{{School District}}'] = st.selectbox(
+        "School District",
+        ['Rochester City'],
+        index=None,
+        placeholder="Select a school district or enter a new one",
+        accept_new_options=True,
+    )
+
+    # data['{{School Name}}'] = st.text_input("School Name")
+
+    if teacher_srs_eval or teacher_vineland_eval:
+        teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
+
+    data['{{Grade}}'] = st.text_input(
+        "Grade",
+    )
+
+    data['School Year'] = st.text_input(
+        "School Year",
+    )
+
+    data['{{Education Setting}}'] = st.selectbox(
+        "Education Setting",
+        ["General Education", "Integrated Co-Taught", "12:1:1", "8:1:1", "6:1:1"],
+        index=None,
+        placeholder="Select a grade or enter a new one",
+        accept_new_options=True,
+    )
+
+    comma['{{Services}}'] = st.multiselect(
+        "Services",
+        dropdowns['Services'],
+        placeholder="Select multiple options from the list or enter a new one",
+        accept_new_options=True
+    )
+
+    data['{{Classification}}'] = st.selectbox(
+        "Classification",
+        dropdowns['Classification'],
+        index=None,
+        placeholder="Select multiple options from the list or enter a new one",
+        accept_new_options=True
+    )
 
     ################################################# 
     if wais_check:
@@ -478,7 +525,7 @@ Fluid Reasoning:
         gb = GridOptionsBuilder.from_dataframe(df)
         gb.configure_grid_options(getRowStyle=row_style_jscode)
         gb.configure_column("data", editable=True)
-        gb.configure_column("field", width=100) 
+        gb.configure_column("field", width=200) 
         gridOptions = gb.build()
 
         # Display grid
@@ -492,75 +539,6 @@ Fluid Reasoning:
             # custom_css=custom_css,
             allow_unsafe_jscode=True
         )
-
-    ######################################################
-    st.header("Medical/Developmental History")
-    
-    data['{{Developmental History}}'] = st.text_input(
-        "Developmental History")
-    
-    data['{{Educational History}}'] = st.text_input(
-        "Educational History")
-
-    data['{{Diagnostic History}}'] = st.text_input(
-        "Diagnostic History")
-    
-    data['{{Medical History}}'] = st.text_input(
-        "Relevant Medical History")
-
-    lines['{{Medications}}'] = st.multiselect(
-        "Medications",
-        ['None noted or reported.'],
-        placeholder="Can input multiple options",
-        accept_new_options=True
-    )
-
-    ###############################################
-    st.header("Educational Background")
-
-    data['{{School District}}'] = st.selectbox(
-        "School District",
-        ['Rochester City'],
-        index=None,
-        placeholder="Select a school district or enter a new one",
-        accept_new_options=True,
-    )
-
-    # data['{{School Name}}'] = st.text_input("School Name")
-
-    if teacher_srs_eval or teacher_vineland_eval:
-        teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
-
-    data['{{Grade}}'] = st.text_input(
-        "Grade",
-    )
-
-    data['School Year'] = st.text_input(
-        "School Year",
-    )
-
-    data['{{Education Setting}}'] = st.selectbox(
-        "Education Setting",
-        ["General Education", "Integrated Co-Taught", "12:1:1", "8:1:1", "6:1:1"],
-        index=None,
-        placeholder="Select a grade or enter a new one",
-        accept_new_options=True,
-    )
-
-    comma['{{Services}}'] = st.multiselect(
-        "Services",
-        dropdowns['Services'],
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
-
-    data['{{Classification}}'] = st.selectbox(
-        "Classification",
-        dropdowns['Classification'],
-        index=None,
-        placeholder="Select multiple options from the list or enter a new one",
-        accept_new_options=True
-    )
 
     ##########################################################
     # Score section
