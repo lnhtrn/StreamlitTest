@@ -527,7 +527,7 @@ Fluid Reasoning:
         gb.configure_column("data", editable=True)
         # gb.configure_column("field", width=300) 
         gridOptions = gb.build()
-        gridOptions["columnDefs"][0]["width"] = 200
+        gridOptions["columnDefs"][0]["width"] = 400
 
         # Display grid
         # with st_normal():
