@@ -296,7 +296,29 @@ with st.form('BasicInfo'):
         placeholder="Select multiple options from the list or enter a new one",
         accept_new_options=True
     )
+
+    ######################################################
+    st.header("Medical/Developmental History")
     
+    data['{{Developmental History}}'] = st.text_input(
+        "Developmental History")
+    
+    data['{{Educational History}}'] = st.text_input(
+        "Educational History")
+
+    data['{{Diagnostic History}}'] = st.text_input(
+        "Diagnostic History")
+    
+    data['{{Medical History}}'] = st.text_input(
+        "Relevant Medical History")
+
+    lines['{{Medications}}'] = st.multiselect(
+        "Medications",
+        ['None noted or reported.'],
+        placeholder="Can input multiple options",
+        accept_new_options=True
+    )
+
     ##########################################################
     if scq_result:
         st.header("(SCQ) - Lifetime Form")
@@ -361,28 +383,6 @@ with st.form('BasicInfo'):
             data["{{Daily Living Skills Score Teacher}}"] = st.text_input("Daily Living Skills Score Teacher")
             
             data["{{Socialization Score Teacher}}"] = st.text_input("Socialization Score Teacher")
-
-    ######################################################
-    st.header("Medical/Developmental History")
-    
-    data['{{Developmental History}}'] = st.text_input(
-        "Developmental History")
-    
-    data['{{Educational History}}'] = st.text_input(
-        "Educational History")
-
-    data['{{Diagnostic History}}'] = st.text_input(
-        "Diagnostic History")
-    
-    data['{{Medical History}}'] = st.text_input(
-        "Relevant Medical History")
-
-    lines['{{Medications}}'] = st.multiselect(
-        "Medications",
-        ['None noted or reported.'],
-        placeholder="Can input multiple options",
-        accept_new_options=True
-    )
 
     ###############################################
     st.header("Educational Background")
