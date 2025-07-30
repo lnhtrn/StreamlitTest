@@ -815,7 +815,7 @@ def add_srs_yes_teacher(paragraph, score_data):
     p.add_run(f"{score_data['{{Social Communication and Interaction Score Caregiver}}']} ({score_data['{{Caregiver type}}']})", style='CustomStyle')
     p = paragraph.insert_paragraph_before()
     p.add_run('\tRestricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Self}} (self), ', style='CustomStyle')
-    p.add_run(f'{score_data["{{Restricted Interests and Repetitive Behavior Score Caregiver}}"]} ({score_data['{{Caregiver type}}']})', style='CustomStyle')
+    p.add_run(f"{score_data['{{Restricted Interests and Repetitive Behavior Score Caregiver}}']} ({score_data['{{Caregiver type}}']})", style='CustomStyle')
     paragraph.insert_paragraph_before()
     observe = paragraph.insert_paragraph_before()
     observe.add_run("Based on the report provided by {{Patient First Name}} and {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
