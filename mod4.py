@@ -279,7 +279,7 @@ with st.form('BasicInfo'):
     
     data['{{Residence City/State}}'] = st.text_input("Residence City/State")
 
-    data['{{Narrative}}'] = st.text_area('Narrative to finish \"Patient lives with...\"')
+    data['{{Narrative}}'] = st.text_area('Narrative to finish \"Patient lives [independently/with their grandparents/...]\"')
 
     ##########################################################
     st.header("BRH Evaluation Details")
