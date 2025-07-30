@@ -899,8 +899,8 @@ if submit:
             for _, row in grid_return_subtest['data'].iterrows()
         }
 
-        wais_data["overall"] = grid_return_overall['data'].set_index("Index", drop=True).to_dict("index")
-        wais_data["subtest"] = grid_return_subtest['data'].to_dict("records")
+        wais_data["overall"] = yaml.dump(grid_return_overall['data'].set_index("Index", drop=True).to_dict("index"), sort_keys=False)
+        wais_data["subtest"] = yaml.dump(grid_return_subtest['data'].to_dict("records"), sort_keys=False)
 
         wais_analysis = ""
         if wais_data["subtest"] and wais_data['overall']:
