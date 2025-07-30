@@ -686,7 +686,7 @@ def add_behavior_presentation(paragraph, transcript):
         # separate transcript
         small_para = transcript.split('\n\n')
 
-        st.write(small_para)
+        # st.write(small_para)
 
         paragraph.insert_paragraph_before().add_run(small_para[0], style='CustomStyle')
         paragraph.insert_paragraph_before()
@@ -703,7 +703,7 @@ def add_developmental_history(paragraph, transcript):
     if transcript != "":    
         # separate transcript
         small_para = transcript.split('\n\n')
-        st.write(small_para)
+        # st.write(small_para)
 
         for sub_para in small_para:
             sub_para = sub_para.split(":")
@@ -902,7 +902,7 @@ if submit:
         wais_data["overall"] = yaml.dump(grid_return_overall['data'].set_index("Index", drop=True).to_dict("index"), sort_keys=False)
         wais_data["subtest"] = yaml.dump(grid_return_subtest['data'].to_dict("records"), sort_keys=False)
 
-        st.code(wais_data["overall"])
+        st.code(wais_overall_dict)
 
         wais_analysis = ""
         if wais_data["subtest"] and wais_data['overall']:
@@ -944,7 +944,7 @@ if submit:
         # st.code(vineland_info_dict, language=None)
 
         vineland_score = yaml.dump(vineland_info_dict, sort_keys=False)
-        st.code(vineland_score)
+        # st.code(vineland_score)
         vineland_analysis = ""
         try:
             response = client.responses.create(
