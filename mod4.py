@@ -885,10 +885,10 @@ if submit:
             "[[{} Standard]]".format(row["Index"]): row["Standard Score"] 
             for _, row in grid_return_overall['data'].iterrows()
         }
-        wais_overall_dict = {
+        wais_overall_dict.update({
             "[[{} CI]]".format(row["Index"]): row["Confidence Interval"] 
             for _, row in grid_return_overall['data'].iterrows()
-        }
+        })
         wais_overall_percentile = {
             "[[{} Percent]]".format(row["Index"]): row["Percentile"] 
             for _, row in grid_return_overall['data'].iterrows()
