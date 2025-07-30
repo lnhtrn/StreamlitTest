@@ -143,7 +143,7 @@ with st.sidebar:
     ####################################################
     st.markdown("**Check to include score in the form:** Scores to report:")
     scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
-    teacher_srs_eval = st.checkbox("Caregiver's SRS Scores")
+    caregiver_srs_eval = st.checkbox("Caregiver's SRS Scores")
     informant_vineland_eval = st.checkbox("Informant's Report - Vineland Adaptive Behavior Scales")
     caregiver_vineland_eval = st.checkbox("Caregiver's Vineland Adaptive Behavior Scales")
     teacher_vineland_eval = st.checkbox("Teacher's Vineland Adaptive Behavior Scales")
@@ -346,7 +346,7 @@ with st.form('BasicInfo'):
     )
 
     ##########################################################
-    if teacher_srs_eval:
+    if caregiver_srs_eval:
         st.header("Caregiver's SRS Score")
         st.markdown("*Skip this section if caregiver did not give SRS Score*")
 
@@ -397,7 +397,7 @@ with st.form('BasicInfo'):
 
     # data['{{School Name}}'] = st.text_input("School Name")
 
-    if teacher_srs_eval or teacher_vineland_eval:
+    if teacher_vineland_eval:
         teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
 
     data['{{Grade}}'] = st.text_input(
@@ -902,7 +902,7 @@ if submit:
         wais_data["overall"] = yaml.dump(grid_return_overall['data'].set_index("Index", drop=True).to_dict("index"), sort_keys=False)
         wais_data["subtest"] = yaml.dump(grid_return_subtest['data'].to_dict("records"), sort_keys=False)
 
-        st.code(wais_overall_dict)
+        # st.code(wais_overall_dict)
 
         wais_analysis = ""
         if wais_data["subtest"] and wais_data['overall']:
@@ -1097,18 +1097,18 @@ if submit:
                 
             if "[[SRS Report Information]]" in paragraph.text:
                 # Add SRS
-                if teacher_srs_eval:
+                if caregiver_srs_eval:
                     add_srs_yes_teacher(paragraph, teacher_score)
                 else:
                     add_srs_no_teacher(paragraph)
             
             if "Social Responsiveness Scale" in paragraph.text:
-                if teacher_srs_eval:
-                    paragraph.add_run(" & teacher", style='CustomStyle')
+                if caregiver_srs_eval:
+                    paragraph.add_run(" & {{Cargiver type}}", style='CustomStyle')
             
             if "Developmental History & Review of Records" in paragraph.text:
-                if teacher_srs_eval:
-                    paragraph.add_run(f"\nSchool Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
+                # if caregiver_srs_eval:
+                #     paragraph.add_run(f"\nSchool Report on SRS-2 provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
                 if teacher_vineland_eval:
                     paragraph.add_run(f"\nReport on Vineland Adaptive Behavior Scale provided by {teacher_score['{{Teacher name, title}}']}", style='CustomStyle')
 
