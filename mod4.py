@@ -464,14 +464,14 @@ with st.form('BasicInfo'):
             df_wais_overall,
             gridOptions=gridOptions_overall,
             editable=True,
-            height=800,
+            height=400,
             theme="balham",
             allow_unsafe_jscode=True
         )
 
         # Build Grid Options
         gb_subtest = GridOptionsBuilder.from_dataframe(df_wais_subtest)
-        gb_subtest.configure_grid_options(getRowStyle=row_style_jscode)
+        # gb_subtest.configure_grid_options(getRowStyle=row_style_jscode)
         gb_subtest.configure_column("Scaled Score", editable=True)
         gridOptions_subtest = gb_subtest.build()
 
@@ -481,7 +481,7 @@ with st.form('BasicInfo'):
             df_wais_subtest,
             gridOptions=gridOptions_subtest,
             editable=True,
-            height=800,
+            height=400,
             theme="balham",
             allow_unsafe_jscode=True
         )
