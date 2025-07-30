@@ -143,7 +143,7 @@ with st.sidebar:
     ####################################################
     st.markdown("**Check to include score in the form:** Scores to report:")
     scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
-    teacher_srs_eval = st.checkbox("Teacher's SRS Scores")
+    teacher_srs_eval = st.checkbox("Caregiver's SRS Scores")
     informant_vineland_eval = st.checkbox("Informant's Report - Vineland Adaptive Behavior Scales")
     caregiver_vineland_eval = st.checkbox("Caregiver's Vineland Adaptive Behavior Scales")
     teacher_vineland_eval = st.checkbox("Teacher's Vineland Adaptive Behavior Scales")
@@ -305,16 +305,16 @@ with st.form('BasicInfo'):
         )
 
     ##########################################################
-    st.header("SRS-2 Caregiver Score")
+    st.header("SRS-2 Self Score")
 
-    data["{{SRS-2 Score Caregiver}}"] = st.text_input("Caregiver's SRS-2 Score")
+    data["{{SRS-2 Score Self}}"] = st.text_input("Self's SRS-2 Score")
     
-    data["{{Social Communication and Interaction Score Caregiver}}"] = st.text_input("Social Communication and Interaction Score Caregiver")
+    data["{{Social Communication and Interaction Score Self}}"] = st.text_input("Social Communication and Interaction Score - Self")
     
-    data["{{Restricted Interests and Repetitive Behavior Score Caregiver}}"] = st.text_input("Restricted Interests and Repetitive Behavior Score Caregiver")
+    data["{{Restricted Interests and Repetitive Behavior Score Self}}"] = st.text_input("Restricted Interests and Repetitive Behavior Score - Self")
 
-    data["{{Caregiver's level of concern}}"] = st.radio(
-        "Caregiver's level of concern",
+    data["{{Self level of concern}}"] = st.radio(
+        "Self's level of concern",
         ['no', 'mild', 'moderate', 'severe']
     )
 
@@ -325,17 +325,17 @@ with st.form('BasicInfo'):
 
     ##########################################################
     if teacher_srs_eval:
-        st.header("Teacher SRS Score")
-        st.markdown("*Skip this section if teacher did not give SRS Score*")
+        st.header("Caregiver's SRS Score")
+        st.markdown("*Skip this section if caregiver did not give SRS Score*")
 
-        teacher_score['{{SRS-2 Score Teacher}}'] = st.text_input("Teacher's SRS-2 Score")
+        teacher_score['{{SRS-2 Score Caregiver}}'] = st.text_input("Caregiver's SRS-2 Score")
 
-        teacher_score['{{Social Communication and Interaction Score Teacher}}'] = st.text_input("Social Communication and Interaction Score Teacher")
+        teacher_score['{{Social Communication and Interaction Score Caregiver}}'] = st.text_input("Social Communication and Interaction Score - Caregiver")
 
-        teacher_score['{{Restricted Interests and Repetitive Behavior Score Teacher}}'] = st.text_input("Restricted Interests and Repetitive Behavior Score Teacher")
+        teacher_score['{{Restricted Interests and Repetitive Behavior Score Caregiver}}'] = st.text_input("Restricted Interests and Repetitive Behavior Score - Caregiver")
 
-        teacher_score["{{Teacher level of concern}}"] = st.radio(
-            "Teacher's level of concern",
+        teacher_score["{{Caregiver level of concern}}"] = st.radio(
+            "Caregiver's level of concern",
             ['no', 'mild', 'moderate', 'severe']
         )
     
@@ -774,54 +774,54 @@ def add_vineland_yes_teacher(paragraph):
     delete_paragraph(paragraph)
 
 def add_srs_no_teacher(paragraph):
-    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent Report', style='CustomStyle')
+    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Self Report', style='CustomStyle')
     r.italic = True
     r.font.underline = True
     p = paragraph.insert_paragraph_before()
     p.add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan.\n\nStudies show that the SRS-2 discriminates both ', style='CustomStyle')
     p.add_run("within ", style='CustomStyle').italic = True
-    p.add_run("the autism spectrum and between ASD and other disorder, which makes the test useful for differential diagnosis. Raters evaluate symptoms using a scale representing a range of severity. Although not used for diagnosis, subscale scores are helpful in designing and evaluating treatment.\n\nSRS-2 scores are reported here as T-scores with a mean of 50 and a standard deviation of 10 with higher scores indicating greater levels of concern for how social behavior impacts or interferes with everyday interactions. The following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe. {{Patient First Name}}’s {{Caregiver type}} and teacher reported the following:", style='CustomStyle')
+    p.add_run("the autism spectrum and between ASD and other disorder, which makes the test useful for differential diagnosis. Raters evaluate symptoms using a scale representing a range of severity. Although not used for diagnosis, subscale scores are helpful in designing and evaluating treatment.\n\nSRS-2 scores are reported here as T-scores with a mean of 50 and a standard deviation of 10 with higher scores indicating greater levels of concern for how social behavior impacts or interferes with everyday interactions. The following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe. {{Patient First Name}} reported the following:", style='CustomStyle')
     paragraph.insert_paragraph_before()
     p = paragraph.insert_paragraph_before()
     r = p.add_run('\tSRS-2 Total Score', style='CustomStyle')
     r.bold = True
     r.italic = True
-    p.add_run(': {{SRS-2 Score Caregiver}} ({{Caregiver type}})', style='CustomStyle').bold = True
+    p.add_run(': {{SRS-2 Score Self}} (self)', style='CustomStyle').bold = True
     paragraph.insert_paragraph_before()
-    paragraph.insert_paragraph_before().add_run('\tSocial Communication and Interaction: {{Social Communication and Interaction Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
-    paragraph.insert_paragraph_before().add_run('\tRestricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Caregiver}} ({{Caregiver type}})', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run('\tSocial Communication and Interaction: {{Social Communication and Interaction Score Self}} (self)', style='CustomStyle')
+    paragraph.insert_paragraph_before().add_run('\tRestricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Self}} (self)', style='CustomStyle')
     paragraph.insert_paragraph_before()
     observe = paragraph.insert_paragraph_before()
-    observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
+    observe.add_run("Based on the report provided by {{Patient First Name}}, ", style='CustomStyle')
     observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
     observe.add_run("My observation aligned with a {{Evaluator's level of concern}} concern.\n", style='CustomStyle').bold = True
     delete_paragraph(paragraph)
 
 def add_srs_yes_teacher(paragraph, score_data):
-    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Parent Report', style='CustomStyle')
+    r = paragraph.insert_paragraph_before().add_run('Social Responsiveness Scale – Second Edition (SRS-2) – Self and Informant Report', style='CustomStyle')
     r.italic = True
     r.font.underline = True
     p = paragraph.insert_paragraph_before()
     p.add_run('The SRS-2 is an objective measure that identifies social impairments associated with autism spectrum disorder and quantifies ASD-related severity throughout the lifespan.\n\nStudies show that the SRS-2 discriminates both ', style='CustomStyle')
     p.add_run("within ", style='CustomStyle').italic = True
-    p.add_run("the autism spectrum and between ASD and other disorder, which makes the test useful for differential diagnosis. Raters evaluate symptoms using a scale representing a range of severity. Although not used for diagnosis, subscale scores are helpful in designing and evaluating treatment.\n\nSRS-2 scores are reported here as T-scores with a mean of 50 and a standard deviation of 10 with higher scores indicating greater levels of concern for how social behavior impacts or interferes with everyday interactions. The following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe. {{Patient First Name}}’s {{Caregiver type}} and teacher reported the following:", style='CustomStyle')
+    p.add_run("the autism spectrum and between ASD and other disorder, which makes the test useful for differential diagnosis. Raters evaluate symptoms using a scale representing a range of severity. Although not used for diagnosis, subscale scores are helpful in designing and evaluating treatment.\n\nSRS-2 scores are reported here as T-scores with a mean of 50 and a standard deviation of 10 with higher scores indicating greater levels of concern for how social behavior impacts or interferes with everyday interactions. The following interpretative guidelines are offered here for the benefit of the reader: Less than 59 indicates within normal limits, between 60 and 65 as mild concern, between 65 and 75 as moderate concern, and greater than 76 as severe. {{Patient First Name}} and {{Preferred Pronouns 2}} {{Caregiver type}} reported the following:", style='CustomStyle')
     paragraph.insert_paragraph_before()
     p = paragraph.insert_paragraph_before()
-    p.add_run('\tSRS-2 Total Score: {{SRS-2 Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle').bold = True
-    p.add_run(f"{score_data['{{SRS-2 Score Teacher}}']} (teacher)", style='CustomStyle').bold = True
+    p.add_run('\tSRS-2 Total Score: {{SRS-2 Score Self}} (self), ', style='CustomStyle').bold = True
+    p.add_run(f"{score_data['{{SRS-2 Score Caregiver}}']} ({{Caregiver type}})", style='CustomStyle').bold = True
     paragraph.insert_paragraph_before()
     p = paragraph.insert_paragraph_before()
-    p.add_run('\tSocial Communication and Interaction: {{Social Communication and Interaction Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle')
-    p.add_run(f"{score_data['{{Social Communication and Interaction Score Teacher}}']} (teacher)", style='CustomStyle')
+    p.add_run('\tSocial Communication and Interaction: {{Social Communication and Interaction Score Self}} (self), ', style='CustomStyle')
+    p.add_run(f"{score_data['{{Social Communication and Interaction Score Caregiver}}']} ({{Caregiver type}})", style='CustomStyle')
     p = paragraph.insert_paragraph_before()
-    p.add_run('\tRestricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Caregiver}} ({{Caregiver type}}), ', style='CustomStyle')
-    p.add_run(f'{score_data["{{Restricted Interests and Repetitive Behavior Score Teacher}}"]} (teacher)', style='CustomStyle')
+    p.add_run('\tRestricted Interests and Repetitive Behavior: {{Restricted Interests and Repetitive Behavior Score Self}} (self), ', style='CustomStyle')
+    p.add_run(f'{score_data["{{Restricted Interests and Repetitive Behavior Score Caregiver}}"]} ({{Caregiver type}})', style='CustomStyle')
     paragraph.insert_paragraph_before()
     observe = paragraph.insert_paragraph_before()
-    observe.add_run("Based on the report provided by {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
-    observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Caregiver's level of concern}} concerns. ", style='CustomStyle').italic = True
+    observe.add_run("Based on the report provided by {{Patient First Name}} and {{Preferred Pronouns 2}} {{Caregiver type}}, ", style='CustomStyle')
+    observe.add_run("{{Patient First Name}}’s social communication and related behaviors indicated {{Self level of concern}} concerns. ", style='CustomStyle').italic = True
     observe.add_run("{{Patient First Name}}’s teacher reported a ", style='CustomStyle')
-    observe.add_run(f"{score_data['{{Teacher level of concern}}']} concern, and ", style='CustomStyle')
+    observe.add_run(f"{score_data['{{Caregiver level of concern}}']} concern, and ", style='CustomStyle')
     observe.add_run("my observation aligned with a {{Evaluator's level of concern}} concern.\n", style='CustomStyle').bold = True
     delete_paragraph(paragraph)
 
