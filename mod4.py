@@ -890,7 +890,7 @@ if submit:
             for _, row in grid_return_overall['data'].iterrows()
         }
         wais_overall_percentile = {
-            "[[{} Percentile]]".format(row["Index"]): row["Percentile"] 
+            "[[{} Percent]]".format(row["Index"]): row["Percentile"] 
             for _, row in grid_return_overall['data'].iterrows()
         }
         
@@ -901,6 +901,8 @@ if submit:
 
         wais_data["overall"] = yaml.dump(grid_return_overall['data'].set_index("Index", drop=True).to_dict("index"), sort_keys=False)
         wais_data["subtest"] = yaml.dump(grid_return_subtest['data'].to_dict("records"), sort_keys=False)
+
+        st.code(wais_data["overall"])
 
         wais_analysis = ""
         if wais_data["subtest"] and wais_data['overall']:
