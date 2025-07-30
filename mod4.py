@@ -441,13 +441,12 @@ with st.form('BasicInfo'):
         df_wais_overall = pd.read_csv("misc_data/wais_overall.csv")
         df_wais_subtest = pd.read_csv("misc_data/wais_subtest.csv")
 
-        # JavaScript code to apply bold styling if "bold" column is True
+        # JavaScript code 
         row_style_jscode = JsCode("""
         function(params) 
             return {
                 'font-size': 16,
             }
-            return {};
         }
         """)
 
