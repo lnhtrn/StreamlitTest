@@ -464,7 +464,7 @@ with st.form('BasicInfo'):
             df_wais_overall,
             gridOptions=gridOptions_overall,
             editable=True,
-            height=300,
+            height=350,
             theme="balham",
             allow_unsafe_jscode=True
         )
