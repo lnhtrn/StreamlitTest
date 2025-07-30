@@ -569,4 +569,7 @@ def add_therapeutic_supports_presence_developmental(paragraph):
     p = paragraph.insert_paragraph_before(style='Bullet New')
     p.paragraph_format.left_indent = Inches(0.5)
     p.add_run('Presence Developmental Services - ', style='CustomStyle')
+    p = paragraph.insert_paragraph_before(style='Normal')
+    p.paragraph_format.left_indent = Inches(0.5)
     add_hyperlink(p, 'https://presencedevelopmental.com/about-us')
+    paragraph.insert_paragraph_before()
