@@ -172,7 +172,7 @@ comma = {}
 # set up recommendation system
 check_rec = {}
 with open("misc_data/rec_per_module.yaml", "r") as file:
-    recommendation_options = yaml.safe_load(file)['mod_3']
+    recommendation_options = yaml.safe_load(file)['mod_4']
 
 ####################################################
 st.header("Appointment Summary")

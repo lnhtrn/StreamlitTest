@@ -47,3 +47,16 @@ mod_3_no_autism:
   occupational_therapy: "Occupational Therapy"
   pediatric_neurology: "Pediatric Neurology Consultation"
   feeding_treatment: "Feeding Treatment & Support"
+
+mod_4:
+  levine_clinic: "Levine Autism Clinic"
+  parent_parent: "Parent to Parent"
+  caregiver_support: "Caregiver Support"
+  therapeutic_supports_presence_developmental: "Therapeutic Supports (Presence Developmental Services)"
+  100_days: "Autism Speaks 100 Days 100 Kit"
+  develop_disability_office: "Developmental Disabilities Regional Office (DDRO)"
+  edu_placement: "Educational Placement"
+  driver_seat: "In the Driver’s Seat"
+  services_support: "Services & Supports"
+  encouraging_flexibility: "Encouraging Flexibility"
+  social_skills: "Social Skills"

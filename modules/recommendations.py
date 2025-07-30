@@ -454,7 +454,7 @@ def add_home_community(paragraph):
     r = p.add_run('Home/Community Based Supports. ', style='CustomStyle')
     r.bold = True
     r.italic = True
-    p.add_run('Based on the report by {{Preferred Pronouns 2}} mother and our observations today, we recommend considering therapeutic supports through organizations that provide specialized care. To that end, we recommend the following organizations: \n', style='CustomStyle')
+    p.add_run('Based on the report by {{Preferred Pronouns 2}} {{Caregiver type}} and our observations today, we recommend considering therapeutic supports through organizations that provide specialized care. To that end, we recommend the following organizations: \n', style='CustomStyle')
 
     p = paragraph.insert_paragraph_before(style='Bullet New')
     p.paragraph_format.left_indent = Inches(0.5)
@@ -476,7 +476,7 @@ def add_therapeutic_supports(paragraph):
     r = p.add_run('Therapeutic Supports. ', style='CustomStyle')
     r.bold = True
     r.italic = True
-    p.add_run('Based on the report by {{Preferred Pronouns 2}} mother and our observations today, we recommend considering therapeutic supports through organizations that provide specialized care. To that end, we recommend the following organizations: \n', style='CustomStyle')
+    p.add_run('Based on the report by {{Preferred Pronouns 2}} {{Caregiver type}} and our observations today, we recommend considering therapeutic supports through organizations that provide specialized care. To that end, we recommend the following organizations: \n', style='CustomStyle')
 
     p = paragraph.insert_paragraph_before(style='Bullet New')
     p.paragraph_format.left_indent = Inches(0.5)
@@ -558,3 +558,15 @@ def add_pediatric_neurology(paragraph):
     p.add_run("I observed {{Patient First Name}} to move {{Preferred Pronouns 2}} face and eyes in a repetitive manner that appeared involuntary; I noted repetitive vocalization of sounds and potential throat-clearing. Based on this, I recommend that {{Patient First Name}}'s parents consult with URMC Pediatric Neurology to determine if these behaviors reflect specific tics or Tourette's syndrome. More information can be found here can be found by calling 585-275-2808 or going to \n", style='CustomStyle')
     add_hyperlink(p, 'https://www.urmc.rochester.edu/locations/pediatric-neurology')
     p = paragraph.insert_paragraph_before()
+
+def add_therapeutic_supports_presence_developmental(paragraph):
+    p = paragraph.insert_paragraph_before()
+    r = p.add_run('Therapeutic Supports. ', style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    p.add_run('{{Patient First Name}} would benefit from accessing therapeutic services to support {{Preferred Pronouns 2}} adaptive functioning and mental health concerns. We would recommend: \n', style='CustomStyle')
+
+    p = paragraph.insert_paragraph_before(style='Bullet New')
+    p.paragraph_format.left_indent = Inches(0.5)
+    p.add_run('Presence Developmental Services - ', style='CustomStyle')
+    add_hyperlink(p, 'https://presencedevelopmental.com/about-us')
