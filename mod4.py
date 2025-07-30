@@ -442,17 +442,17 @@ with st.form('BasicInfo'):
         df_wais_subtest = pd.read_csv("misc_data/wais_subtest.csv")
 
         # JavaScript code 
-        row_style_jscode = JsCode("""
-        function(params) 
-            return {
-                'font-size': 16,
-            }
-        }
-        """)
+        # row_style_jscode = JsCode("""
+        # function(params) 
+        #     return {
+        #         'font-size': 16,
+        #     }
+        # }
+        # """)
 
         # Build Grid Options
         gb_overall = GridOptionsBuilder.from_dataframe(df_wais_overall)
-        gb_overall.configure_grid_options(getRowStyle=row_style_jscode)
+        # gb_overall.configure_grid_options(getRowStyle=row_style_jscode)
         gb_overall.configure_column("Standard Score", editable=True)
         gb_overall.configure_column("Confidence Interval", editable=True)
         gb_overall.configure_column("Percentile", editable=True)
