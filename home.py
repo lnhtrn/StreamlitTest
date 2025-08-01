@@ -1,6 +1,11 @@
 import streamlit as st
 
-st.set_page_config(page_title="Welcome", layout="centered")
+st.set_page_config(
+    page_title="Welcome", 
+    page_icon="📝",
+    initial_sidebar_state="collapsed",
+    layout="centered"
+)
 
 if not st.user.is_logged_in:
     col1, col2, col3 = st.columns([1, 2, 1]) # Adjust ratios as needed for desired centering
