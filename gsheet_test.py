@@ -196,8 +196,8 @@ with open("misc_data/rec_per_module.yaml", "r") as file:
     recommendation_options = yaml.safe_load(file)['mod_12']
 
 # Display data 
-yaml_string = yaml.dump(rec_dict, sort_keys=False)
-yaml_data = st.code(yaml_string, language=None)
+# yaml_string = yaml.dump(rec_dict, sort_keys=False)
+# yaml_data = st.code(yaml_string, language=None)
 
 #############################################################
 # Start of form 
