@@ -11,13 +11,13 @@ if not st.user.is_logged_in:
     col1, col2, col3 = st.columns([1, 2, 1]) # Adjust ratios as needed for desired centering
     with col2:
         st.title("Log in to use Report Builder!")
-        if st.button("Log in with Google Account"):
+        if st.button("Log in with Google Account", icon=":material/login:", use_container_width=True):
             st.login("google")
     st.stop()
 
 # Sidebar after logging in 
 st.sidebar.write(f"Welcome, {st.user.name}!")
-if st.sidebar.button("Log out"):
+if st.sidebar.button("Log out", icon=":material/logout:", use_container_width=True):
     st.logout()
 
 
