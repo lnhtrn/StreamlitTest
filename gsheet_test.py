@@ -268,7 +268,7 @@ if submit:
                                     add_hyperlink(p, para_item[0])
                                 else:
                                     pass
-
+                        paragraph.insert_paragraph_before()
                 delete_paragraph(paragraph)
 
         # Get file name
