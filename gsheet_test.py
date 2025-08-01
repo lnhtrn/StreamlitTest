@@ -253,7 +253,7 @@ if submit:
         for paragraph in doc.paragraphs:
             if "[[Recommendations]]" in paragraph.text:
                 for rec in check_rec:
-                    if check_rec[rec]:
+                    if check_rec[rec] and rec in rec_dict:
                         rec_item = rec_dict[rec]
                         for para in rec_item:
                             p = paragraph.insert_paragraph_before()
