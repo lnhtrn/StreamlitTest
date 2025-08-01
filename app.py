@@ -9,6 +9,7 @@ def user_log_out():
 # Page navigation
 if not st.user.is_logged_in:
     pg = st.navigation([
+        st.Page("home.py", title="Homepage"), 
     ])
 else:
     pg = st.navigation([
