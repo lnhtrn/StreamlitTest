@@ -1,5 +1,6 @@
 import streamlit as st
 
+# Page navigation
 pg = st.navigation([
     st.Page("home.py", title="Homepage"), 
     st.Page("mod12.py", title="Module 1&2"), 
@@ -9,4 +10,6 @@ pg = st.navigation([
     st.Page("mod4.py", title="Module 4"), 
     # st.Page("gsheet_test.py", title="Testing GSheet"),
 ])
+
+
 pg.run()

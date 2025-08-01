@@ -20,6 +20,20 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# Set up authentication 
+if not st.user.is_logged_in:
+    col1, col2, col3 = st.columns([1, 2, 1]) # Adjust ratios as needed for desired centering
+    with col2:
+        st.title("Log in to use Report Builder!")
+        if st.button("Log in with Google Account"):
+            st.login("google")
+    st.stop()
+
+# Sidebar after logging in 
+st.sidebar.write(f"Welcome, {st.user.name}!")
+if st.sidebar.button("Log out"):
+    st.logout()
+
 ##########################################################
 # Set up OpenAI 
 if 'behavior_observation_mod12' not in st.session_state:
@@ -147,8 +161,11 @@ with st.sidebar:
     for item in scores:
         check_scores[item] = st.checkbox(scores[item]["Test name"])
 
-col1,col2 = st.columns(2)
-col1.title('Module 1&2 Report Builder')
+# col1,col2 = st.columns(2)
+# col1
+st.title('Module 1&2 Report Builder')
+st.markdown("*For authorized use by Bryan R. Harrison, PhD Psychologist, PC only.*")
+st.markdown("---")
 
 def format_date_with_ordinal(date_obj):
     day = date_obj.day
@@ -743,3 +760,11 @@ if submit:
             file_name=filename,
             mime="docx"
         )
+
+st.markdown("---")
+st.markdown("**Disclaimer:**", unsafe_allow_html=True)
+st.markdown("""
+This application is intended solely for use in support of work product for Bryan R. Harrison, PhD, Psychologist PC. All patient information must be handled in strict compliance with HIPAA regulations to ensure confidentiality.  
+            
+Unauthorized access, use, or distribution of this system and its data is strictly prohibited and may violate intellectual property laws and patient confidentiality protections. Misuse of this application may result in legal action.
+""")
