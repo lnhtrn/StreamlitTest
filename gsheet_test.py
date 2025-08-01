@@ -1,155 +1,223 @@
 import streamlit as st
-import yaml
 from docx import Document
+import docx
+import yaml
 import io
 import docxedit
 import datetime
-import re 
-from docx.shared import Pt
-from docx.enum.style import WD_STYLE_TYPE, WD_STYLE
-from docx.enum.text import WD_BREAK
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.style import WD_STYLE_TYPE
+from streamlit_gsheets import GSheetsConnection
+from docxtpl import DocxTemplate
+from docx.shared import Inches, Pt
 from openai import OpenAI
-import pandas as pd
-from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 from modules.recommendations import *
 
-#########################################################
-# Load OpenAI client 
-client = OpenAI(api_key=st.secrets["openai_key"])
+##########################################################
+st.set_page_config(
+    page_title="Recommendation Testing",
+    page_icon="📝",
+    layout="centered",
+    initial_sidebar_state="expanded",
+)
 
+# Set up authentication 
+if not st.user.is_logged_in:
+    col1, col2, col3 = st.columns([1, 2, 1]) # Adjust ratios as needed for desired centering
+    with col2:
+        st.title("Log in to use Report Builder!")
+        if st.button("Log in with Google Account"):
+            st.login("google")
+    st.stop()
+
+# Sidebar after logging in 
+st.sidebar.write(f"Welcome, {st.user.name}!")
+if st.sidebar.button("Log out"):
+    st.logout()
+
+##########################################################
+# Access Google Sheets
+
+def get_abbreviation(test_name):
+    # Split on en dash (\u2013)
+    main_title = test_name.split('\u2013')[0].strip()
+    
+    # Split into words and get uppercase initials
+    abbreviation = ''.join(word[0] for word in main_title.split() if word[0].isupper())
+    
+    return abbreviation
+
+dropdowns = {}
+connections = {}
+
+# Create a connection object.
+connections['All'] = st.connection(f"mod12_all", type=GSheetsConnection)
+
+# Read object
+df = connections['All'].read(
+    ttl="30m",
+    usecols=list(range(6)),
+    nrows=30,
+) 
+for col_name in df.columns:
+    dropdowns[col_name] = df[col_name].tolist()
+    dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
+
+# DSM dropdowns
+connections['DSM'] = st.connection(f"dsm", type=GSheetsConnection)
+# Read object
+df = connections['DSM'].read(
+    ttl="30m",
+    usecols=list(range(7)),
+    nrows=15,
+) 
+for col_name in df.columns:
+    dropdowns[col_name] = df[col_name].tolist()
+    dropdowns[col_name] = [x for x in dropdowns[col_name] if str(x) != 'nan']
+    dropdowns[col_name].append("None")
+
+# Scores for sidebar
+connections['Scores'] = st.connection(f"mod12_scores", type=GSheetsConnection)
+# Read object
+df = connections['Scores'].read(
+    ttl="30m",
+    usecols=list(range(6)),
+    nrows=30,
+) 
+score_list = df.to_dict('records')
+
+# Process data
+scores = {}
+check_scores = {}
+
+for test in score_list:
+    test_name = test["Test name"]
+    abbr = get_abbreviation(test_name)
+    scores[abbr] = {}
+
+    scores[abbr]["Test name"] = test_name
+    all_lines = []
+    all_items = {}
+    print(f"\nTest: {test_name}")
+    
+    for i in range(5):
+        line_key = f"Line {i}"
+        line_value = test.get(line_key)
+        if line_value and str(line_value) != "nan":
+            all_lines.append([])
+            items = [item.strip() for item in line_value.split(",")]
+            for item in items:
+                bold = "(bold)" in item
+                item_name = item.replace("(bold)", "").strip()
+                # write_item(item_name, bold=bold)
+                all_lines[i].append((item_name, bold))
+                all_items[item_name] = 0
+    
+    scores[abbr]["Lines"] = all_lines
+    scores[abbr]["All items"] = all_items
+
+################ RECOMMENDATION #################
+rec_dict = {}
+
+# Connect Google Sheets for Recommendation 
+connections['Recommendation'] = st.connection(f"recommendations", type=GSheetsConnection)
+
+# Read object
+df = connections['Recommendation'].read(
+    ttl="30m",
+    usecols=list(range(2)),
+    nrows=200,
+) 
+
+for _, row in df.iterrows():
+    key = row['Title']
+    values = []
+    for item in row['Content'].split(';'):
+        item = item.strip()
+        if '[' in item and ']' in item:
+            data_part = item.split('[')[0].strip()
+            format_part = item.split('[')[1].replace(']', '').strip()
+            values.append((data_part, format_part))
+    rec_dict[key] = values
+
+connections['Recommendation_Per_Module'] = st.connection(f"recommendations_per_module", type=GSheetsConnection)
+
+# Read object
+df = connections['Recommendation_Per_Module'].read(
+    ttl="30m",
+    usecols=list(range(2)),
+    nrows=200,
+) 
+
+rec_list = df[df["Module Name"] == 'Module 4']["Recommendation Name"].tolist()
+
+##################################################
+# Set up side bar
+def clear_my_cache():
+    st.cache_data.clear()
+
+with st.sidebar:
+    st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
+    st.link_button("Edit Dropdown Options", st.secrets['mod12_spreadsheet'])
+    st.link_button("Edit Score Options", st.secrets['mod12_scores'])
+    st.button('Reload Dropdown Data', on_click=clear_my_cache)
+
+    # Display data 
+    # yaml_dropdown = yaml.dump(dropdowns, sort_keys=False)
+    # st.code(yaml_dropdown, language=None)
+    
+    ####################################################
+    # st.markdown("**Check to include score in the form:** Scores to report:")
+    # scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
+    # teacher_eval = st.checkbox("Teacher's SRS Scores")
+    
+    # for item in scores:
+    #     check_scores[item] = st.checkbox(scores[item]["Test name"])
+
+# col1,col2 = st.columns(2)
+# col1
+st.title('Recommendation Testing')
+st.markdown("*For authorized use by Bryan R. Harrison, PhD Psychologist, PC only.*")
+st.markdown("---")
+
+def format_date_with_ordinal(date_obj):
+    day = date_obj.day
+    suffix = 'th' if 11 <= day <= 13 else {1: 'st', 2: 'nd', 3: 'rd'}.get(day % 10, 'th')
+    return date_obj.strftime(f"%B {day}{suffix}, %Y")
+
+# Set up dictionary to store data 
 data = {}
-wais_data = {}
 
-#########################################################
-def st_normal():
-    _, col, _ = st.columns([1, 2, 1])
-    return col
+# set up recommendation system
+check_rec = {}
+with open("misc_data/rec_per_module.yaml", "r") as file:
+    recommendation_options = yaml.safe_load(file)['mod_12']
+
+#############################################################
+# Start of form 
+st.header("Appointment Summary")
+
+data['{{Patient First Name}}'] = st.text_input('Patient First Name')
+
+data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
+
+preferred = st.selectbox(
+    "Patient's Preferred Pronoun",
+    ("They/them", "He/him", "She/her"),
+)
+
+data['{{Location of the evaluation}}'] = st.radio(
+    "Location of the evaluation",
+    ['home', 'school', 'the office'],
+    index=None,
+)
 
 #########################################################
 with st.form("BasicInfo"):  
-    st.header("Patient's data")
-    
-    data['{{Patient First Name}}'] = st.text_input('Patient First Name')
+    st.header("Recommendations")
 
-    data['{{Patient Last Name}}'] = st.text_input('Patient Last Name')
-
-    data["{{Patient Age}}"] = st.number_input("Patient's Age", 0, 100)
-
-    data['{{Patient age unit}}'] = st.radio(
-        "Year/month?",
-        ("year", "month")
-    )
-
-    preferred = st.selectbox(
-        "Patient's Preferred Pronoun",
-        ("They/them", "He/him", "She/her"),
-    )
-
-    ################################################# 
-    st.header("WAIS-5 Score Report")
-
-    wais_data['overall'] = st.text_area(
-        "WAIS-5 Overall Score - Input percentile without any suffix. For example: Percentile: 42", 
-        """Full Scale IQ:
-  Standard Score: 
-  Confidence Interval: 
-  Percentile: 
-
-Verbal Comprehension Index:
-  Standard Score: 
-  Confidence Interval: 
-  Percentile: 
-
-Visual Spatial Index:
-  Standard Score: 
-  Confidence Interval: 
-  Percentile:
-
-Fluid Reasoning Index:
-  Standard Score: 
-  Confidence Interval:
-  Percentile: 
-
-Working Memory Index:
-  Standard Score: 
-  Confidence Interval: 
-  Percentile: 
-
-Processing Speed Index:
-  Standard Score: 
-  Confidence Interval: 
-  Percentile: 
-""",
-        height=350,
-    )
-
-    wais_data['subtest'] = st.text_area(
-        "WAIS-5 Subtest Score", 
-        """Verbal Comprehension Index:
-  Similarities: 
-  Vocabulary: 
-
-Working Memory Index:
-  Digit Sequencing: 
-  Running Digits: 
-
-Visual Spatial Index:
-  Block Design: 
-  Visual Puzzles: 
-
-Processing Speed Index:
-  Symbol Search: 
-  Coding: 
-
-Fluid Reasoning Index:
-  Matrix Reasoning: 
-  Figure Weights: 
-""",
-        height=350,
-    )
-
-    #############################################
-    # First table
-    st.header("Informant's Report - Vineland Adaptive Behavior Scales")
-
-    # Load data
-    df = pd.read_csv("misc_data/vineland_informant.csv")
-
-    # JavaScript code to apply bold styling if "bold" column is True
-    row_style_jscode = JsCode("""
-    function(params) {
-        if (params.data.bold === true) {
-            return {
-                'font-weight': 'bold',
-                'font-size': 16,
-            }
-        } else {
-            return {
-                'font-size': 16,
-            }
-        }
-        return {};
-    }
-    """)
-
-    # Build Grid Options
-    gb = GridOptionsBuilder.from_dataframe(df)
-    gb.configure_grid_options(getRowStyle=row_style_jscode)
-    gb.configure_column("data", editable=True)
-    gridOptions = gb.build()
-
-    # Display grid
-    # with st_normal():
-    grid_return = AgGrid(
-        df,
-        gridOptions=gridOptions,
-        editable=True,
-        height=800,
-        theme="balham",
-        # custom_css=custom_css,
-        allow_unsafe_jscode=True
-    )
+    check_rec = {}
+    for rec in rec_list:
+        check_rec[rec] = st.checkbox(rec)
 
     #############################################
     submit = st.form_submit_button('Submit')
@@ -158,68 +226,8 @@ Fluid Reasoning Index:
 ###########################################################
 
 if submit:
-    # Display the newly edited dataframe
-    st.subheader("Updated Data")
-    st.dataframe(grid_return['data'])
-
-    # WAIS Score
-    wais_analysis = ""
-    # if wais_data["subtest"] and wais_data['overall']:
-    #     response = client.responses.create(
-    #         prompt={
-    #             "id": st.secrets["wais_analysis_id"],
-    #             "variables": {
-    #                 "first_name": data['{{Patient First Name}}'],
-    #                 "pronouns": preferred,
-    #                 "wais_subtest": wais_data['subtest'],
-    #                 "wais_overall": wais_data['overall'],
-    #             }
-    #         }
-    #     )
-    #     wais_analysis = response.output_text
-
-    # Edit Table Score
     replace_word = {}
     replace_percent = {}
-
-    # WAIS Score 
-        
-    wais_subtest_score = yaml.safe_load(wais_data['subtest'])
-    wais_score = yaml.safe_load(wais_data['overall'])
-
-    info_list = ['IQ', 'Verbal Comp', 'Visual Spatial']
-
-    for info in wais_score:
-        # Info meaning type of score, i.e. "Full Scale IQ", "Verbal Comprehension Index, etc"
-        replace_word[f"[[{info} Standard]]"] = str(wais_score[info]['Standard Score'])
-        replace_word[f"[[{info} CI]]"] = str(wais_score[info]['Confidence Interval'])
-        replace_percent[f"[[{info} Percent]]"] = str(wais_score[info]['Percentile'])
-    
-    for info in wais_subtest_score:
-        for subtest in wais_subtest_score[info]:
-            replace_word[f"[[{subtest}]]"] = str(wais_subtest_score[info][subtest])
-
-
-    # Vineland Informant Score
-    vineland_info_dict = {
-        "[[{}]]".format(row["field"]): row["data"] 
-        for _, row in grid_return['data'].iterrows()
-    }
-
-    vineland_perc_dict = {
-        "[[{}]]".format(row["field"]): row["data"] 
-        for _, row in grid_return['data'].iterrows()
-        if "Percentile" in row["field"]
-    }
-
-    replace_percent.update(vineland_perc_dict)
-    replace_word.update(vineland_info_dict)
-
-    # Display data 
-    yaml_string = yaml.dump(data, sort_keys=False)
-    yaml_string += "\nOverall:\n" + yaml.dump(replace_word) + yaml.dump(replace_percent)
-    yaml_string += "\n\n" + wais_analysis
-    yaml_data = st.code(yaml_string, language=None)
 
     # Edit document 
     doc = Document('templates/template_mod_4.docx')
@@ -234,41 +242,8 @@ if submit:
         custom_style.font.size = Pt(12)
         custom_style.font.name = 'Georgia'
 
-        # Replace percent in table 
-        for table in doc.tables:
-            for row in table.rows:
-                for cell in row.cells:
-                    for paragraph in cell.paragraphs:
-                        # Loop through all percentage needed to be replaced in the table
-                        for key in replace_percent:
-                            if key in paragraph.text:
-                                write_ordinal(paragraph, replace_percent[key])
-
-        # Replace words even in a table 
-        for word in replace_word:
-            docxedit.replace_string(doc, old_string=word, new_string=replace_word[word])
-
-        # Now do the analysis replacement
-        for paragraph in doc.paragraphs:
-            if "[[WAIS-Analysis]]" in paragraph.text:
-                replace_ordinal_with_superscript(paragraph, wais_analysis)
-
-
-        for paragraph in doc.paragraphs:
-            if "[[Vineland Analysis]]" in paragraph.text:
-                # Add page break
-                paragraph.insert_paragraph_before().add_run().add_break(WD_BREAK.PAGE)
-
-                p = paragraph.insert_paragraph_before()
-                r = p.add_run("Interpretation of VABS-3 Results – Informant Report", style='CustomStyle')
-                r.bold = True
-                r.italic = True
-
-                paragraph.insert_paragraph_before().add_run("\nInterpretation of VABS-3 Results – Informant Report", style='CustomStyle')
-
-                
         # Get file name
-        filename = f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} test Mod 4 WAIS Score.docx"
+        filename = f"{data['{{Patient First Name}}']} {data['{{Patient Last Name}}']} test recommendation.docx"
 
         # Save content to file
         doc.save(filename)
