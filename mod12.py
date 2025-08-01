@@ -31,9 +31,9 @@ if not st.user.is_logged_in:
 
 # Sidebar after logging in 
 st.sidebar.write(f"Welcome, {st.user.name}!")
-if st.sidebar.button("Log out"):
+if st.sidebar.button("Log out", icon=":material/logout:", use_container_width=True):
     st.logout()
-
+    
 ##########################################################
 # Set up OpenAI 
 if 'behavior_observation_mod12' not in st.session_state:
