@@ -81,14 +81,7 @@ def replace_ordinal_with_superscript(para, full_text):
 def add_bullet(paragraph, text):
     paragraph.style = 'Bullet New'
     paragraph.paragraph_format.left_indent = Inches(0.5)
-    paragraph.add_run(text, style='CustomStyle')
-    
-def add_bullet_and_link(paragraph, text, url):
-    paragraph.style = 'Bullet New'
-    paragraph.paragraph_format.left_indent = Inches(0.5)
-    paragraph.add_run(text, style='CustomStyle')
-    add_hyperlink(paragraph, url)
-
+    paragraph.add_run(f"{text} ", style='CustomStyle')
 
 def add_bold(paragraph, text_bold):
     r = paragraph.add_run(f"{text_bold} ", style='CustomStyle')
@@ -96,7 +89,7 @@ def add_bold(paragraph, text_bold):
     r.italic = True
     
 def add_normal(paragraph, text):
-    paragraph.add_run(text, style='CustomStyle')
+    paragraph.add_run(f"{text} ", style='CustomStyle')
 
 
 
