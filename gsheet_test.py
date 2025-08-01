@@ -131,12 +131,15 @@ df = connections['Recommendation'].read(
 for _, row in df.iterrows():
     key = row['Title']
     values = []
-    for item in row['Content'].split(';'):
-        item = item.strip()
-        if '[' in item and ']' in item:
-            data_part = item.split('[')[0].strip()
-            format_part = item.split('[')[1].replace(']', '').strip()
-            values.append((data_part, format_part))
+    for para in row['Content'].split('\n'):
+        para_value = []
+        for item in para.split(';'):
+            item = item.strip()
+            if '[' in item and ']' in item:
+                data_part = item.split('[')[0].strip()
+                format_part = item.split('[')[1].replace(']', '').strip()
+                para_value.append((data_part, format_part))
+        values.append(para_value)
     rec_dict[key] = values
 
 connections['Recommendation_Per_Module'] = st.connection(f"recommendations_per_module", type=GSheetsConnection)

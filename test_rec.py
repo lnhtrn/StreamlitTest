@@ -1,10 +1,17 @@
+import streamlit as st
 from docx import Document
-from docx.enum.style import WD_STYLE, WD_STYLE_TYPE
-from docx.shared import Pt, Inches
-from docx.enum.text import WD_TAB_ALIGNMENT
-from docx.oxml.shared import OxmlElement, qn
-
 import docx
+import yaml
+import io
+import docxedit
+import datetime
+from docx.enum.style import WD_STYLE_TYPE
+from streamlit_gsheets import GSheetsConnection
+from docxtpl import DocxTemplate
+from docx.shared import Inches, Pt
+from openai import OpenAI
+from modules.recommendations import *
+
 
 def add_hyperlink(paragraph, url, size=24):
     """
@@ -88,6 +95,15 @@ def delete_paragraph(paragraph):
     p.getparent().remove(p)
     p._p = p._element = None
 
+
+# set up recommendation system
+check_rec = {}
+with open("misc_data/rec_per_module.yaml", "r") as file:
+    rec_all = yaml.safe_load(file)
+    recommendation_options = {}
+    for mod in rec_all:
+        recommendation_options.update(rec_all[mod])
+
 ### Create new doc
 doc = Document('templates/template_mod_12.docx')
 
@@ -99,6 +115,10 @@ custom_style = doc.styles.add_style('CustomStyle', WD_STYLE_TYPE.CHARACTER)
 custom_style.font.size = Pt(12)
 custom_style.font.name = 'Georgia'
 
+custom_style_2 = doc.styles.add_style('CustomStyle2', WD_STYLE_TYPE.CHARACTER)
+custom_style_2.font.size = Pt(11.5)
+custom_style_2.font.name = 'Georgia'
+
 list_style = doc.styles['Bullet New']
 list_style.paragraph_format.line_spacing = 1
 
@@ -106,8 +126,10 @@ list_style.paragraph_format.line_spacing = 1
 
 for paragraph in doc.paragraphs:
     if "[[Recommendations]]" in paragraph.text:
-        
+        for rec in recommendation_options:
+            func = globals().get(f"add_{rec}")
+            if callable(func):
+                func(paragraph)
         delete_paragraph(paragraph)
-
 
 doc.save('recommendation_test.docx')
