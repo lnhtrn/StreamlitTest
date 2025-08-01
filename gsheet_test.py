@@ -253,20 +253,21 @@ if submit:
         for paragraph in doc.paragraphs:
             if "[[Recommendations]]" in paragraph.text:
                 for rec in check_rec:
-                    rec_item = rec_dict[rec]
-                    for para in rec_item:
-                        p = paragraph.insert_paragraph_before()
-                        for para_item in para:
-                            if para_item[1] == "bold":
-                                add_bold(p, para_item[0])
-                            elif para_item[1] == "normal":
-                                add_normal(p, para_item[0])
-                            elif para_item[1] == "bullet":
-                                add_bullet(p, para_item[0])
-                            elif para_item[1] == "link":
-                                add_hyperlink(p, para_item[0])
-                            else:
-                                pass
+                    if check_rec[rec]:
+                        rec_item = rec_dict[rec]
+                        for para in rec_item:
+                            p = paragraph.insert_paragraph_before()
+                            for para_item in para:
+                                if para_item[1] == "bold":
+                                    add_bold(p, para_item[0])
+                                elif para_item[1] == "normal":
+                                    add_normal(p, para_item[0])
+                                elif para_item[1] == "bullet":
+                                    add_bullet(p, para_item[0])
+                                elif para_item[1] == "link":
+                                    add_hyperlink(p, para_item[0])
+                                else:
+                                    pass
 
                 delete_paragraph(paragraph)
 
