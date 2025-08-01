@@ -143,6 +143,46 @@ for test in score_list:
     scores[abbr]["Lines"] = all_lines
     scores[abbr]["All items"] = all_items
 
+
+################ RECOMMENDATION #################
+rec_dict = {}
+
+# Connect Google Sheets for Recommendation 
+connections['Recommendation'] = st.connection(f"recommendations", type=GSheetsConnection)
+
+# Read object
+df = connections['Recommendation'].read(
+    ttl="30m",
+    usecols=list(range(2)),
+    nrows=200,
+) 
+
+for _, row in df.iterrows():
+    key = row['Title']
+    values = []
+    for para in row['Content'].split('\n'):
+        para_value = []
+        for item in para.split(';'):
+            item = item.strip()
+            if '[' in item and ']' in item:
+                data_part = item.split('[')[0].strip()
+                format_part = item.split('[')[1].replace(']', '').strip()
+                para_value.append((data_part, format_part))
+        values.append(para_value)
+    rec_dict[key] = values
+
+connections['Recommendation_Per_Module'] = st.connection(f"recommendations_per_module", type=GSheetsConnection)
+
+# Read object
+df = connections['Recommendation_Per_Module'].read(
+    ttl="30m",
+    usecols=list(range(2)),
+    nrows=200,
+) 
+
+rec_list = df[df["Module Name"] == 'Module 4']["Recommendation Name"].tolist()
+
+
 ##################################################
 # Set up side bar
 def clear_my_cache():
@@ -184,11 +224,6 @@ teacher_score = {}
 bullet = {}
 lines = {}
 comma = {}
-
-# set up recommendation system
-check_rec = {}
-with open("misc_data/rec_per_module.yaml", "r") as file:
-    recommendation_options = yaml.safe_load(file)['mod_4']
 
 ####################################################
 st.header("Appointment Summary")
@@ -457,15 +492,6 @@ with st.form('BasicInfo'):
         df_wais_overall = pd.read_csv("misc_data/wais_overall.csv")
         df_wais_subtest = pd.read_csv("misc_data/wais_subtest.csv")
 
-        # JavaScript code 
-        # row_style_jscode = JsCode("""
-        # function(params) 
-        #     return {
-        #         'font-size': 16,
-        #     }
-        # }
-        # """)
-
         # Build Grid Options
         gb_overall = GridOptionsBuilder.from_dataframe(df_wais_overall)
         # gb_overall.configure_grid_options(getRowStyle=row_style_jscode)
@@ -503,66 +529,6 @@ with st.form('BasicInfo'):
         )
 
 
-#         wais_data['overall'] = st.text_area(
-#             "WAIS-5 Overall Score - Input percentile without any suffix. For example: Percentile: 42", 
-#             """Full Scale IQ:
-#   Standard Score: 
-#   Confidence Interval: 
-#   Percentile: 
-
-# Verbal Comprehension:
-#   Standard Score: 
-#   Confidence Interval: 
-#   Percentile: 
-
-# Visual Spatial:
-#   Standard Score: 
-#   Confidence Interval: 
-#   Percentile:
-
-# Fluid Reasoning:
-#   Standard Score: 
-#   Confidence Interval:
-#   Percentile: 
-
-# Working Memory:
-#   Standard Score: 
-#   Confidence Interval: 
-#   Percentile: 
-
-# Processing Speed:
-#   Standard Score: 
-#   Confidence Interval: 
-#   Percentile: 
-# """,
-#             height=800,
-#         )
-
-#         wais_data['subtest'] = st.text_area(
-#             "WAIS-5 Subtest Score", 
-#             """Verbal Comprehension:
-#   Similarities: 
-#   Vocabulary: 
-
-# Working Memory:
-#   Digit Sequencing: 
-#   Running Digits: 
-
-# Visual Spatial:
-#   Block Design: 
-#   Visual Puzzles: 
-
-# Processing Speed:
-#   Symbol Search: 
-#   Coding: 
-
-# Fluid Reasoning:
-#   Matrix Reasoning: 
-#   Figure Weights: 
-# """,
-#         height=500,
-#     )
-        
     #############################################
     # First table
     if informant_vineland_eval:
@@ -683,8 +649,9 @@ with st.form('BasicInfo'):
     ##########################################################
     st.header("Recommendations")
 
-    for key, label in recommendation_options.items():
-        check_rec[key] = st.checkbox(label)
+    check_rec = {}
+    for rec in rec_list:
+        check_rec[rec] = st.checkbox(rec)
 
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -1091,12 +1058,23 @@ if submit:
                 add_diagnostic_formulation(paragraph, diagnostic_formulation)
 
             if "[[Recommendations]]" in paragraph.text:
-                for rec, checked in check_rec.items():
-                    if checked:
-                        func = globals().get(f"add_{rec}")
-                        if callable(func):
-                            func(paragraph)
-                
+                for rec in check_rec:
+                    if check_rec[rec] and rec in rec_dict:
+                        rec_item = rec_dict[rec]
+                        for para in rec_item:
+                            p = paragraph.insert_paragraph_before()
+                            for para_item in para:
+                                if para_item[1] == "bold":
+                                    add_bold(p, para_item[0])
+                                elif para_item[1] == "normal":
+                                    add_normal(p, para_item[0])
+                                elif para_item[1] == "bullet":
+                                    add_bullet(p, para_item[0])
+                                elif para_item[1] == "link":
+                                    add_hyperlink(p, para_item[0])
+                                else:
+                                    pass
+                        paragraph.insert_paragraph_before()
                 delete_paragraph(paragraph)
 
             if "[[WAIS-Analysis]]" in paragraph.text:

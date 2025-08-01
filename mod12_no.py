@@ -136,6 +136,46 @@ for test in score_list:
     scores[abbr]["Lines"] = all_lines
     scores[abbr]["All items"] = all_items
 
+
+################ RECOMMENDATION #################
+rec_dict = {}
+
+# Connect Google Sheets for Recommendation 
+connections['Recommendation'] = st.connection(f"recommendations", type=GSheetsConnection)
+
+# Read object
+df = connections['Recommendation'].read(
+    ttl="30m",
+    usecols=list(range(2)),
+    nrows=200,
+) 
+
+for _, row in df.iterrows():
+    key = row['Title']
+    values = []
+    for para in row['Content'].split('\n'):
+        para_value = []
+        for item in para.split(';'):
+            item = item.strip()
+            if '[' in item and ']' in item:
+                data_part = item.split('[')[0].strip()
+                format_part = item.split('[')[1].replace(']', '').strip()
+                para_value.append((data_part, format_part))
+        values.append(para_value)
+    rec_dict[key] = values
+
+connections['Recommendation_Per_Module'] = st.connection(f"recommendations_per_module", type=GSheetsConnection)
+
+# Read object
+df = connections['Recommendation_Per_Module'].read(
+    ttl="30m",
+    usecols=list(range(2)),
+    nrows=200,
+) 
+
+rec_list = df[df["Module Name"] == 'Module 1&2 No Autism']["Recommendation Name"].tolist()
+
+
 ##################################################
 # Set up side bar
 def clear_my_cache():
@@ -174,11 +214,6 @@ teacher_score = {}
 bullet = {}
 lines = {}
 comma = {}
-
-# set up recommendation system
-check_rec = {}
-with open("misc_data/rec_per_module.yaml", "r") as file:
-    recommendation_options = yaml.safe_load(file)['mod_12_no_autism']
 
 ####################################################
 st.header("Appointment Summary")
@@ -364,8 +399,9 @@ with st.form('BasicInfo'):
     ########################################################################
     st.header("Recommendations")
 
-    for key, label in recommendation_options.items():
-        check_rec[key] = st.checkbox(label)
+    check_rec = {}
+    for rec in rec_list:
+        check_rec[rec] = st.checkbox(rec)
     
     # data['{{}}'] = st.text_input("")
     # data['{{}}'] = st.text_input("")
@@ -488,12 +524,23 @@ if submit:
                     delete_paragraph(paragraph)
             
             if "[[Recommendations]]" in paragraph.text:
-                for rec, checked in check_rec.items():
-                    if checked:
-                        func = globals().get(f"add_{rec}")
-                        if callable(func):
-                            func(paragraph)
-                
+                for rec in check_rec:
+                    if check_rec[rec] and rec in rec_dict:
+                        rec_item = rec_dict[rec]
+                        for para in rec_item:
+                            p = paragraph.insert_paragraph_before()
+                            for para_item in para:
+                                if para_item[1] == "bold":
+                                    add_bold(p, para_item[0])
+                                elif para_item[1] == "normal":
+                                    add_normal(p, para_item[0])
+                                elif para_item[1] == "bullet":
+                                    add_bullet(p, para_item[0])
+                                elif para_item[1] == "link":
+                                    add_hyperlink(p, para_item[0])
+                                else:
+                                    pass
+                        paragraph.insert_paragraph_before()
                 delete_paragraph(paragraph)
                 
             if "[[Behavioral Presentation]]" in paragraph.text:
