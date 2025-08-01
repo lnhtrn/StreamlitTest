@@ -77,6 +77,29 @@ def replace_ordinal_with_superscript(para, full_text):
     paragraph.add_run(full_text[last_index:], style='CustomStyle')
 
 
+
+def add_bullet(paragraph, text):
+    paragraph.style = 'Bullet New'
+    paragraph.paragraph_format.left_indent = Inches(0.5)
+    paragraph.add_run(text, style='CustomStyle')
+    
+def add_bullet_and_link(paragraph, text, url):
+    paragraph.style = 'Bullet New'
+    paragraph.paragraph_format.left_indent = Inches(0.5)
+    paragraph.add_run(text, style='CustomStyle')
+    add_hyperlink(paragraph, url)
+
+
+def add_bold(paragraph, text_bold):
+    r = paragraph.add_run(f"{text_bold} ", style='CustomStyle')
+    r.bold = True
+    r.italic = True
+    
+def add_normal(paragraph, text):
+    paragraph.add_run(text, style='CustomStyle')
+
+
+
 def add_hyperlink(paragraph, url, size=24):
     """
     A function that places a hyperlink within a paragraph object with custom font and size.

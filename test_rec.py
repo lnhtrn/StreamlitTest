@@ -67,27 +67,24 @@ def add_hyperlink(paragraph, url, size=24):
     return hyperlink
 
 def add_bullet(paragraph, text):
-    paragraph.insert_paragraph_before()
-    p = paragraph.insert_paragraph_before(style='Bullet New')
-    p.paragraph_format.left_indent = Inches(0.5)
+    paragraph.style = 'Bullet New'
+    paragraph.paragraph_format.left_indent = Inches(0.5)
+    paragraph.add_run(text, style='CustomStyle')
     
 def add_bullet_and_link(paragraph, text, url):
-    paragraph.insert_paragraph_before()
-    p = paragraph.insert_paragraph_before(style='Bullet New')
-    p.paragraph_format.left_indent = Inches(0.5)
-    p.add_run(text, style='CustomStyle2')
-    add_hyperlink(p, url)
+    paragraph.style = 'Bullet New'
+    paragraph.paragraph_format.left_indent = Inches(0.5)
+    paragraph.add_run(text, style='CustomStyle')
+    add_hyperlink(paragraph, url)
 
 
-def add_bold_and_normal(paragraph, text_bold, text_normal):
-    p = paragraph.insert_paragraph_before()
-    r = p.add_run(text_bold, style='CustomStyle')
+def add_bold(paragraph, text_bold):
+    r = paragraph.add_run(f"{text_bold} ", style='CustomStyle')
     r.bold = True
     r.italic = True
-    p.add_run(text_normal, style='CustomStyle')
-
+    
 def add_normal(paragraph, text):
-    paragraph.insert_paragraph_before().add_run(text, style='CustomStyle')
+    paragraph.add_run(text, style='CustomStyle')
 
 
 def delete_paragraph(paragraph):
