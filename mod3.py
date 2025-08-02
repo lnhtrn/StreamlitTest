@@ -10,6 +10,7 @@ from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
 from docx.shared import Inches, Pt
 from openai import OpenAI
+from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 from modules.recommendations import *
 
 ##########################################################
@@ -187,6 +188,7 @@ with st.sidebar:
     st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
     st.link_button("Edit Dropdown Options", st.secrets['mod3_spreadsheet'])
     st.link_button("Edit Score Options", st.secrets['mod3_scores'])
+    st.link_button("Edit Recommendation Options", st.secrets['recommendations'])
     st.button('Reload Spreadsheet Data', on_click=clear_my_cache)
 
     ####################################################
@@ -194,6 +196,8 @@ with st.sidebar:
     scq_result = st.checkbox("Social Communication Questionnaire (SCQ) - Lifetime Form")
     teacher_srs_eval = st.checkbox("Teacher's SRS Scores")
     teacher_vineland_eval = st.checkbox("Teacher's Vineland Adaptive Behavior Scales")
+    informant_vineland_eval = st.checkbox("Informant's Report - Vineland Adaptive Behavior Scales")
+    wais_check = st.checkbox("Wechsler Adult Intelligence Scale – Fifth Edition (WAIS-5)")
     
     for item in scores:
         check_scores[item] = st.checkbox(scores[item]["Test name"])
@@ -485,6 +489,97 @@ with st.form('BasicInfo'):
             for item in scores[test]["All items"]:
                 scores[test]["All items"][item] = st.text_input(item)    
 
+    ################################################# 
+    if wais_check:
+        st.header("WAIS-5 Score Report")
+
+        wais_data = {}
+
+        # Load data
+        df_wais_overall = pd.read_csv("misc_data/wais_overall.csv")
+        df_wais_subtest = pd.read_csv("misc_data/wais_subtest.csv")
+
+        # Build Grid Options
+        gb_overall = GridOptionsBuilder.from_dataframe(df_wais_overall)
+        # gb_overall.configure_grid_options(getRowStyle=row_style_jscode)
+        gb_overall.configure_column("Standard Score", editable=True)
+        gb_overall.configure_column("Confidence Interval", editable=True)
+        gb_overall.configure_column("Percentile", editable=True)
+        gridOptions_overall = gb_overall.build()
+
+        # Display grid
+        # with st_normal():
+        grid_return_overall = AgGrid(
+            df_wais_overall,
+            gridOptions=gridOptions_overall,
+            editable=True,
+            height=350,
+            theme="balham",
+            allow_unsafe_jscode=True
+        )
+
+        # Build Grid Options
+        gb_subtest = GridOptionsBuilder.from_dataframe(df_wais_subtest)
+        # gb_subtest.configure_grid_options(getRowStyle=row_style_jscode)
+        gb_subtest.configure_column("Scaled Score", editable=True)
+        gridOptions_subtest = gb_subtest.build()
+
+        # Display grid
+        # with st_normal():
+        grid_return_subtest = AgGrid(
+            df_wais_subtest,
+            gridOptions=gridOptions_subtest,
+            editable=True,
+            height=500,
+            theme="balham",
+            allow_unsafe_jscode=True
+        )
+
+
+    #############################################
+    # First table
+    if informant_vineland_eval:
+        st.header("Informant's Report - Vineland Adaptive Behavior Scales")
+
+        # Load data
+        df_vineland = pd.read_csv("misc_data/vineland_informant.csv")
+
+        # JavaScript code to apply bold styling if "bold" column is True
+        row_style_jscode_vineland = JsCode("""
+        function(params) {
+            if (params.data.bold === true) {
+                return {
+                    'font-weight': 'bold',
+                    'font-size': 16,
+                }
+            } else {
+                return {
+                    'font-size': 16,
+                }
+            }
+            return {};
+        }
+        """)
+
+        # Build Grid Options
+        gb_vineland = GridOptionsBuilder.from_dataframe(df_vineland)
+        gb_vineland.configure_grid_options(getRowStyle=row_style_jscode_vineland)
+        gb_vineland.configure_column("data", editable=True)
+        gridOptions_vineland = gb_vineland.build()
+
+        # Display grid
+        # with st_normal():
+        grid_return = AgGrid(
+            df_vineland,
+            gridOptions=gridOptions_vineland,
+            editable=True,
+            height=800,
+            theme="balham",
+            # custom_css=custom_css,
+            allow_unsafe_jscode=True
+        )
+
+    
     ########################################################
     st.header("Behavioral Presentation")
     data['behavior_observation'] = st.text_area(
@@ -718,6 +813,92 @@ if submit:
 
     replace_word.update(data)
 
+    replace_percent = {}
+
+    # Get WAIS 
+    if wais_check:
+        wais_overall_dict = {
+            "[[{} Standard]]".format(row["Index"]): row["Standard Score"] 
+            for _, row in grid_return_overall['data'].iterrows()
+        }
+        wais_overall_dict.update({
+            "[[{} CI]]".format(row["Index"]): row["Confidence Interval"] 
+            for _, row in grid_return_overall['data'].iterrows()
+        })
+        wais_overall_percentile = {
+            "[[{} Percent]]".format(row["Index"]): row["Percentile"] 
+            for _, row in grid_return_overall['data'].iterrows()
+        }
+        
+        wais_subtest_dict = {
+            "[[{}]]".format(row["Subtest"]): row["Scaled Score"] 
+            for _, row in grid_return_subtest['data'].iterrows()
+        }
+
+        wais_data["overall"] = yaml.dump(grid_return_overall['data'].set_index("Index", drop=True).to_dict("index"), sort_keys=False)
+        wais_data["subtest"] = yaml.dump(grid_return_subtest['data'].to_dict("records"), sort_keys=False)
+
+        # st.code(wais_overall_dict)
+
+        wais_analysis = ""
+        if wais_data["subtest"] and wais_data['overall']:
+            response = client.responses.create(
+                prompt={
+                    "id": st.secrets["wais_analysis_id"],
+                    "variables": {
+                        "first_name": data['{{Patient First Name}}'],
+                        "pronouns": preferred,
+                        "wais_subtest": wais_data['subtest'],
+                        "wais_overall": wais_data['overall'],
+                    }
+                }
+            )
+            wais_analysis = response.output_text
+
+        # Get Table data
+        replace_word.update(wais_overall_dict)
+        replace_word.update(wais_subtest_dict)
+        replace_percent.update(wais_overall_percentile)
+
+    # Get Vineland Informant
+    if informant_vineland_eval:
+        # Vineland Informant Score
+        vineland_info_dict = {
+            "[[{}]]".format(row["field"]): row["data"] 
+            for _, row in grid_return['data'].iterrows()
+        }
+
+        vineland_perc_dict = {
+            "[[{}]]".format(row["field"]): row["data"] 
+            for _, row in grid_return['data'].iterrows()
+            if "Percentile" in row["field"]
+        }
+
+        replace_percent.update(vineland_perc_dict)
+        replace_word.update(vineland_info_dict)
+
+        # st.code(vineland_info_dict, language=None)
+
+        vineland_score = yaml.dump(vineland_info_dict, sort_keys=False)
+        # st.code(vineland_score)
+        vineland_analysis = ""
+        try:
+            response = client.responses.create(
+                prompt={
+                    "id": st.secrets["vineland_analysis_id"],
+                    "variables": {
+                    "first_name": data['{{Patient First Name}}'],
+                    "pronouns": preferred,
+                    "score": vineland_score,
+                    "caregiver": data['{{Caregiver type}}']
+                    }
+                }
+            )
+            vineland_analysis = response.output_text
+        except:
+            print("Cannot analyze Vineland Score")
+
+
     # Display data 
     # yaml_string = yaml.dump(replace_word, sort_keys=False)
     # yaml_string = yaml_string + '\n' + yaml.dump(scores, sort_keys=False)
@@ -725,8 +906,13 @@ if submit:
     # yaml_data = st.code(yaml_string, language=None)
     
 
-    #### Edit document 
-    doc = Document('templates/template_mod_3.docx')
+    # #### Edit document 
+    # doc = Document('templates/template_mod_3.docx')
+    if wais_check:
+        doc = Document('templates/template_mod_3.docx')
+    else:
+        doc = Document('templates/template_mod_3_no_wais.docx')
+
     if doc:
         # Get file name
         today_date = format_date_with_ordinal(datetime.date.today())
@@ -746,6 +932,53 @@ if submit:
 
         list_style = doc.styles['Bullet New']
         list_style.paragraph_format.line_spacing = 1
+
+        if not informant_vineland_eval:
+            # if we don't have vineland score
+            # Remove tables 
+            allTables = doc.tables
+            for activeTable in allTables:
+                if activeTable.cell(0,0).paragraphs[0].text == 'Adaptive Behavior Composite':
+                    activeTable._element.getparent().remove(activeTable._element)
+
+            # Test paragraph 
+            for i, paragraph in enumerate(doc.paragraphs):
+                # Vineland Informant Report 
+                if "[[Vineland_Start]]" in paragraph.text:
+                    vineland_start = i 
+                    break
+
+            if vineland_start:
+                print(vineland_start)
+                for index in range(vineland_start, vineland_start+4, 1):
+                    try:
+                        delete_paragraph(doc.paragraphs[index])
+                    except:
+                        print("Out of range at index", i)
+            else:
+                print("Cannot find Vineland Start")
+
+            for i, paragraph in enumerate(doc.paragraphs):
+                if "The VABS-3 yields information about an individual’s adaptive functioning" in paragraph.text:
+                    delete_paragraph(paragraph)
+                if "[[Vineland Analysis]]" in paragraph.text:
+                    delete_paragraph(paragraph)
+
+        if wais_check or informant_vineland_eval:
+            # Replace percent in table 
+            for table in doc.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for paragraph in cell.paragraphs:
+                            # Loop through all percentage needed to be replaced in the table
+                            for key in replace_percent:
+                                if key in paragraph.text:
+                                    p = paragraph.insert_paragraph_before()
+                                    p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                                    p.add_run(replace_percent[key], style='CustomStyle')
+                                    suffix = get_ordinal(replace_percent[key])
+                                    p.add_run(suffix, style='CustomStyle').font.superscript = True
+                                    delete_paragraph(paragraph)
 
         # Add scores 
         for i, paragraph in enumerate(doc.paragraphs):
@@ -833,6 +1066,50 @@ if submit:
                     add_vineland_yes_teacher(paragraph)
                 else:
                     add_vineland_no_teacher(paragraph)
+
+            if "[[WAIS-Analysis]]" in paragraph.text:
+                if wais_check:
+                    replace_ordinal_with_superscript(paragraph, wais_analysis)
+                delete_paragraph(paragraph)
+
+            if "[[Vineland_Start]]" in paragraph.text:
+                if informant_vineland_eval:
+                    delete_paragraph(paragraph)
+
+            if "[[Vineland Analysis]]" in paragraph.text:
+                if informant_vineland_eval:
+                    # Add page break
+                    paragraph.insert_paragraph_before().add_run().add_break(WD_BREAK.PAGE)
+
+                    p = paragraph.insert_paragraph_before()
+                    r = p.add_run("Interpretation of VABS-3 Results – Informant Report", style='CustomStyle')
+                    r.bold = True
+                    r.italic = True
+
+                    p = paragraph.insert_paragraph_before()
+                    p.add_run(f"\nAdaptive Behavior Composite: {replace_word['[[Adaptive Behavior Composite]]']} (", style='CustomStyle')
+                    write_ordinal_in_paragraph(p, replace_word['[[Adaptive Behavior Composite Percentile]]'])
+                    p.add_run(" percentile)", style='CustomStyle')
+
+                    p = paragraph.insert_paragraph_before()
+                    p.add_run(f"\n\tCommunication: {replace_word['[[Communication]]']} (", style='CustomStyle')
+                    write_ordinal_in_paragraph(p, replace_word['[[Communication Percentile]]'])
+                    p.add_run(" percentile)", style='CustomStyle')
+
+                    p = paragraph.insert_paragraph_before()
+                    p.add_run(f"\tDaily Living Skills: {replace_word['[[Daily Living Skills]]']} (", style='CustomStyle')
+                    write_ordinal_in_paragraph(p, replace_word['[[Daily Living Skills Percentile]]'])
+                    p.add_run(" percentile)", style='CustomStyle')
+
+                    p = paragraph.insert_paragraph_before()
+                    p.add_run(f"\tSocialization: {replace_word['[[Socialization]]']} (", style='CustomStyle')
+                    write_ordinal_in_paragraph(p, replace_word['[[Socialization Percentile]]'])
+                    p.add_run(" percentile)", style='CustomStyle')
+
+                    paragraph.insert_paragraph_before()
+
+                    replace_ordinal_with_superscript(paragraph, vineland_analysis)
+                    delete_paragraph(paragraph)
         
         # Edit document
         for word in replace_word:

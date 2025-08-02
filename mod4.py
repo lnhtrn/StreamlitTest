@@ -192,6 +192,7 @@ with st.sidebar:
     st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
     st.link_button("Edit Dropdown Options", st.secrets['mod3_spreadsheet'])
     st.link_button("Edit Score Options", st.secrets['mod3_scores'])
+    st.link_button("Edit Recommendation Options", st.secrets['recommendations'])
     st.button('Reload Spreadsheet Data', on_click=clear_my_cache)
 
     ####################################################
@@ -446,8 +447,6 @@ with st.form('BasicInfo'):
         accept_new_options=True,
     )
 
-    # data['{{School Name}}'] = st.text_input("School Name")
-
     if teacher_vineland_eval:
         teacher_score['{{Teacher name, title}}'] = st.text_input("Teacher name, title")
 
@@ -658,11 +657,6 @@ with st.form('BasicInfo'):
     # data['{{}}'] = st.text_input("")
 
     submit = st.form_submit_button('Submit')
-
-def delete_paragraph(paragraph):
-    p = paragraph._element
-    p.getparent().remove(p)
-    p._p = p._element = None
 
 def add_behavior_presentation(paragraph, transcript):
     if transcript != "":    

@@ -33,7 +33,7 @@ if not st.user.is_logged_in:
 st.sidebar.write(f"Welcome, {st.user.name}!")
 if st.sidebar.button("Log out", icon=":material/logout:", use_container_width=True):
     st.logout()
-    
+
 ##########################################################
 # Set up OpenAI 
 if 'behavior_observation_mod12' not in st.session_state:
@@ -186,6 +186,7 @@ with st.sidebar:
     st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
     st.link_button("Edit Dropdown Options", st.secrets['mod12_spreadsheet'])
     st.link_button("Edit Score Options", st.secrets['mod12_scores'])
+    st.link_button("Edit Recommendation Options", st.secrets['recommendations'])
     st.button('Reload Dropdown Data', on_click=clear_my_cache)
 
     # Display data 

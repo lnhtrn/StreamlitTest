@@ -185,6 +185,7 @@ with st.sidebar:
     st.markdown("**After editing dropdown options, please reload data using the button below to update within the form.**")
     st.link_button("Edit Dropdown Options", st.secrets['mod12_spreadsheet'])
     st.link_button("Edit Score Options", st.secrets['mod12_scores'])
+    st.link_button("Edit Recommendation Options", st.secrets['recommendations'])
     st.button('Reload Dropdown Data', on_click=clear_my_cache)
 
     # Display data 
