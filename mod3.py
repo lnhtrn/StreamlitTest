@@ -1,11 +1,14 @@
 import streamlit as st
 from docx import Document
 import pandas as pd
+import re
 import yaml
 import io
 import docxedit
 import datetime
 from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.text import WD_BREAK
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from streamlit_gsheets import GSheetsConnection
 from docxtpl import DocxTemplate
 from docx.shared import Inches, Pt
