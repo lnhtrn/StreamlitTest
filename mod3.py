@@ -1,6 +1,6 @@
 import streamlit as st
 from docx import Document
-import docx
+import pandas as pd
 import yaml
 import io
 import docxedit

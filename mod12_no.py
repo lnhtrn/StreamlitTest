@@ -1,6 +1,5 @@
 import streamlit as st
 from docx import Document
-import docx
 import yaml
 import io
 import docxedit
